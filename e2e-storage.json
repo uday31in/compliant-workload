@@ -104,7 +104,7 @@
                 },
                 "parameters": {
                     "prefix": {
-                        "value":"[variables('name-compliant-vnet')]"
+                        "value":"[parameters('prefix')]"
                     },
                     "_artifactsLocation": {
                         "value": "[parameters('_artifactsLocation')]"
@@ -128,7 +128,7 @@
                 },
                 "parameters": {
                     "prefix": {
-                        "value":"[variables('name-compliant-userAssignedIdentity')]"
+                        "value":"[parameters('prefix')]"
                     },
                     "_artifactsLocation": {
                         "value": "[parameters('_artifactsLocation')]"
@@ -152,7 +152,7 @@
                 },
                 "parameters": {
                     "prefix": {
-                        "value":"[variables('name-compliant-KeyVault')]"
+                        "value":"[parameters('prefix')]"
                     },
                     "userAssignedIdentity": {
                         "value":"[reference(concat(variables('name-compliant-userAssignedIdentity'),'-deployment')).outputs.userAssignedIdentity.value]"

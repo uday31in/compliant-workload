@@ -2,263 +2,62 @@
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "subscriptionID": {
+        "_artifactsLocation": {
             "type": "string",
-            "defaultValue": "2b20fbc5-3fba-4d81-b2ff-594113dac038",
+            "defaultValue": "https://raw.githubusercontent.com/uday31in/compliant-workload/main/",
+            "metadata": {
+                "description": "This is the link to the nested template that must to be accessible to ARM to be able to use as a part of nested deployment.
+                                Please feel free to use template hosted here or override with choice of your location.
+                                If you chose to do so, please ensure future bug fixes are incorporated from above location to your private location."
+            }
+        },
+        "_artifactsLocationSasToken": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "prefix": {
+            "type": "string",
+            "defaultValue": "compliant-kv",
             "metadata": {
                 "description": "description"
             }
         },
-        "keyExpiration": {
-            "type": "int",
-            "defaultValue": "[dateTimeToEpoch(dateTimeAdd(utcNow(), 'P1Y'))]",
+        "userAssignedIdentity": {
+            "type": "string",
+            "defaultValue": "6102998c-f70e-4e8e-be0e-96d2f7d09a75",
             "metadata": {
-                "description": "Expiration time of the key"
+                "description": "description"
             }
         },
-        "expiryTime": {
-            "type": "int",
-            "defaultValue": "[dateTimeToEpoch(dateTimeAdd(utcNow(), 'P1Y'))]",
+        "tenantId": {
+            "type": "string",
+            "defaultValue": "5663f39e-feb1-4303-a1f9-cf20b702de61",
             "metadata": {
-                "description": "Expiration time of the key"
+                "description": "description"
             }
         },
-        "timeAfterCreate": {
-            "type": "int",
-            "defaultValue": "[dateTimeToEpoch(dateTimeAdd(utcNow(), 'P1Y'))]",
+        "keyname": {
+            "type": "string",
+            "defaultValue": "/subscriptions/22a8d224-e190-45c0-a936-f915ee2d8b16/resourceGroups/compliant-storage-resourcegroup/providers/Microsoft.Network/virtualNetworks/compliant-storage-virtualNetworks/subnets/compliant-storage-virtualNetworks-subnet",
             "metadata": {
-                "description": "Expiration time of the key"
+                "description": "description"
             }
         },
-        "timeBeforeExpiry": {
-            "type": "int",
-            "defaultValue": "[dateTimeToEpoch(dateTimeAdd(utcNow(), 'P30D'))]",
+        "keyvaulturi": {
+            "type": "string",
+            "defaultValue": "5663f39e-feb1-4303-a1f9-cf20b702de61",
             "metadata": {
-                "description": "Expiration time of the key"
+                "description": "description"
             }
         }
     },
     "variables": {},
     "resources": [
         {
-            "name": "nestedDeployment1",
-            "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2018-05-01",
-            "location": "West Europe",
-            "subscriptionId": "[parameters('subscriptionID')]",
-            "properties": {
-                "mode": "incremental",
-                "template": {
-                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
-                    "contentVersion": "1.0.0.0",
-                    "parameters": {},
-                    "variables": {},
-                    "resources": [
-                        {
-                            "type": "Microsoft.Resources/resourceGroups",
-                            "apiVersion": "2018-05-01",
-                            "location": "West Europe",
-                            "name": "uday",
-                            "properties": {}
-                        }
-                    ]
-                }
-            }
-        },
-        {
-            "type": "Microsoft.Network/routeTables",
-            "apiVersion": "2022-07-01",
-            "name": "compliant-storage-routetable",
-            "location": "westeurope",
-            "properties": {
-                "disableBgpRoutePropagation": false,
-                "routes": []
-            }
-        },
-        {
-            "type": "Microsoft.Network/networkSecurityGroups",
-            "apiVersion": "2022-07-01",
-            "name": "compliant-stoage-nsg",
-            "location": "westeurope",
-            "properties": {
-                "securityRules": []
-            }
-        },
-        {
-            "type": "Microsoft.Network/virtualNetworks",
-            "apiVersion": "2022-07-01",
-            "name": "compliant-storage-vnet",
-            "location": "westeurope",
-            "dependsOn": [
-                "[resourceId('Microsoft.Network/networkSecurityGroups', 'compliant-stoage-nsg' )]",
-                "[resourceId('Microsoft.Network/routeTables', 'compliant-storage-routetable')]"
-            ],
-            "properties": {
-                "addressSpace": {
-                    "addressPrefixes": [
-                        "10.1.1.0/24"
-                    ]
-                },
-                "subnets": [
-                    {
-                        "name": "compliant-storage-subnet",
-                        "properties": {
-                            "addressPrefix": "10.1.1.0/25",
-                            "networkSecurityGroup": {
-                                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', 'compliant-stoage-nsg' )]"
-                            },
-                            "routeTable": {
-                                "id": "[resourceId('Microsoft.Network/routeTables', 'compliant-storage-routetable')]"
-                            },
-                            "serviceEndpoints": [
-                                {
-                                    "service": "Microsoft.KeyVault",
-                                    "locations": [
-                                        "*"
-                                    ]
-                                }
-                            ],
-                            "delegations": [],
-                            "privateEndpointNetworkPolicies": "Disabled",
-                            "privateLinkServiceNetworkPolicies": "Enabled"
-                        },
-                        "type": "Microsoft.Network/virtualNetworks/subnets"
-                    }
-                ],
-                "virtualNetworkPeerings": [],
-                "enableDdosProtection": true,
-                "ddosProtectionPlan": {
-                    "id": "/subscriptions/c62c2473-9d97-4014-a42c-dd41f1b3c5e7/resourceGroups/chase-ddos/providers/Microsoft.Network/ddosProtectionPlans/chase-ddos-westeurope"
-                }
-            }
-        },
-        {
-            "type": "Microsoft.ManagedIdentity/userAssignedIdentities",
-            "apiVersion": "2023-01-31",
-            "name": "compliant-storage-ui",
-            "location": "westeurope"
-        },
-        {
-            "type": "Microsoft.KeyVault/vaults",
-            "apiVersion": "2022-11-01",
-            "name": "compliant-kv2",
-            "location": "westeurope",
-            "dependsOn": [
-                "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', 'compliant-storage-ui')]"
-            ],
-            "properties": {
-                "sku": {
-                    "family": "A",
-                    "name": "Standard"
-                },
-                "tenantId": "5663f39e-feb1-4303-a1f9-cf20b702de61",
-                "networkAcls": {
-                    "bypass": "AzureServices",
-                    "defaultAction": "Deny",
-                    "ipRules": [],
-                    "virtualNetworkRules": []
-                },
-                "accessPolicies": [
-                    {
-                        "tenantId": "5663f39e-feb1-4303-a1f9-cf20b702de61",
-                        "permissions": {
-                            "keys": [
-                                "unwrapKey",
-                                "wrapKey",
-                                "get"
-                            ]
-                        },
-                        "objectId": "[reference(extensionResourceId('/subscriptions/2b20fbc5-3fba-4d81-b2ff-594113dac038/resourcegroups/uday' , 'Microsoft.ManagedIdentity/userAssignedIdentities', 'compliant-storage-ui') , '2018-11-30').principalId]"
-                    }
-                ],
-                "enabledForDeployment": true,
-                "enabledForDiskEncryption": true,
-                "enabledForTemplateDeployment": true,
-                "enableSoftDelete": true,
-                "softDeleteRetentionInDays": 90,
-                "enableRbacAuthorization": true,
-                "enablePurgeProtection": true,
-                "vaultUri": "[concat('https://', 'compliant-kv2', '.vault.azure.net/')]",
-                "publicNetworkAccess": "Disabled"
-            }
-        },
-        {
-            "type": "Microsoft.Authorization/roleAssignments",
-            "apiVersion": "2022-04-01",
-            "name": "[guid(deployment().name)]",
-            "dependsOn": [
-                "[resourceId('Microsoft.KeyVault/vaults', 'compliant-kv2')]"
-            ],
-            "properties": {
-                "roleDefinitionId": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', 'e147488a-f6f5-4113-8e2d-b22465e65bf6')]",
-                "principalId": "[reference(extensionResourceId('/subscriptions/2b20fbc5-3fba-4d81-b2ff-594113dac038/resourcegroups/uday' , 'Microsoft.ManagedIdentity/userAssignedIdentities', 'compliant-storage-ui') , '2018-11-30').principalId]"
-            }
-        },
-        {
-            "type": "Microsoft.Network/privateEndpoints",
-            "apiVersion": "2020-04-01",
-            "name": "[concat('compliant-keyvault','-pe')]",
-            "location": "westeurope",
-            "dependsOn": [
-                "[resourceId('Microsoft.KeyVault/vaults', 'compliant-kv2')]"
-            ],
-            "properties": {
-                "privateLinkServiceConnections": [
-                    {
-                        "name": "compliant-keyvault-pe",
-                        "properties": {
-                            "privateLinkServiceId": "[resourceId('Microsoft.KeyVault/vaults', 'compliant-kv2')]",
-                            "groupIds": [
-                                "vault"
-                            ]
-                        }
-                    }
-                ],
-                "subnet": {
-                    "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', 'compliant-storage-vnet', 'compliant-storage-subnet')]"
-                }
-            }
-        },
-        {
-            "type": "Microsoft.KeyVault/vaults/keys",
-            "apiVersion": "2021-10-01",
-            "name": "[format('{0}/{1}', 'compliant-kv2', 'compliant-storage-cmk4')]",
-            "dependsOn": [
-                "[resourceId('Microsoft.KeyVault/vaults',  'compliant-kv2')]"
-            ],
-            "properties": {
-                "kty": "RSA",
-                "keyOps": [],
-                "keySize": 2048,
-                "curveName": "P-256",
-                "attributes": {
-                    "enabled": true,
-                    "exp": "[parameters('keyExpiration')]"
-                },
-                "rotationPolicy": {
-                    "attributes": {
-                        "expiryTime": "[parameters('expiryTime')]"
-                    },
-                    "lifetimeActions": [
-                        {
-                            "action": {
-                                "type": "notify"
-                            }
-                        }
-                    ]
-                }
-            }
-        },
-        {
             "type": "Microsoft.Storage/storageAccounts",
             "apiVersion": "2022-05-01",
             "name": "compliantstorage3",
             "location": "westeurope",
-            "dependsOn": [
-                "[resourceId('Microsoft.KeyVault/vaults', 'compliant-kv2')]",
-                "[resourceId('Microsoft.KeyVault/vaults/keys', 'compliant-kv2', 'compliant-storage-cmk4')]",
-                "[resourceId('Microsoft.Network/privateEndpoints', concat('compliant-keyvault','-pe'))]"
-            ],
             "sku": {
                 "name": "Standard_LRS"
             },
@@ -266,7 +65,7 @@
             "identity": {
                 "type": "UserAssigned",
                 "userAssignedIdentities": {
-                    "[format('{0}', extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, resourcegroup().name ), 'Microsoft.ManagedIdentity/userAssignedIdentities', 'compliant-storage-ui'))]": {}
+                    "[parameters('userAssignedIdentity')]": {}
                 }
             },
             "properties": {
@@ -287,7 +86,7 @@
                 "encryption": {
                     "requireInfrastructureEncryption": true,
                     "identity": {
-                        "userAssignedIdentity": "[extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, resourcegroup().name ), 'Microsoft.ManagedIdentity/userAssignedIdentities', 'compliant-storage-ui')]"
+                        "userAssignedIdentity":  "[parameters('userAssignedIdentity')]"
                     },
                     "services": {
                         "blob": {
@@ -340,10 +139,6 @@
         }
     ],
     "outputs": {
-        "proxyKey": {
-            "type": "object",
-            "value": "[reference(resourceId('Microsoft.KeyVault/vaults/keys', 'compliant-kv2', 'compliant-storage-cmk4'))]"
-        }
     },
     "functions": []
 }
