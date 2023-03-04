@@ -24,7 +24,7 @@
         }
     },
     "variables": {
-        "name-compliant-routeTable": "[concat(parameters('prefix,'-routeTable')]",
+        "name-compliant-routeTable": "[concat(parameters('prefix'),'-routeTable')]",
         "name-compliant-networkSecurityGroups": "[concat(parameters('prefix'),'-networkSecurityGroups')]",
         "name-compliant-virtualNetworks": "[concat(parameters('prefix'),'-virtualNetworks')]",
         "name-compliant-subnet": "[concat(variables('name-compliant-virtualNetworks'),'-subnet')]"
