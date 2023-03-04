@@ -112,10 +112,10 @@
             }
         },
         {
-            "name": "[concat(variables('name-compliant-userAssignedIdentities'),'-deployment')]",
+            "name": "[concat(variables('name-compliant-userAssignedIdentity'),'-deployment')]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2018-05-01",
-            "resourceGroup": "[variables('name-compliant-userAssignedIdentities')]",
+            "resourceGroup": "[variables('name-compliant-resourcegroup')]",
             "properties": {
                 "mode": "incremental",
                 "templateLink": {

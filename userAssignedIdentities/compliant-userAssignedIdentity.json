@@ -24,7 +24,7 @@
         }
     },
     "variables": {
-        "name-compliant-userAssignedIdentities": "[concat(parameters('prefix,'-userAssignedIdentities')]"
+        "name-compliant-userAssignedIdentities": "[concat(parameters('prefix'),'-userAssignedIdentities')]"
     },
     "resources": [
         {
