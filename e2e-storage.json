@@ -16,6 +16,19 @@
                 "description": "description"
             }
         },
+        "_artifactsLocation": {
+            "type": "string",
+            "defaultValue": "https://raw.githubusercontent.com/uday31in/compliant-workload/main/",
+            "metadata": {
+                "description": "This is the link to the nested template that must to be accessible to ARM to be able to use as a part of nested deployment.
+                                Please feel free to use template hosted here or override with choice of your location.
+                                If you chose to do so, please ensure future bug fixes are incorporated from above location to your private location."
+            }
+        },
+        "_artifactsLocationSasToken": {
+            "type": "string",
+            "defaultValue": ""
+        },
         "keyExpiration": {
             "type": "int",
             "defaultValue": "[dateTimeToEpoch(dateTimeAdd(utcNow(), 'P1Y'))]",
@@ -77,17 +90,23 @@
             }
         },
         {
-            "name": "[variables('name-compliant-vnet-deployment')]",
+            "name": "[concat(variables('name-compliant-vnet'),'-deployment')]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2018-05-01",
             "resourceGroup": "[variables('name-compliant-resourcegroup')]",
             "properties": {
                 "mode": "incremental",
                 "templateLink": {
-                    "uri": "[concat(variables('linkedTemplates')[copyIndex()].templateUrl, parameters('sasToken'))]",
+                    "uri": "[uri(parameters('_artifactsLocation'), concat('network/network.json', parameters('_artifactsLocationSasToken')))]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
+                    "_artifactsLocation": {
+                        "value": "[parameters('_artifactsLocation')]"
+                    },
+                    "_artifactsLocationSasToken": {
+                        "value": "[parameters('_artifactsLocationSasToken')]"
+                    }
                 }
             }
         }
