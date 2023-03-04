@@ -1,0 +1,97 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "prefix": {
+            "type": "string",
+            "defaultValue": "compliant-storage",
+            "metadata": {
+                "description": "description"
+            }
+        },
+        "subscriptionID": {
+            "type": "string",
+            "defaultValue": "22a8d224-e190-45c0-a936-f915ee2d8b16",
+            "metadata": {
+                "description": "description"
+            }
+        },
+        "keyExpiration": {
+            "type": "int",
+            "defaultValue": "[dateTimeToEpoch(dateTimeAdd(utcNow(), 'P1Y'))]",
+            "metadata": {
+                "description": "Expiration time of the key"
+            }
+        },
+        "expiryTime": {
+            "type": "int",
+            "defaultValue": "[dateTimeToEpoch(dateTimeAdd(utcNow(), 'P1Y'))]",
+            "metadata": {
+                "description": "Expiration time of the key"
+            }
+        },
+        "timeAfterCreate": {
+            "type": "int",
+            "defaultValue": "[dateTimeToEpoch(dateTimeAdd(utcNow(), 'P1Y'))]",
+            "metadata": {
+                "description": "Expiration time of the key"
+            }
+        },
+        "timeBeforeExpiry": {
+            "type": "int",
+            "defaultValue": "[dateTimeToEpoch(dateTimeAdd(utcNow(), 'P30D'))]",
+            "metadata": {
+                "description": "Expiration time of the key"
+            }
+        }
+    },
+    "variables": {
+        "name-compliant-deployment": "[concat(parameters('prefix'),'-deployment')]",
+        "name-compliant-resourcegroup": "[concat(parameters('prefix'),'-resourcegroup')]",
+        "name-compliant-vnet": "[concat(parameters('prefix'),'-vnet')]"
+    },
+    "resources": [
+        {
+            "name": "[variables('name-compliant-deployment')]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2018-05-01",
+            "location": "West Europe",
+            "subscriptionId": "[parameters('subscriptionID')]",
+            "properties": {
+                "mode": "incremental",
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {},
+                    "variables": {},
+                    "resources": [
+                        {
+                            "type": "Microsoft.Resources/resourceGroups",
+                            "apiVersion": "2018-05-01",
+                            "location": "West Europe",
+                            "name": "[variables('name-compliant-resourcegroup')]",
+                            "properties": {}
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "[variables('name-compliant-vnet-deployment')]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2018-05-01",
+            "resourceGroup": "[variables('name-compliant-resourcegroup')]",
+            "properties": {
+                "mode": "incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('linkedTemplates')[copyIndex()].templateUrl, parameters('sasToken'))]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                }
+            }
+        }
+    ],
+    "outputs": {},
+    "functions": []
+}

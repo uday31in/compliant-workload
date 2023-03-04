@@ -1,0 +1,95 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "prefix": {
+            "type": "string",
+            "defaultValue": "compliant-vnet",
+            "metadata": {
+                "description": "description"
+            }
+        }
+    },
+    "variables": {
+        "name-compliant-routeTable": "[concat(parameters('prefix,'-routeTable')]",
+        "name-compliant-networkSecurityGroups": "[concat(parameters('prefix'),'-networkSecurityGroups')]",
+        "name-compliant-virtualNetworks": "[concat(parameters('prefix'),'-virtualNetworks')]",
+        "name-compliant-subnet": "[concat(variables('name-compliant-virtualNetworks'),'-subnet')]"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Network/routeTables",
+            "apiVersion": "2022-07-01",
+            "name": "[variables('name-compliant-routeTable')]",
+            "location": "westeurope",
+            "properties": {
+                "disableBgpRoutePropagation": false,
+                "routes": []
+            }
+        },
+        {
+            "type": "Microsoft.Network/networkSecurityGroups",
+            "apiVersion": "2022-07-01",
+            "name": "[variables('name-compliant-networkSecurityGroups')]",
+            "location": "westeurope",
+            "properties": {
+                "securityRules": []
+            }
+        },
+        {
+            "type": "Microsoft.Network/virtualNetworks",
+            "apiVersion": "2022-07-01",
+            "name": "[variables('name-compliant-virtualNetworks')]",
+            "location": "westeurope",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/networkSecurityGroups', variables('name-compliant-routeTable')]",
+                "[resourceId('Microsoft.Network/routeTables',  variables('name-compliant-networkSecurityGroups')]"
+            ],
+            "properties": {
+                "addressSpace": {
+                    "addressPrefixes": [
+                        "10.1.1.0/24"
+                    ]
+                },
+                "subnets": [
+                    {
+                        "name": "[variables('name-compliant-subnet')]",
+                        "properties": {
+                            "addressPrefix": "10.1.1.0/25",
+                            "networkSecurityGroup": {
+                                "id": "[resourceId('Microsoft.Network/networkSecurityGroups',variables('name-compliant-networkSecurityGroups')]"
+                            },
+                            "routeTable": {
+                                "id": "[resourceId('Microsoft.Network/routeTables', variables('name-compliant-routeTable')]"
+                            },
+                            "serviceEndpoints": [
+                                {
+                                    "service": "Microsoft.KeyVault",
+                                    "locations": [
+                                        "*"
+                                    ]
+                                }
+                            ],
+                            "delegations": [],
+                            "privateEndpointNetworkPolicies": "Disabled",
+                            "privateLinkServiceNetworkPolicies": "Enabled"
+                        },
+                        "type": "Microsoft.Network/virtualNetworks/subnets"
+                    }
+                ],
+                "virtualNetworkPeerings": [],
+                "enableDdosProtection": true,
+                "ddosProtectionPlan": {
+                    "id": "/subscriptions/c62c2473-9d97-4014-a42c-dd41f1b3c5e7/resourceGroups/chase-ddos/providers/Microsoft.Network/ddosProtectionPlans/chase-ddos-westeurope"
+                }
+            }
+        }
+    ],
+    "outputs": {
+        "proxyKey": {
+            "type": "object",
+            "value": "[reference(resourceId('Microsoft.Network/vaults/virtualNetworks', variables('name-compliant-virtualNetworks') ))]"
+        }
+    },
+    "functions": []
+}
