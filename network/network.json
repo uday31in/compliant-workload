@@ -17,7 +17,7 @@
         },
         "prefix": {
             "type": "string",
-            "defaultValue": "compliant-vnet",
+            "defaultValue": "compliant-storage",
             "metadata": {
                 "description": "description"
             }
@@ -25,9 +25,12 @@
     },
     "variables": {
         "name-compliant-routeTable": "[concat(parameters('prefix'),'-routeTable')]",
-        "name-compliant-networkSecurityGroups": "[concat(parameters('prefix'),'-networkSecurityGroups')]",
+        "name-compliant-networkSecurityGroup": "[concat(parameters('prefix'),'-networkSecurityGroup')]",
         "name-compliant-virtualNetworks": "[concat(parameters('prefix'),'-virtualNetworks')]",
-        "name-compliant-subnet": "[concat(variables('name-compliant-virtualNetworks'),'-subnet')]"
+        "name-compliant-subnet": "[concat(variables('name-compliant-virtualNetworks'),'-subnet')]",
+
+        "name-compliant-networkSecurityGroup-id": "[resourceId('Microsoft.Network/networkSecurityGroups',variables('name-compliant-networkSecurityGroup'))]",
+        "name-compliant-routeTable-id": "[resourceId('Microsoft.Network/routeTables',variables('name-compliant-routeTable'))]"
     },
     "resources": [
         {
@@ -43,7 +46,7 @@
         {
             "type": "Microsoft.Network/networkSecurityGroups",
             "apiVersion": "2022-07-01",
-            "name": "[variables('name-compliant-networkSecurityGroups')]",
+            "name": "[variables('name-compliant-networkSecurityGroup')]",
             "location": "westeurope",
             "properties": {
                 "securityRules": []
@@ -55,8 +58,8 @@
             "name": "[variables('name-compliant-virtualNetworks')]",
             "location": "westeurope",
             "dependsOn": [
-                "[resourceId(concat('Microsoft.Network/routeTables',  variables('name-compliant-networkSecurityGroups'))]",
-                "[resourceId(concat('Microsoft.Network/networkSecurityGroups', variables('name-compliant-routeTable'))]"
+                "[variables('name-compliant-networkSecurityGroup-id')]",
+                "[variables('name-compliant-routeTable-id')]"
             ],
             "properties": {
                 "addressSpace": {
@@ -70,10 +73,10 @@
                         "properties": {
                             "addressPrefix": "10.1.1.0/25",
                             "networkSecurityGroup": {
-                                "id": "[resourceId(concat('Microsoft.Network/routeTables',  variables('name-compliant-networkSecurityGroups'))]"
+                                "id":  "[variables('name-compliant-networkSecurityGroup-id')]"
                             },
                             "routeTable": {
-                                "id": "[resourceId(concat('Microsoft.Network/networkSecurityGroups', variables('name-compliant-routeTable'))]"
+                                "id": "[variables('name-compliant-routeTable-id')]"
                             },
                             "serviceEndpoints": [
                                 {
@@ -99,9 +102,9 @@
         }
     ],
     "outputs": {
-        "proxyKey": {
+        "virtualNetworks": {
             "type": "object",
-            "value": "[reference(resourceId('Microsoft.Network/vaults/virtualNetworks', variables('name-compliant-virtualNetworks') ))]"
+            "value": "[reference(resourceId('Microsoft.Network/virtualNetworks', variables('name-compliant-virtualNetworks') ))]"
         }
     },
     "functions": []
