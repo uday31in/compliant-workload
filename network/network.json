@@ -55,8 +55,8 @@
             "name": "[variables('name-compliant-virtualNetworks')]",
             "location": "westeurope",
             "dependsOn": [
-                "[resourceId('Microsoft.Network/networkSecurityGroups', variables('name-compliant-routeTable')]",
-                "[resourceId('Microsoft.Network/routeTables',  variables('name-compliant-networkSecurityGroups')]"
+                "[resourceId(concat('Microsoft.Network/routeTables',  variables('name-compliant-networkSecurityGroups'))]",
+                "[resourceId(concat('Microsoft.Network/networkSecurityGroups', variables('name-compliant-routeTable'))]"
             ],
             "properties": {
                 "addressSpace": {
@@ -70,10 +70,10 @@
                         "properties": {
                             "addressPrefix": "10.1.1.0/25",
                             "networkSecurityGroup": {
-                                "id": "[resourceId('Microsoft.Network/networkSecurityGroups',variables('name-compliant-networkSecurityGroups')]"
+                                "id": "[resourceId(concat('Microsoft.Network/routeTables',  variables('name-compliant-networkSecurityGroups'))]"
                             },
                             "routeTable": {
-                                "id": "[resourceId('Microsoft.Network/routeTables', variables('name-compliant-routeTable')]"
+                                "id": "[resourceId(concat('Microsoft.Network/networkSecurityGroups', variables('name-compliant-routeTable'))]"
                             },
                             "serviceEndpoints": [
                                 {
