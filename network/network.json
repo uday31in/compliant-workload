@@ -3,10 +3,17 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "_artifactsLocation": {
-            "value": "[parameters('_artifactsLocation')]"
+            "type": "string",
+            "defaultValue": "https://raw.githubusercontent.com/uday31in/compliant-workload/main/",
+            "metadata": {
+                "description": "This is the link to the nested template that must to be accessible to ARM to be able to use as a part of nested deployment.
+                                Please feel free to use template hosted here or override with choice of your location.
+                                If you chose to do so, please ensure future bug fixes are incorporated from above location to your private location."
+            }
         },
         "_artifactsLocationSasToken": {
-            "value": "[parameters('_artifactsLocationSasToken')]"
+            "type": "string",
+            "defaultValue": ""
         },
         "prefix": {
             "type": "string",
