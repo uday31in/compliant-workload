@@ -62,7 +62,8 @@
         "name-compliant-deployment": "[concat(parameters('prefix'),'-deployment')]",
         "name-compliant-resourcegroup": "[concat(parameters('prefix'),'-resourcegroup')]",
         "name-compliant-vnet": "[concat(parameters('prefix'),'-vnet')]",
-        "name-compliant-userAssignedIdentity": "[concat(parameters('prefix'),'-userAssignedIdentity')]"
+        "name-compliant-userAssignedIdentity": "[concat(parameters('prefix'),'-userAssignedIdentity')]",
+        "name-compliant-KeyVault": "[concat(parameters('prefix'),'-KeyVault')]"
     },
     "resources": [
         {
@@ -98,10 +99,13 @@
             "properties": {
                 "mode": "incremental",
                 "templateLink": {
-                    "uri": "[uri(parameters('_artifactsLocation'), concat('network/network.json', parameters('_artifactsLocationSasToken')))]",
+                    "uri": "[uri(parameters('_artifactsLocation'), concat('network/compliant-network.json', parameters('_artifactsLocationSasToken')))]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
+                    "prefix": {
+                        "value":"[variables('name-compliant-vnet')]"
+                    },
                     "_artifactsLocation": {
                         "value": "[parameters('_artifactsLocation')]"
                     },
@@ -123,6 +127,36 @@
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
+                    "prefix": {
+                        "value":"[variables('name-compliant-userAssignedIdentity')]"
+                    },
+                    "_artifactsLocation": {
+                        "value": "[parameters('_artifactsLocation')]"
+                    },
+                    "_artifactsLocationSasToken": {
+                        "value": "[parameters('_artifactsLocationSasToken')]"
+                    }
+                }
+            }
+        },
+        {
+            "name": "[concat(variables('name-compliant-KeyVault'),'-deployment')]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2018-05-01",
+            "resourceGroup": "[variables('name-compliant-resourcegroup')]",
+            "properties": {
+                "mode": "incremental",
+                "templateLink": {
+                    "uri": "[uri(parameters('_artifactsLocation'), concat('KeyVault/compliant-KeyVault.json', parameters('_artifactsLocationSasToken')))]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "prefix": {
+                        "value":"[variables('name-compliant-KeyVault')]"
+                    },
+                    "userAssignedIdentity": {
+                        "value":"[reference(concat(variables('name-compliant-userAssignedIdentity'),'-deployment')).outputs.userAssignedIdentity.value]"
+                    },
                     "_artifactsLocation": {
                         "value": "[parameters('_artifactsLocation')]"
                     },
@@ -133,6 +167,7 @@
             }
         }
     ],
-    "outputs": {},
+    "outputs": {
+    },
     "functions": []
 }

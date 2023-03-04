@@ -24,16 +24,21 @@
         }
     },
     "variables": {
-        "name-compliant-userAssignedIdentities": "[concat(parameters('prefix'),'-userAssignedIdentities')]"
+        "name-compliant-userAssignedIdentity": "[concat(parameters('prefix'),'-userAssignedIdentity')]"
     },
     "resources": [
         {
             "type": "Microsoft.ManagedIdentity/userAssignedIdentities",
             "apiVersion": "2023-01-31",
-            "name": "[variables('name-compliant-userAssignedIdentities')]",
+            "name": "[variables('name-compliant-userAssignedIdentity')]",
             "location": "westeurope"
         }
     ],
-    "outputs": {},
+    "outputs": {
+        "userAssignedIdentity": {
+            "type": "string",
+            "value": "[reference(ResourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('name-compliant-userAssignedIdentity')) ,'2023-01-31').principalId]"
+        }
+    },
     "functions": []
 }
