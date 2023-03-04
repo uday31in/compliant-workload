@@ -1,0 +1,26 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "prefix": {
+            "type": "string",
+            "defaultValue": "compliant-ui",
+            "metadata": {
+                "description": "description"
+            }
+        }
+    },
+    "variables": {
+        "name-compliant-userAssignedIdentities": "[concat(parameters('prefix,'-userAssignedIdentities')]"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.ManagedIdentity/userAssignedIdentities",
+            "apiVersion": "2023-01-31",
+            "name": "[variables('name-compliant-userAssignedIdentities')]",
+            "location": "westeurope"
+        }
+    ],
+    "outputs": {},
+    "functions": []
+}
