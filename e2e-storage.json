@@ -61,7 +61,8 @@
     "variables": {
         "name-compliant-deployment": "[concat(parameters('prefix'),'-deployment')]",
         "name-compliant-resourcegroup": "[concat(parameters('prefix'),'-resourcegroup')]",
-        "name-compliant-vnet": "[concat(parameters('prefix'),'-vnet')]"
+        "name-compliant-vnet": "[concat(parameters('prefix'),'-vnet')]",
+        "name-compliant-userAssignedIdentity": "[concat(parameters('prefix'),'-userAssignedIdentity')]"
     },
     "resources": [
         {
@@ -98,6 +99,27 @@
                 "mode": "incremental",
                 "templateLink": {
                     "uri": "[uri(parameters('_artifactsLocation'), concat('network/network.json', parameters('_artifactsLocationSasToken')))]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "_artifactsLocation": {
+                        "value": "[parameters('_artifactsLocation')]"
+                    },
+                    "_artifactsLocationSasToken": {
+                        "value": "[parameters('_artifactsLocationSasToken')]"
+                    }
+                }
+            }
+        },
+        {
+            "name": "[concat(variables('name-compliant-userAssignedIdentities'),'-deployment')]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2018-05-01",
+            "resourceGroup": "[variables('name-compliant-userAssignedIdentities')]",
+            "properties": {
+                "mode": "incremental",
+                "templateLink": {
+                    "uri": "[uri(parameters('_artifactsLocation'), concat('userAssignedIdentities/compliant-userAssignedIdentity.json', parameters('_artifactsLocationSasToken')))]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
