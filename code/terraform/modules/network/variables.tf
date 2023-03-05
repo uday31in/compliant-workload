@@ -49,13 +49,3 @@ variable "virtual_network_name" {
     error_message = "Please specify a valid name."
   }
 }
-
-variable "ddos_protection_plan_id" {
-  description = "Specifies the resource ID of the DDoS protection plan."
-  type        = string
-  sensitive   = false
-  validation {
-    condition     = length(split("/", var.ddos_protection_plan_id)) == 9
-    error_message = "Please specify a valid resource ID."
-  }
-}
