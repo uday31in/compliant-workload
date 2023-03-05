@@ -200,7 +200,7 @@
                         "value":"[reference(variables('name-compliant-userAssignedIdentity-deployment')).outputs.userAssignedIdentityName.value]"
                     },
                     "userAssignedIdentityResourceGroup": {
-                        "value":"[reference(variables('name-compliant-userAssignedIdentity-deployment')).outputs.userAssignedIdentityResourceGroup.value.id.value]"
+                        "value":"[reference(variables('name-compliant-userAssignedIdentity-deployment')).outputs.userAssignedIdentityResourceGroup.value.id]"
                     },
                     "subnetId": {
                         "value":"[reference(variables('name-compliant-vnet-deployment')).outputs.subnetId.value]"
@@ -209,7 +209,7 @@
                         "value":"[reference(variables('name-compliant-keyVault-deployment')).outputs.cmkName.value]"
                     },
                     "keyVaultUri": {
-                        "value":"[reference(variables('name-compliant-keyVault-deployment')).outputs.keyVault.value]"
+                        "value":"[reference(variables('name-compliant-keyVault-deployment')).outputs.keyVault.value.vaultUri]"
                     }
                 }
             }
