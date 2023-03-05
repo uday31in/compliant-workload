@@ -4,7 +4,7 @@
     "parameters": {
         "prefix": {
             "type": "string",
-            "defaultValue": "cs1",
+            "defaultValue": "uday-dns",
             "metadata": {
                 "description": "description"
             }
@@ -50,8 +50,8 @@
         "name-compliant-KeyVault": "[concat(parameters('prefix'),'-kv')]",
         "name-compliant-KeyVault-deployment": "[concat(variables('name-compliant-KeyVault'),'-deployment')]",
 
-        "name-compliant-storage": "[ replace(concat(parameters('prefix'),'storage'),'-','')]",
-        "name-compliant-storage-deployment": "[concat(variables('name-compliant-storage'),'-deployment')]"
+        "name-compliant-storage": "[ replace(concat(parameters('prefix'),'-storage'),'-','')]",
+        "name-compliant-storage-deployment": "[concat(concat(parameters('prefix'),'-storage'),'-deployment')]"
     },
     "resources": [
         {
@@ -111,6 +111,9 @@
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2018-05-01",
             "resourceGroup": "[variables('name-compliant-resourcegroup')]",
+            "dependsOn": [
+                "[variables('name-compliant-resourcegroup-deployment')]"
+            ],
             "properties": {
                 "mode": "incremental",
                 "templateLink": {
