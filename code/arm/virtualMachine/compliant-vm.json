@@ -17,7 +17,7 @@
         },
         "prefix": {
             "type": "string",
-            "defaultValue": "compliantstorage",
+            "defaultValue": "cs1",
             "metadata": {
                 "description": "description"
             }
@@ -45,7 +45,7 @@
         },
         "subnetId": {
             "type": "string",
-            "defaultValue": "/subscriptions/22a8d224-e190-45c0-a936-f915ee2d8b16/resourceGroups/compliant-storage-resourcegroup/providers/Microsoft.Network/virtualNetworks/compliant-storage-virtualNetworks/subnets/compliant-storage-virtualNetworks-subnet",
+            "defaultValue": "/subscriptions/0095be37-07e5-48e7-b252-462ae52fefba/resourceGroups/uday-dns-resourcegroup/providers/Microsoft.Network/virtualNetworks/uday-dns-vnet/subnets/uday-dns-vnet-subnet",
             "metadata": {
                 "description": "description"
             }
@@ -57,65 +57,38 @@
                 "description": "description"
             }
         },
+        "keyVaultId": {
+            "type": "string",
+            "defaultValue": "/subscriptions/0095be37-07e5-48e7-b252-462ae52fefba/resourceGroups/uday-dns-resourcegroup/providers/Microsoft.KeyVault/vaults/uday-dns-kv",
+            "metadata": {
+                "description": "description"
+            }
+        },
         "keyVaultUri": {
             "type": "string",
-            "defaultValue": "https://compliant-storage-kv1.vault.azure.net/",
+            "defaultValue": "https://uday-dns-kv.vault.azure.net/keys/cmk-key/92442fdf59c442d8bff8ecad7fca29bf",
             "metadata": {
                 "description": "description"
             }
         },
         "adminUsername": {
             "type": "string",
+            "defaultValue": "saturn",
             "metadata": {
                 "description": "Username for the Virtual Machine."
             }
         },
         "adminPassword": {
             "type": "securestring",
+            "defaultValue": "Pa$$word123456789",
             "minLength": 12,
             "metadata": {
                 "description": "Password for the Virtual Machine."
             }
         },
-        "dnsLabelPrefix": {
-            "type": "string",
-            "defaultValue": "[toLower(format('{0}-{1}', parameters('vmName'), uniqueString(resourceGroup().id, parameters('vmName'))))]",
-            "metadata": {
-                "description": "Unique DNS Name for the Public IP used to access the Virtual Machine."
-            }
-        },
-        "publicIpName": {
-            "type": "string",
-            "defaultValue": "myPublicIP",
-            "metadata": {
-                "description": "Name for the Public IP used to access the Virtual Machine."
-            }
-        },
-        "publicIPAllocationMethod": {
-            "type": "string",
-            "defaultValue": "Dynamic",
-            "allowedValues": [
-                "Dynamic",
-                "Static"
-            ],
-            "metadata": {
-                "description": "Allocation method for the Public IP used to access the Virtual Machine."
-            }
-        },
-        "publicIpSku": {
-            "type": "string",
-            "defaultValue": "Basic",
-            "allowedValues": [
-                "Basic",
-                "Standard"
-            ],
-            "metadata": {
-                "description": "SKU for the Public IP used to access the Virtual Machine."
-            }
-        },
         "OSVersion": {
             "type": "string",
-            "defaultValue": "2022-datacenter-azure-edition",
+            "defaultValue": "2019-datacenter-smalldisk-g2",
             "allowedValues": [
                 "2016-datacenter-gensecond",
                 "2016-datacenter-server-core-g2",
@@ -151,18 +124,31 @@
             "metadata": {
                 "description": "Size of the virtual machine."
             }
+        },
+        "securityType": {
+            "type": "string",
+            "defaultValue": "TrustedLaunch",
+            "allowedValues": [
+                "Standard",
+                "TrustedLaunch"
+            ],
+            "metadata": {
+                "description": "Security Type of the Virtual Machine."
+            }
         }
     },
     "variables": {
-        "name-compliant-strorage": "[toLower(concat(parameters('prefix'),'9xyz'))]",
-        "name-compliant-strorage-id": "[resourceId('Microsoft.Storage/storageAccounts',variables('name-compliant-strorage'))]",
-        "name-compliant-strorage-pe": "[concat(parameters('prefix'),'-strorage-pe')]",
-        "name-compliant-strorage-pe-id": "[resourceId('Microsoft.Network/privateEndpoints',variables('name-compliant-strorage-pe'))]",
-        "userAssignedIdentity": "[extensionResourceId( parameters('userAssignedIdentityResourceGroup'), 'Microsoft.ManagedIdentity/userAssignedIdentities', parameters('userAssignedIdentityName'))]",
-
-        "name-compliant-vm": "[concat(parameters('prefix'),'-vm'))]",
-        "name-compliant-vm-nic": "[concat(variables('name-compliant-vm'),'-nic'))]",
-        "name-compliant-strorage-id": "[resourceId('Microsoft.Storage/storageAccounts',variables('name-compliant-strorage'))]"
+        "name-compliant-vm": "[concat(parameters('prefix'),'-vm')]",
+        "name-compliant-vm-nic": "[concat(variables('name-compliant-vm'),'-nic')]",
+        "name-compliant-vm-diskEncryptionSets": "[concat(variables('name-compliant-vm'),'-diskEncryptionSets')]",
+        "securityProfileJson": {
+            "uefiSettings": {
+                "secureBootEnabled": true,
+                "vTpmEnabled": true
+            },
+            "encryptionAtHost": true,
+            "securityType": "[parameters('securityType')]"
+        }
     },
     "resources": [
         {
@@ -185,12 +171,44 @@
             }
         },
         {
+            "type": "Microsoft.Compute/diskEncryptionSets",
+            "apiVersion": "2022-07-02",
+            "name": "[variables('name-compliant-vm-diskEncryptionSets')]",
+            "location": "[parameters('location')]",
+            "identity": {
+                "type": "SystemAssigned"
+            },
+            "properties": {
+                "activeKey": {
+                    "keyUrl": "[parameters('keyVaultUri')]",
+                    "sourceVault": {
+                        "id": "[parameters('keyVaultId')]"
+                    }
+                },
+                "encryptionType": "EncryptionAtRestWithPlatformAndCustomerKeys"
+            }
+        },
+        {
+            "type": "Microsoft.Authorization/roleAssignments",
+            "apiVersion": "2022-04-01",
+            "name": "[guid(deployment().name)]",
+            "dependsOn": [
+                "[variables('name-compliant-vm-diskEncryptionSets')]"
+            ],
+            "properties": {
+                "roleDefinitionId": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', 'e147488a-f6f5-4113-8e2d-b22465e65bf6')]",
+                "principalId": "[reference(concat('Microsoft.Compute/diskEncryptionSets/', variables('name-compliant-vm-diskEncryptionSets')), '2019-11-01', 'Full').identity.principalId]"
+            }
+        },
+        {
             "type": "Microsoft.Compute/virtualMachines",
             "apiVersion": "2022-11-01",
             "name": "[variables('name-compliant-vm')]",
             "location": "[parameters('location')]",
             "dependsOn": [
-                "[resourceId('Microsoft.Network/networkInterfaces', variables('name-compliant-vm-nic'))]"
+                "[resourceId('Microsoft.Network/networkInterfaces', variables('name-compliant-vm-nic'))]",
+                "[variables('name-compliant-vm-diskEncryptionSets')]",
+                "[guid(deployment().name)]"
             ],
             "properties": {
                 "hardwareProfile": {
@@ -199,7 +217,11 @@
                 "osProfile": {
                     "computerName": "[variables('name-compliant-vm')]",
                     "adminUsername": "[parameters('adminUsername')]",
-                    "adminPassword": "[parameters('adminPassword')]"
+                    "adminPassword": "[parameters('adminPassword')]",
+                    "windowsConfiguration": {
+                        "enableAutomaticUpdates": false,
+                        "provisionVmAgent": true
+                    }
                 },
                 "storageProfile": {
                     "imageReference": {
@@ -211,21 +233,17 @@
                     "osDisk": {
                         "createOption": "FromImage",
                         "managedDisk": {
-                            "storageAccountType": "StandardSSD_LRS"
+                            "storageAccountType": "StandardSSD_LRS",
+                            "diskEncryptionSet": {
+                                "id": "[resourceId('Microsoft.Compute/diskEncryptionSets', variables('name-compliant-vm-diskEncryptionSets'))]"
+                            }
                         }
-                    },
-                    "dataDisks": [
-                        {
-                            "diskSizeGB": 1023,
-                            "lun": 0,
-                            "createOption": "Empty"
-                        }
-                    ]
+                    }
                 },
                 "networkProfile": {
                     "networkInterfaces": [
                         {
-                            "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('nicName'))]"
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('name-compliant-vm-nic'))]"
                         }
                     ]
                 },
