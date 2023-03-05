@@ -173,7 +173,7 @@
             "properties": {
                 "ipConfigurations": [
                     {
-                        "name": "ipconfig1",
+                        "name": "ipconfig",
                         "properties": {
                             "privateIPAllocationMethod": "Dynamic",
                             "subnet": {
@@ -231,7 +231,7 @@
                 },
                 "securityProfile": "[if(equals(parameters('securityType'), 'TrustedLaunch'), variables('securityProfileJson'), json('null'))]"
             }
-        },
+        }
     ],
     "outputs": {},
     "functions": []

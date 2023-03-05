@@ -100,7 +100,7 @@
                 "publicNetworkAccess": "Disabled",
                 "isLocalUserEnabled": "false",
                 "networkAcls": {
-                    "bypass": "None",
+                    "bypass": "AzureServices",
                     "defaultAction": "deny",
                     "ipRules": []
                 },
