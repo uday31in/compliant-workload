@@ -105,6 +105,10 @@
         "virtualNetworks": {
             "type": "object",
             "value": "[reference(resourceId('Microsoft.Network/virtualNetworks', variables('name-compliant-virtualNetworks') ))]"
+        },
+        "subnetId": {
+            "type": "string",
+            "value": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('name-compliant-virtualNetworks'), variables('name-compliant-subnet') )]"
         }
     },
     "functions": []

@@ -35,9 +35,17 @@
         }
     ],
     "outputs": {
-        "userAssignedIdentity": {
+        "userAssignedIdentityName": {
             "type": "string",
-            "value": "[reference(ResourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('name-compliant-userAssignedIdentity')) ,'2023-01-31').principalId]"
+            "value": "[variables('name-compliant-userAssignedIdentity')]"
+        },
+        "userAssignedIdentity": {
+            "type": "object",
+            "value": "[reference(ResourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('name-compliant-userAssignedIdentity')) ,'2023-01-31')]"
+        },
+        "userAssignedIdentityResourceGroup": {
+            "type": "object",
+            "value": "[resourceGroup()]"
         }
     },
     "functions": []

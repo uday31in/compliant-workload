@@ -59,15 +59,24 @@
         }
     },
     "variables": {
-        "name-compliant-deployment": "[concat(parameters('prefix'),'-deployment')]",
         "name-compliant-resourcegroup": "[concat(parameters('prefix'),'-resourcegroup')]",
+        "name-compliant-resourcegroup-deployment": "[concat(variables('name-compliant-resourcegroup'),'-deployment')]",
+
         "name-compliant-vnet": "[concat(parameters('prefix'),'-vnet')]",
+        "name-compliant-vnet-deployment": "[concat(variables('name-compliant-vnet'),'-deployment')]",
+
         "name-compliant-userAssignedIdentity": "[concat(parameters('prefix'),'-userAssignedIdentity')]",
-        "name-compliant-KeyVault": "[concat(parameters('prefix'),'-KeyVault')]"
+        "name-compliant-userAssignedIdentity-deployment": "[concat(variables('name-compliant-userAssignedIdentity'),'-deployment')]",
+
+        "name-compliant-KeyVault": "[concat(parameters('prefix'),'-KeyVault')]",
+        "name-compliant-KeyVault-deployment": "[concat(variables('name-compliant-KeyVault'),'-deployment')]",
+
+        "name-compliant-storage": "[ replace(concat(parameters('prefix'),'-stroage'),'-','')]",
+        "name-compliant-storage-deployment": "[concat(variables('name-compliant-storage'),'-deployment')]"
     },
     "resources": [
         {
-            "name": "[variables('name-compliant-deployment')]",
+            "name": "[variables('name-compliant-resourcegroup-deployment')]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2018-05-01",
             "location": "West Europe",
@@ -92,7 +101,7 @@
             }
         },
         {
-            "name": "[concat(variables('name-compliant-vnet'),'-deployment')]",
+            "name": "[concat(variables('name-compliant-vnet-deployment')]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2018-05-01",
             "resourceGroup": "[variables('name-compliant-resourcegroup')]",
@@ -116,7 +125,7 @@
             }
         },
         {
-            "name": "[concat(variables('name-compliant-userAssignedIdentity'),'-deployment')]",
+            "name": "[concat(variables('name-compliant-userAssignedIdentity-deployment')]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2018-05-01",
             "resourceGroup": "[variables('name-compliant-resourcegroup')]",
@@ -140,14 +149,14 @@
             }
         },
         {
-            "name": "[concat(variables('name-compliant-KeyVault'),'-deployment')]",
+            "name": "[concat(variables('name-compliant-KeyVault-deployment')]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2018-05-01",
             "resourceGroup": "[variables('name-compliant-resourcegroup')]",
             "properties": {
                 "mode": "incremental",
                 "templateLink": {
-                    "uri": "[uri(parameters('_artifactsLocation'), concat('KeyVault/compliant-KeyVault.json', parameters('_artifactsLocationSasToken')))]",
+                    "uri": "[uri(parameters('_artifactsLocation'), concat('keyVault/compliant-KeyVault.json', parameters('_artifactsLocationSasToken')))]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
@@ -155,13 +164,52 @@
                         "value":"[parameters('prefix')]"
                     },
                     "userAssignedIdentity": {
-                        "value":"[reference(concat(variables('name-compliant-userAssignedIdentity'),'-deployment')).outputs.userAssignedIdentity.value]"
+                        "value":"[reference(concat(variables('name-compliant-userAssignedIdentity'),'-deployment')).outputs.userAssignedIdentity.value.principalId]"
                     },
                     "_artifactsLocation": {
                         "value": "[parameters('_artifactsLocation')]"
                     },
                     "_artifactsLocationSasToken": {
                         "value": "[parameters('_artifactsLocationSasToken')]"
+                    }
+                }
+            }
+        },
+        {
+            "name": "[concat(variables('name-compliant-strorage'-deployment')]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2018-05-01",
+            "resourceGroup": "[variables('name-compliant-resourcegroup')]",
+            "properties": {
+                "mode": "incremental",
+                "templateLink": {
+                    "uri": "[uri(parameters('_artifactsLocation'), concat('storage/compliant-storage.json', parameters('_artifactsLocationSasToken')))]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "prefix": {
+                        "value":"[parameters('prefix')]"
+                    },
+                    "_artifactsLocation": {
+                        "value": "[parameters('_artifactsLocation')]"
+                    },
+                    "_artifactsLocationSasToken": {
+                        "value": "[parameters('_artifactsLocationSasToken')]"
+                    },
+                    "userAssignedIdentityName": {
+                        "value":"[reference(concat(variables('name-compliant-userAssignedIdentity-deployment')).outputs.userAssignedIdentity.value]"
+                    },
+                    "userAssignedIdentityResourceGroup": {
+                        "value":"[reference(concat(variables('name-compliant-userAssignedIdentity-deployment')).outputs.userAssignedIdentityResourceGroup.value.id]"
+                    },
+                    "subnetId": {
+                        "value":"[reference(concat(variables('name-compliant-vnet-deployment')).outputs.subnetId.value]"
+                    },
+                    "keyName": {
+                        "value":"[reference(concat(variables('name-compliant-keyVault-deployment')).outputs.cmkName.value]"
+                    },
+                    "keyVaultUri": {
+                        "value":"[reference(concat(variables('name-compliant-keyVault-deployment')).outputs.keyVault.value]"
                     }
                 }
             }

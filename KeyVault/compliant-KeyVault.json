@@ -24,7 +24,7 @@
         },
         "userAssignedIdentity": {
             "type": "string",
-            "defaultValue": "6102998c-f70e-4e8e-be0e-96d2f7d09a75",
+            "defaultValue": "50c5f50f-ca40-4672-913b-a6aa10d908ad",
             "metadata": {
                 "description": "description"
             }
@@ -191,9 +191,17 @@
         }
     ],
     "outputs": {
-        "proxyKey": {
-            "type": "object",
+        "cmkName": {
+            "type": "string",
+            "value": "[reference( variables('name-compliant-keyvault-cmk-name'))]"
+        },
+        "cmk-id": {
+            "type": "string",
             "value": "[reference( variables('name-compliant-keyvault-cmk-id'))]"
+        },
+        "keyVault": {
+            "type": "object",
+            "value": "[reference( variables('name-compliant-keyvault-id'))]"
         }
     },
     "functions": []
