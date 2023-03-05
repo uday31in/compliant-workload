@@ -9,6 +9,13 @@
                 "description": "description"
             }
         },
+        "location":{
+            "type": "string",
+            "defaultValue": "westeurope",
+            "metadata": {
+                "description": "description"
+            }
+        },
         "_artifactsLocation": {
             "type": "string",
             "defaultValue": "https://raw.githubusercontent.com/uday31in/compliant-workload/main/",
@@ -24,20 +31,28 @@
         }
     },
     "variables": {
-        "name-compliant-userAssignedIdentity": "[concat(parameters('prefix'),'-userAssignedIdentity')]"
+        "name-compliant-userAssignedIdentity": "[concat(parameters('prefix'),'')]"
     },
     "resources": [
         {
             "type": "Microsoft.ManagedIdentity/userAssignedIdentities",
             "apiVersion": "2023-01-31",
             "name": "[variables('name-compliant-userAssignedIdentity')]",
-            "location": "westeurope"
+            "location": "[parameters('location')]"
         }
     ],
     "outputs": {
+        "userAssignedIdentityName": {
+            "type": "string",
+            "value": "[variables('name-compliant-userAssignedIdentity')]"
+        },
         "userAssignedIdentity": {
             "type": "string",
             "value": "[reference(ResourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('name-compliant-userAssignedIdentity')) ,'2023-01-31').principalId]"
+        },
+        "userAssignedIdentityResourceGroup": {
+            "type": "object",
+            "value": "[resourceGroup()]"
         }
     },
     "functions": []

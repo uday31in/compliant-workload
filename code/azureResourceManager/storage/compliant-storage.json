@@ -17,46 +17,66 @@
         },
         "prefix": {
             "type": "string",
-            "defaultValue": "compliant-kv",
+            "defaultValue": "compliantstorage",
             "metadata": {
                 "description": "description"
             }
         },
-        "userAssignedIdentity": {
+        "location": {
             "type": "string",
-            "defaultValue": "6102998c-f70e-4e8e-be0e-96d2f7d09a75",
+            "defaultValue": "westeurope",
             "metadata": {
                 "description": "description"
             }
         },
-        "tenantId": {
+        "userAssignedIdentityName": {
             "type": "string",
-            "defaultValue": "5663f39e-feb1-4303-a1f9-cf20b702de61",
+            "defaultValue": "compliant-storage-userAssignedIdentity",
             "metadata": {
                 "description": "description"
             }
         },
-        "keyname": {
+        "userAssignedIdentityResourceGroup": {
+            "type": "string",
+            "defaultValue": "/subscriptions/22a8d224-e190-45c0-a936-f915ee2d8b16/resourceGroups/compliant-storage-resourcegroup",
+            "metadata": {
+                "description": "description"
+            }
+        },
+        "subnetId": {
             "type": "string",
             "defaultValue": "/subscriptions/22a8d224-e190-45c0-a936-f915ee2d8b16/resourceGroups/compliant-storage-resourcegroup/providers/Microsoft.Network/virtualNetworks/compliant-storage-virtualNetworks/subnets/compliant-storage-virtualNetworks-subnet",
             "metadata": {
                 "description": "description"
             }
         },
-        "keyvaulturi": {
+        "keyName": {
             "type": "string",
-            "defaultValue": "5663f39e-feb1-4303-a1f9-cf20b702de61",
+            "defaultValue": "cmk-key",
+            "metadata": {
+                "description": "description"
+            }
+        },
+        "keyVaultUri": {
+            "type": "string",
+            "defaultValue": "https://compliant-storage-kv1.vault.azure.net/",
             "metadata": {
                 "description": "description"
             }
         }
     },
-    "variables": {},
+    "variables": {
+        "name-compliant-strorage": "[toLower(concat(parameters('prefix'),'9xyz'))]",
+        "name-compliant-strorage-id": "[resourceId('Microsoft.Storage/storageAccounts',variables('name-compliant-strorage'))]",
+        "name-compliant-strorage-pe": "[concat(parameters('prefix'),'-strorage-pe')]",
+        "name-compliant-strorage-pe-id": "[resourceId('Microsoft.Network/privateEndpoints',variables('name-compliant-strorage-pe'))]",
+        "userAssignedIdentity": "[extensionResourceId( parameters('userAssignedIdentityResourceGroup'), 'Microsoft.ManagedIdentity/userAssignedIdentities', parameters('userAssignedIdentityName'))]"
+    },
     "resources": [
         {
             "type": "Microsoft.Storage/storageAccounts",
             "apiVersion": "2022-05-01",
-            "name": "compliantstorage3",
+            "name": "[variables('name-compliant-strorage')]",
             "location": "westeurope",
             "sku": {
                 "name": "Standard_LRS"
@@ -65,7 +85,7 @@
             "identity": {
                 "type": "UserAssigned",
                 "userAssignedIdentities": {
-                    "[parameters('userAssignedIdentity')]": {}
+                    "[format('{0}', variables('userAssignedIdentity'))]": {}
                 }
             },
             "properties": {
@@ -78,15 +98,16 @@
                 "defaultToOAuthAuthentication": false,
                 "allowedCopyScope": "AAD",
                 "publicNetworkAccess": "Disabled",
+                "isLocalUserEnabled": "false",
                 "networkAcls": {
-                    "bypass": "AzureServices",
+                    "bypass": "None",
                     "defaultAction": "deny",
                     "ipRules": []
                 },
                 "encryption": {
                     "requireInfrastructureEncryption": true,
                     "identity": {
-                        "userAssignedIdentity":  "[parameters('userAssignedIdentity')]"
+                        "userAssignedIdentity": "[variables('userAssignedIdentity')]"
                     },
                     "services": {
                         "blob": {
@@ -106,8 +127,8 @@
                     },
                     "keySource": "Microsoft.Keyvault",
                     "keyvaultproperties": {
-                        "keyname": "compliant-storage-cmk4",
-                        "keyvaulturi": "[if(endsWith(reference(resourceId('Microsoft.KeyVault/vaults', 'compliant-kv2')).vaultUri, '/'), substring(reference(resourceId('Microsoft.KeyVault/vaults', 'compliant-kv2')).vaultUri, 0, sub(length(reference(resourceId('Microsoft.KeyVault/vaults', 'compliant-kv2')).vaultUri), 1)), reference(resourceId('Microsoft.KeyVault/vaults', 'compliant-kv2')).vaultUri)]"
+                        "keyname": "[parameters('keyName')]",
+                        "keyvaulturi": "[parameters('keyvaulturi')]"
                     }
                 }
             }
@@ -115,17 +136,17 @@
         {
             "type": "Microsoft.Network/privateEndpoints",
             "apiVersion": "2020-04-01",
-            "name": "[concat('compliant-storage','-pe')]",
+            "name": "[variables('name-compliant-strorage-pe')]",
             "location": "westeurope",
             "dependsOn": [
-                "[resourceId('Microsoft.Storage/storageAccounts', 'compliantstorage3')]"
+                "[variables('name-compliant-strorage')]"
             ],
             "properties": {
                 "privateLinkServiceConnections": [
                     {
-                        "name": "compliant-stroage-pe",
+                        "name": "[variables('name-compliant-strorage-pe')]",
                         "properties": {
-                            "privateLinkServiceId": "[resourceId('Microsoft.Storage/storageAccounts', 'compliantstorage3')]",
+                            "privateLinkServiceId": "[variables('name-compliant-strorage-id')]",
                             "groupIds": [
                                 "blob"
                             ]
@@ -133,12 +154,11 @@
                     }
                 ],
                 "subnet": {
-                    "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', 'compliant-storage-vnet', 'compliant-storage-subnet')]"
+                    "id": "[parameters('subnetId')]"
                 }
             }
         }
     ],
-    "outputs": {
-    },
+    "outputs": {},
     "functions": []
 }
