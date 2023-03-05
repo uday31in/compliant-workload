@@ -12,8 +12,8 @@ on:
         type: string
         description: "Specifies the working directory."
 
-permissions:
-  pull-requests: write
+# permissions:
+#   pull-requests: write
 
 jobs:
   deployment:
@@ -42,22 +42,22 @@ jobs:
         run: |
           terraform fmt -check -recursive
 
-      # Add Pull Request Comment
-      - name: Add Pull Request Comment
-        uses: actions/github-script@v6
-        id: pr_comment
-        if: github.event_name == 'pull_request'
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const output = `#### Terraform Lint Results
-            * Terraform Version 📎\`${{ inputs.terraform_version }}\`
-            * Working Directory 📂\`${{ inputs.working_directory }}\`
-            * Terraform Format and Style 🖌\`${{ steps.terraform_format.outcome }}\``;
+      # # Add Pull Request Comment
+      # - name: Add Pull Request Comment
+      #   uses: actions/github-script@v6
+      #   id: pr_comment
+      #   if: github.event_name == 'pull_request'
+      #   with:
+      #     github-token: ${{ secrets.GITHUB_TOKEN }}
+      #     script: |
+      #       const output = `#### Terraform Lint Results
+      #       * Terraform Version 📎\`${{ inputs.terraform_version }}\`
+      #       * Working Directory 📂\`${{ inputs.working_directory }}\`
+      #       * Terraform Format and Style 🖌\`${{ steps.terraform_format.outcome }}\``;
 
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: output
-            })
+      #       github.rest.issues.createComment({
+      #         issue_number: context.issue.number,
+      #         owner: context.repo.owner,
+      #         repo: context.repo.repo,
+      #         body: output
+      #       })
