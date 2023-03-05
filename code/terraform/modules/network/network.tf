@@ -25,10 +25,6 @@ resource "azurerm_virtual_network" "virtual_network" {
 
   address_space = ["10.0.0.0/24"]
   dns_servers   = []
-  ddos_protection_plan {
-    enable = true
-    id     = var.ddos_protection_plan_id
-  }
 }
 
 resource "azurerm_subnet" "subnet_private_endpoints" {

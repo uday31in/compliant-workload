@@ -80,13 +80,3 @@ variable "private_dns_zone_id_key_vault" {
     error_message = "Please specify a valid resource ID for the private DNS Zone."
   }
 }
-
-variable "ddos_protection_plan_id" {
-  description = "Specifies the resource ID of the DDoS protection plan."
-  type        = string
-  sensitive   = false
-  validation {
-    condition     = length(split("/", var.ddos_protection_plan_id)) == 9
-    error_message = "Please specify a valid resource ID."
-  }
-}
