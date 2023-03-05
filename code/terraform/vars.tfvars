@@ -1,0 +1,10 @@
+location                      = "westeurope"
+environment                   = "dev"
+prefix                        = "mabuss0503"
+tags                          = {}
+subnet_id                     = ""
+private_dns_zone_id_blob      = ""
+private_dns_zone_id_dfs       = ""
+private_dns_zone_id_key_vault = ""
+private_dns_zone_id_queue     = ""
+ddos_protection_plan_id       = ""
