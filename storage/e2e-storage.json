@@ -156,7 +156,7 @@
             "properties": {
                 "mode": "incremental",
                 "templateLink": {
-                    "uri": "[uri(parameters('_artifactsLocation'), concat('keyVault/compliant-KeyVault.json', parameters('_artifactsLocationSasToken')))]",
+                    "uri": "[uri(parameters('_artifactsLocation'), concat('KeyVault/compliant-KeyVault.json', parameters('_artifactsLocationSasToken')))]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
@@ -197,7 +197,7 @@
                         "value": "[parameters('_artifactsLocationSasToken')]"
                     },
                     "userAssignedIdentityName": {
-                        "value":"[reference(variables('name-compliant-userAssignedIdentity-deployment')).outputs.userAssignedIdentity.value]"
+                        "value":"[reference(variables('name-compliant-userAssignedIdentity-deployment')).outputs.userAssignedIdentityName.value]"
                     },
                     "userAssignedIdentityResourceGroup": {
                         "value":"[reference(variables('name-compliant-userAssignedIdentity-deployment')).outputs.userAssignedIdentityResourceGroup.value.id.value]"
