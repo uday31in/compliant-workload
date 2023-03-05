@@ -1,0 +1,238 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "_artifactsLocation": {
+            "type": "string",
+            "defaultValue": "https://raw.githubusercontent.com/uday31in/compliant-workload/main/",
+            "metadata": {
+                "description": "This is the link to the nested template that must to be accessible to ARM to be able to use as a part of nested deployment.
+                                Please feel free to use template hosted here or override with choice of your location.
+                                If you chose to do so, please ensure future bug fixes are incorporated from above location to your private location."
+            }
+        },
+        "_artifactsLocationSasToken": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "prefix": {
+            "type": "string",
+            "defaultValue": "compliantstorage",
+            "metadata": {
+                "description": "description"
+            }
+        },
+        "location": {
+            "type": "string",
+            "defaultValue": "westeurope",
+            "metadata": {
+                "description": "description"
+            }
+        },
+        "userAssignedIdentityName": {
+            "type": "string",
+            "defaultValue": "compliant-storage-userAssignedIdentity",
+            "metadata": {
+                "description": "description"
+            }
+        },
+        "userAssignedIdentityResourceGroup": {
+            "type": "string",
+            "defaultValue": "/subscriptions/22a8d224-e190-45c0-a936-f915ee2d8b16/resourceGroups/compliant-storage-resourcegroup",
+            "metadata": {
+                "description": "description"
+            }
+        },
+        "subnetId": {
+            "type": "string",
+            "defaultValue": "/subscriptions/22a8d224-e190-45c0-a936-f915ee2d8b16/resourceGroups/compliant-storage-resourcegroup/providers/Microsoft.Network/virtualNetworks/compliant-storage-virtualNetworks/subnets/compliant-storage-virtualNetworks-subnet",
+            "metadata": {
+                "description": "description"
+            }
+        },
+        "keyName": {
+            "type": "string",
+            "defaultValue": "cmk-key",
+            "metadata": {
+                "description": "description"
+            }
+        },
+        "keyVaultUri": {
+            "type": "string",
+            "defaultValue": "https://compliant-storage-kv1.vault.azure.net/",
+            "metadata": {
+                "description": "description"
+            }
+        },
+        "adminUsername": {
+            "type": "string",
+            "metadata": {
+                "description": "Username for the Virtual Machine."
+            }
+        },
+        "adminPassword": {
+            "type": "securestring",
+            "minLength": 12,
+            "metadata": {
+                "description": "Password for the Virtual Machine."
+            }
+        },
+        "dnsLabelPrefix": {
+            "type": "string",
+            "defaultValue": "[toLower(format('{0}-{1}', parameters('vmName'), uniqueString(resourceGroup().id, parameters('vmName'))))]",
+            "metadata": {
+                "description": "Unique DNS Name for the Public IP used to access the Virtual Machine."
+            }
+        },
+        "publicIpName": {
+            "type": "string",
+            "defaultValue": "myPublicIP",
+            "metadata": {
+                "description": "Name for the Public IP used to access the Virtual Machine."
+            }
+        },
+        "publicIPAllocationMethod": {
+            "type": "string",
+            "defaultValue": "Dynamic",
+            "allowedValues": [
+                "Dynamic",
+                "Static"
+            ],
+            "metadata": {
+                "description": "Allocation method for the Public IP used to access the Virtual Machine."
+            }
+        },
+        "publicIpSku": {
+            "type": "string",
+            "defaultValue": "Basic",
+            "allowedValues": [
+                "Basic",
+                "Standard"
+            ],
+            "metadata": {
+                "description": "SKU for the Public IP used to access the Virtual Machine."
+            }
+        },
+        "OSVersion": {
+            "type": "string",
+            "defaultValue": "2022-datacenter-azure-edition",
+            "allowedValues": [
+                "2016-datacenter-gensecond",
+                "2016-datacenter-server-core-g2",
+                "2016-datacenter-server-core-smalldisk-g2",
+                "2016-datacenter-smalldisk-g2",
+                "2016-datacenter-with-containers-g2",
+                "2016-datacenter-zhcn-g2",
+                "2019-datacenter-core-g2",
+                "2019-datacenter-core-smalldisk-g2",
+                "2019-datacenter-core-with-containers-g2",
+                "2019-datacenter-core-with-containers-smalldisk-g2",
+                "2019-datacenter-gensecond",
+                "2019-datacenter-smalldisk-g2",
+                "2019-datacenter-with-containers-g2",
+                "2019-datacenter-with-containers-smalldisk-g2",
+                "2019-datacenter-zhcn-g2",
+                "2022-datacenter-azure-edition",
+                "2022-datacenter-azure-edition-core",
+                "2022-datacenter-azure-edition-core-smalldisk",
+                "2022-datacenter-azure-edition-smalldisk",
+                "2022-datacenter-core-g2",
+                "2022-datacenter-core-smalldisk-g2",
+                "2022-datacenter-g2",
+                "2022-datacenter-smalldisk-g2"
+            ],
+            "metadata": {
+                "description": "The Windows version for the VM. This will pick a fully patched image of this given Windows version."
+            }
+        },
+        "vmSize": {
+            "type": "string",
+            "defaultValue": "Standard_D2s_v5",
+            "metadata": {
+                "description": "Size of the virtual machine."
+            }
+        }
+    },
+    "variables": {
+        "name-compliant-strorage": "[toLower(concat(parameters('prefix'),'9xyz'))]",
+        "name-compliant-strorage-id": "[resourceId('Microsoft.Storage/storageAccounts',variables('name-compliant-strorage'))]",
+        "name-compliant-strorage-pe": "[concat(parameters('prefix'),'-strorage-pe')]",
+        "name-compliant-strorage-pe-id": "[resourceId('Microsoft.Network/privateEndpoints',variables('name-compliant-strorage-pe'))]",
+        "userAssignedIdentity": "[extensionResourceId( parameters('userAssignedIdentityResourceGroup'), 'Microsoft.ManagedIdentity/userAssignedIdentities', parameters('userAssignedIdentityName'))]",
+
+        "name-compliant-vm": "[concat(parameters('prefix'),'-vm'))]",
+        "name-compliant-vm-nic": "[concat(variables('name-compliant-vm'),'-nic'))]",
+        "name-compliant-strorage-id": "[resourceId('Microsoft.Storage/storageAccounts',variables('name-compliant-strorage'))]"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Network/networkInterfaces",
+            "apiVersion": "2022-05-01",
+            "name": "[variables('name-compliant-vm-nic')]",
+            "location": "[parameters('location')]",
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "ipconfig1",
+                        "properties": {
+                            "privateIPAllocationMethod": "Dynamic",
+                            "subnet": {
+                                "id": "[parameters('subnetId')]"
+                            }
+                        }
+                    }s
+                ]
+            }
+        },
+        {
+            "type": "Microsoft.Compute/virtualMachines",
+            "apiVersion": "2022-11-01",
+            "name": "[variables('name-compliant-vm')]",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/networkInterfaces', variables('name-compliant-vm-nic'))]"
+            ],
+            "properties": {
+                "hardwareProfile": {
+                    "vmSize": "[parameters('vmSize')]"
+                },
+                "osProfile": {
+                    "computerName": "[variables('name-compliant-vm')]",
+                    "adminUsername": "[parameters('adminUsername')]",
+                    "adminPassword": "[parameters('adminPassword')]"
+                },
+                "storageProfile": {
+                    "imageReference": {
+                        "publisher": "MicrosoftWindowsServer",
+                        "offer": "WindowsServer",
+                        "sku": "[parameters('OSVersion')]",
+                        "version": "latest"
+                    },
+                    "osDisk": {
+                        "createOption": "FromImage",
+                        "managedDisk": {
+                            "storageAccountType": "StandardSSD_LRS"
+                        }
+                    },
+                    "dataDisks": [
+                        {
+                            "diskSizeGB": 1023,
+                            "lun": 0,
+                            "createOption": "Empty"
+                        }
+                    ]
+                },
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('nicName'))]"
+                        }
+                    ]
+                },
+                "securityProfile": "[if(equals(parameters('securityType'), 'TrustedLaunch'), variables('securityProfileJson'), json('null'))]"
+            }
+        },
+    ],
+    "outputs": {},
+    "functions": []
+}
