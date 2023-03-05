@@ -28,34 +28,6 @@
         "_artifactsLocationSasToken": {
             "type": "string",
             "defaultValue": ""
-        },
-        "keyExpiration": {
-            "type": "int",
-            "defaultValue": "[dateTimeToEpoch(dateTimeAdd(utcNow(), 'P1Y'))]",
-            "metadata": {
-                "description": "Expiration time of the key"
-            }
-        },
-        "expiryTime": {
-            "type": "int",
-            "defaultValue": "[dateTimeToEpoch(dateTimeAdd(utcNow(), 'P1Y'))]",
-            "metadata": {
-                "description": "Expiration time of the key"
-            }
-        },
-        "timeAfterCreate": {
-            "type": "int",
-            "defaultValue": "[dateTimeToEpoch(dateTimeAdd(utcNow(), 'P1Y'))]",
-            "metadata": {
-                "description": "Expiration time of the key"
-            }
-        },
-        "timeBeforeExpiry": {
-            "type": "int",
-            "defaultValue": "[dateTimeToEpoch(dateTimeAdd(utcNow(), 'P30D'))]",
-            "metadata": {
-                "description": "Expiration time of the key"
-            }
         }
     },
     "variables": {
@@ -68,10 +40,10 @@
         "name-compliant-userAssignedIdentity": "[concat(parameters('prefix'),'-userAssignedIdentity')]",
         "name-compliant-userAssignedIdentity-deployment": "[concat(variables('name-compliant-userAssignedIdentity'),'-deployment')]",
 
-        "name-compliant-KeyVault": "[concat(parameters('prefix'),'-KeyVault')]",
+        "name-compliant-KeyVault": "[concat(parameters('prefix'),'-kv')]",
         "name-compliant-KeyVault-deployment": "[concat(variables('name-compliant-KeyVault'),'-deployment')]",
 
-        "name-compliant-storage": "[ replace(concat(parameters('prefix'),'-stroage'),'-','')]",
+        "name-compliant-storage": "[ replace(concat(parameters('prefix'),'storage'),'-','')]",
         "name-compliant-storage-deployment": "[concat(variables('name-compliant-storage'),'-deployment')]"
     },
     "resources": [
@@ -113,7 +85,7 @@
                 },
                 "parameters": {
                     "prefix": {
-                        "value":"[parameters('prefix')]"
+                        "value":"[variables('name-compliant-vnet')]"
                     },
                     "_artifactsLocation": {
                         "value": "[parameters('_artifactsLocation')]"
@@ -137,7 +109,7 @@
                 },
                 "parameters": {
                     "prefix": {
-                        "value":"[parameters('prefix')]"
+                        "value":"[variables('name-compliant-userAssignedIdentity')]"
                     },
                     "_artifactsLocation": {
                         "value": "[parameters('_artifactsLocation')]"
@@ -161,7 +133,7 @@
                 },
                 "parameters": {
                     "prefix": {
-                        "value":"[parameters('prefix')]"
+                        "value":"[variables('name-compliant-KeyVault')]"
                     },
                     "userAssignedIdentity": {
                         "value":"[reference(variables('name-compliant-userAssignedIdentity-deployment')).outputs.userAssignedIdentity.value]"
@@ -188,7 +160,7 @@
                 },
                 "parameters": {
                     "prefix": {
-                        "value":"[parameters('prefix')]"
+                        "value":"[variables('name-compliant-storage')]"
                     },
                     "_artifactsLocation": {
                         "value": "[parameters('_artifactsLocation')]"

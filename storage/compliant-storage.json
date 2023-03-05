@@ -59,7 +59,7 @@
         }
     },
     "variables": {
-        "name-compliant-strorage": "[concat(parameters('prefix'),'storage')]",
+        "name-compliant-strorage": "[concat(parameters('prefix'),'')]",
         "name-compliant-strorage-id": "[resourceId('Microsoft.Storage/storageAccounts',variables('name-compliant-strorage'))]",
         "name-compliant-strorage-pe": "[concat(parameters('prefix'),'-strorage-pe')]",
         "name-compliant-strorage-pe-id": "[resourceId('Microsoft.Network/privateEndpoints',variables('name-compliant-strorage-pe'))]",

@@ -24,10 +24,10 @@
         }
     },
     "variables": {
+        "name-compliant-virtualNetworks": "[concat(parameters('prefix'),'')]",
+        "name-compliant-subnet": "[concat(variables('name-compliant-virtualNetworks'),'-subnet')]",
         "name-compliant-routeTable": "[concat(parameters('prefix'),'-routeTable')]",
         "name-compliant-networkSecurityGroup": "[concat(parameters('prefix'),'-networkSecurityGroup')]",
-        "name-compliant-virtualNetworks": "[concat(parameters('prefix'),'-virtualNetworks')]",
-        "name-compliant-subnet": "[concat(variables('name-compliant-virtualNetworks'),'-subnet')]",
 
         "name-compliant-networkSecurityGroup-id": "[resourceId('Microsoft.Network/networkSecurityGroups',variables('name-compliant-networkSecurityGroup'))]",
         "name-compliant-routeTable-id": "[resourceId('Microsoft.Network/routeTables',variables('name-compliant-routeTable'))]"
