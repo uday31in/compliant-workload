@@ -202,8 +202,8 @@
             "type": "string",
             "value": "[parameters('cmkKeyName')]"
         },
-        "cmk-id": {
-            "type": "string",
+        "cmk": {
+            "type": "object",
             "value": "[reference( variables('name-compliant-keyvault-cmk-id'))]"
         },
         "keyVault": {
