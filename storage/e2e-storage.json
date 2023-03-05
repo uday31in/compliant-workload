@@ -4,7 +4,7 @@
     "parameters": {
         "prefix": {
             "type": "string",
-            "defaultValue": "compliant-storage",
+            "defaultValue": "cs1",
             "metadata": {
                 "description": "description"
             }
@@ -77,6 +77,9 @@
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2018-05-01",
             "resourceGroup": "[variables('name-compliant-resourcegroup')]",
+            "dependsOn": [
+                "[variables('name-compliant-resourcegroup-deployment')]"
+            ],
             "properties": {
                 "mode": "incremental",
                 "templateLink": {
@@ -137,6 +140,9 @@
                     },
                     "userAssignedIdentity": {
                         "value":"[reference(variables('name-compliant-userAssignedIdentity-deployment')).outputs.userAssignedIdentity.value]"
+                    },
+                    "subnetId": {
+                        "value":"[reference(variables('name-compliant-vnet-deployment')).outputs.subnetId.value]"
                     },
                     "_artifactsLocation": {
                         "value": "[parameters('_artifactsLocation')]"
