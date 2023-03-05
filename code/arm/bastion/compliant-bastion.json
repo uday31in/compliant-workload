@@ -1,0 +1,122 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "prefix": {
+            "type": "string",
+            "defaultValue": "compliant-bastion",
+            "metadata": {
+                "description": "description"
+            }
+        },
+        "location": {
+            "type": "string",
+            "defaultValue": "westeurope",
+            "metadata": {
+                "description": "description"
+            }
+        },
+        "_artifactsLocation": {
+            "type": "string",
+            "defaultValue": "https://raw.githubusercontent.com/uday31in/compliant-workload/main/code/arm/",
+            "metadata": {
+                "description": "This is the link to the nested template that must to be accessible to ARM to be able to use as a part of nested deployment.
+                                Please feel free to use template hosted here or override with choice of your location.
+                                If you chose to do so, please ensure future bug fixes are incorporated from above location to your private location."
+            }
+        },
+        "_artifactsLocationSasToken": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "subnetId": {
+            "type": "string",
+            "defaultValue": "/subscriptions/0095be37-07e5-48e7-b252-462ae52fefba/resourceGroups/uday-dns-resourcegroup/providers/Microsoft.Network/virtualNetworks/compliant-storage/subnets/AzureBastionSubnet"
+        },
+        "bastionHostSku": {
+            "type": "string",
+            "defaultValue": "Standard"
+        },
+        "bastionHostScaleUnits": {
+            "type": "int",
+            "defaultValue":2
+        },
+        "enableIpConnect": {
+            "type": "bool",
+            "defaultValue":true
+        },
+        "enableTunneling": {
+            "type": "bool",
+            "defaultValue": true
+        },
+        "enableShareableLink": {
+            "type": "bool",
+            "defaultValue": true
+        },
+        "enableKerberos": {
+            "type": "bool",
+            "defaultValue": true
+        },
+        "disableCopyPaste": {
+            "type": "bool",
+            "defaultValue":true
+        }
+    },
+    "variables": {
+        "name-compliant-bastion": "[concat(parameters('prefix'),'')]",
+        "name-compliant-bastion-public-ip": "[concat(variables('name-compliant-bastion'),'-ip')]",
+        "name-compliant-bastion-public-ip-id":"[resourceId('Microsoft.Network/publicIpAddresses', variables('name-compliant-bastion-public-ip'))]"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Network/publicIPAddresses",
+            "apiVersion": "2022-07-01",
+            "name": "[variables('name-compliant-bastion-public-ip')]",
+            "location": "[parameters('location')]",
+            "sku": {
+                "name": "Standard"
+            },
+            "properties": {
+                "publicIPAllocationMethod": "Static"
+            }
+        },
+        {
+            "apiVersion": "2022-05-01",
+            "type": "Microsoft.Network/bastionHosts",
+            "name": "[variables('name-compliant-bastion')]",
+            "sku": {
+                "name": "[parameters('bastionHostSku')]"
+            },
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[variables('name-compliant-bastion-public-ip')]"
+            ],
+            "properties": {
+                "enableIpConnect": "[parameters('enableIpConnect')]",
+                "enableTunneling": "[parameters('enableTunneling')]",
+                "enableShareableLink": "[parameters('enableShareableLink')]",
+                "enableKerberos": "[parameters('enableKerberos')]",
+                "disableCopyPaste": "[parameters('disableCopyPaste')]",
+                "ipConfigurations": [
+                    {
+                        "name": "IpConf",
+                        "properties": {
+                            "subnet": {
+                                "id": "[parameters('subnetId')]"
+                            },
+                            "publicIPAddress": {
+                                "id": "[variables('name-compliant-bastion-public-ip-id')]"
+                            }
+                        }
+                    }
+                ],
+                "scaleUnits": "[parameters('bastionHostScaleUnits')]"
+            },
+            "tags": {}
+        }
+    ],
+    "outputs": {
+
+    },
+    "functions": []
+}
