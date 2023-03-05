@@ -101,7 +101,7 @@
             }
         },
         {
-            "name": "[concat(variables('name-compliant-vnet-deployment')]",
+            "name": "[variables('name-compliant-vnet-deployment')]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2018-05-01",
             "resourceGroup": "[variables('name-compliant-resourcegroup')]",
@@ -125,7 +125,7 @@
             }
         },
         {
-            "name": "[concat(variables('name-compliant-userAssignedIdentity-deployment')]",
+            "name": "[variables('name-compliant-userAssignedIdentity-deployment')]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2018-05-01",
             "resourceGroup": "[variables('name-compliant-resourcegroup')]",
@@ -149,7 +149,7 @@
             }
         },
         {
-            "name": "[concat(variables('name-compliant-KeyVault-deployment')]",
+            "name": "[variables('name-compliant-KeyVault-deployment')]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2018-05-01",
             "resourceGroup": "[variables('name-compliant-resourcegroup')]",
@@ -164,7 +164,7 @@
                         "value":"[parameters('prefix')]"
                     },
                     "userAssignedIdentity": {
-                        "value":"[reference(concat(variables('name-compliant-userAssignedIdentity'),'-deployment')).outputs.userAssignedIdentity.value.principalId]"
+                        "value":"[reference(variables('name-compliant-userAssignedIdentity-deployment')).outputs.userAssignedIdentity.value]"
                     },
                     "_artifactsLocation": {
                         "value": "[parameters('_artifactsLocation')]"
@@ -176,7 +176,7 @@
             }
         },
         {
-            "name": "[concat(variables('name-compliant-strorage'-deployment')]",
+            "name": "[variables('name-compliant-storage-deployment')]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2018-05-01",
             "resourceGroup": "[variables('name-compliant-resourcegroup')]",
@@ -197,19 +197,19 @@
                         "value": "[parameters('_artifactsLocationSasToken')]"
                     },
                     "userAssignedIdentityName": {
-                        "value":"[reference(concat(variables('name-compliant-userAssignedIdentity-deployment')).outputs.userAssignedIdentity.value]"
+                        "value":"[reference(variables('name-compliant-userAssignedIdentity-deployment')).outputs.userAssignedIdentity.value]"
                     },
                     "userAssignedIdentityResourceGroup": {
-                        "value":"[reference(concat(variables('name-compliant-userAssignedIdentity-deployment')).outputs.userAssignedIdentityResourceGroup.value.id]"
+                        "value":"[reference(variables('name-compliant-userAssignedIdentity-deployment')).outputs.userAssignedIdentityResourceGroup.value.id.value]"
                     },
                     "subnetId": {
-                        "value":"[reference(concat(variables('name-compliant-vnet-deployment')).outputs.subnetId.value]"
+                        "value":"[reference(variables('name-compliant-vnet-deployment')).outputs.subnetId.value]"
                     },
                     "keyName": {
-                        "value":"[reference(concat(variables('name-compliant-keyVault-deployment')).outputs.cmkName.value]"
+                        "value":"[reference(variables('name-compliant-keyVault-deployment')).outputs.cmkName.value]"
                     },
                     "keyVaultUri": {
-                        "value":"[reference(concat(variables('name-compliant-keyVault-deployment')).outputs.keyVault.value]"
+                        "value":"[reference(variables('name-compliant-keyVault-deployment')).outputs.keyVault.value]"
                     }
                 }
             }
