@@ -9,6 +9,13 @@
                 "description": "description"
             }
         },
+        "location":{
+            "type": "string",
+            "defaultValue": "westeurope",
+            "metadata": {
+                "description": "description"
+            }
+        },
         "subscriptionID": {
             "type": "string",
             "defaultValue": "22a8d224-e190-45c0-a936-f915ee2d8b16",
@@ -51,7 +58,7 @@
             "name": "[variables('name-compliant-resourcegroup-deployment')]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2018-05-01",
-            "location": "West Europe",
+            "location": "[parameters('location')]",
             "subscriptionId": "[parameters('subscriptionID')]",
             "properties": {
                 "mode": "incremental",
@@ -64,7 +71,7 @@
                         {
                             "type": "Microsoft.Resources/resourceGroups",
                             "apiVersion": "2018-05-01",
-                            "location": "West Europe",
+                            "location": "[parameters('location')]",
                             "name": "[variables('name-compliant-resourcegroup')]",
                             "properties": {}
                         }

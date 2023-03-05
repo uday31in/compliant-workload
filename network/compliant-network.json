@@ -21,6 +21,13 @@
             "metadata": {
                 "description": "description"
             }
+        },
+        "location": {
+            "type": "string",
+            "defaultValue": "westeurope",
+            "metadata": {
+                "description": "description"
+            }
         }
     },
     "variables": {
@@ -28,7 +35,6 @@
         "name-compliant-subnet": "[concat(variables('name-compliant-virtualNetworks'),'-subnet')]",
         "name-compliant-routeTable": "[concat(parameters('prefix'),'-routeTable')]",
         "name-compliant-networkSecurityGroup": "[concat(parameters('prefix'),'-networkSecurityGroup')]",
-
         "name-compliant-networkSecurityGroup-id": "[resourceId('Microsoft.Network/networkSecurityGroups',variables('name-compliant-networkSecurityGroup'))]",
         "name-compliant-routeTable-id": "[resourceId('Microsoft.Network/routeTables',variables('name-compliant-routeTable'))]"
     },
@@ -37,7 +43,7 @@
             "type": "Microsoft.Network/routeTables",
             "apiVersion": "2022-07-01",
             "name": "[variables('name-compliant-routeTable')]",
-            "location": "westeurope",
+            "location": "[parameters('location')]",
             "properties": {
                 "disableBgpRoutePropagation": false,
                 "routes": []
@@ -47,7 +53,7 @@
             "type": "Microsoft.Network/networkSecurityGroups",
             "apiVersion": "2022-07-01",
             "name": "[variables('name-compliant-networkSecurityGroup')]",
-            "location": "westeurope",
+            "location": "[parameters('location')]",
             "properties": {
                 "securityRules": []
             }
@@ -56,7 +62,7 @@
             "type": "Microsoft.Network/virtualNetworks",
             "apiVersion": "2022-07-01",
             "name": "[variables('name-compliant-virtualNetworks')]",
-            "location": "westeurope",
+            "location": "[parameters('location')]",
             "dependsOn": [
                 "[variables('name-compliant-networkSecurityGroup-id')]",
                 "[variables('name-compliant-routeTable-id')]"
@@ -73,7 +79,7 @@
                         "properties": {
                             "addressPrefix": "10.1.1.0/25",
                             "networkSecurityGroup": {
-                                "id":  "[variables('name-compliant-networkSecurityGroup-id')]"
+                                "id": "[variables('name-compliant-networkSecurityGroup-id')]"
                             },
                             "routeTable": {
                                 "id": "[variables('name-compliant-routeTable-id')]"
