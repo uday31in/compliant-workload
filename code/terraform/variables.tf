@@ -71,22 +71,22 @@ variable "private_dns_zone_id_cognitive_service" {
   }
 }
 
-variable "cmk_uai_id" {
-  description = "Specifies the resource ID of the user assigned identity used for customer managed keys."
+variable "cmk_key_vault_id" {
+  description = "Specifies the resource ID of the key vault."
   type        = string
   sensitive   = false
   validation {
-    condition     = var.cmk_uai_id == "" || length(split("/", var.cmk_uai_id)) == 9
+    condition     = length(split("/", var.cmk_key_vault_id)) == 9
     error_message = "Please specify a valid resource ID."
   }
 }
 
-variable "cmk_key_id" {
-  description = "Specifies the resource ID of the user assigned identity used for customer managed keys."
+variable "cmk_key_name" {
+  description = "Specifies the resource ID of the key vault."
   type        = string
   sensitive   = false
   validation {
-    condition     = var.cmk_key_id == "" || length(var.cmk_key_id) >= 2
+    condition     = length(var.cmk_key_name) >= 2
     error_message = "Please specify a valid resource ID."
   }
 }

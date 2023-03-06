@@ -33,9 +33,9 @@ provider "azurerm" {
   features {
     key_vault {
       recover_soft_deleted_key_vaults   = true
-      # recover_soft_deleted_certificates = true
-      # recover_soft_deleted_keys         = true
-      # recover_soft_deleted_secrets      = true
+      recover_soft_deleted_certificates = true
+      recover_soft_deleted_keys         = true
+      recover_soft_deleted_secrets      = true
     }
     network {
       relaxed_locking = true

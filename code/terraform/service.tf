@@ -10,10 +10,10 @@ module "network" {
 
 module "user_assigned_identity" {
   source = "./modules/userassignedidentity"
-  
-  location                      = var.location
-  tags                          = var.tags
-  resource_group_name           = azurerm_resource_group.services_rg.name
+
+  location                    = var.location
+  tags                        = var.tags
+  resource_group_name         = azurerm_resource_group.services_rg.name
   user_assigned_identity_name = "${local.prefix}-uai001"
 }
 
@@ -38,7 +38,23 @@ module "cognitive_service" {
   cognitive_service_kind                = "CognitiveServices"
   cognitive_service_sku                 = "S0"
   subnet_id                             = module.network.subnet_private_endpoints_id
-  private_dns_zone_id_cognitive_service = var.private_dns_zone_id_cognitive_service
   cmk_uai_id                            = module.user_assigned_identity.user_assigned_identity_id
-  cmk_key_id                            = var.cmk_key_id
+  cmk_key_vault_id                      = var.cmk_key_vault_id
+  cmk_key_name                          = var.cmk_key_name
+  private_dns_zone_id_cognitive_service = var.private_dns_zone_id_cognitive_service
+}
+
+module "storage" {
+  source = "./modules/storage"
+
+  location                 = var.location
+  tags                     = var.tags
+  resource_group_name      = azurerm_resource_group.services_rg.name
+  storage_name             = replace("${local.prefix}-stg001", "-", "")
+  storage_container_names  = ["data"]
+  subnet_id                = module.network.subnet_private_endpoints_id
+  cmk_uai_id               = module.user_assigned_identity.user_assigned_identity_id
+  cmk_key_vault_id         = var.cmk_key_vault_id
+  cmk_key_name             = var.cmk_key_name
+  private_dns_zone_id_blob = var.private_dns_zone_id_blob
 }
