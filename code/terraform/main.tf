@@ -33,9 +33,9 @@ provider "azurerm" {
   features {
     key_vault {
       recover_soft_deleted_key_vaults   = true
-      recover_soft_deleted_certificates = true
-      recover_soft_deleted_keys         = true
-      recover_soft_deleted_secrets      = true
+      # recover_soft_deleted_certificates = true
+      # recover_soft_deleted_keys         = true
+      # recover_soft_deleted_secrets      = true
     }
     network {
       relaxed_locking = true
@@ -52,7 +52,7 @@ provider "azapi" {
   disable_correlation_request_id = false
   environment                    = "public"
   skip_provider_registration     = false
-  use_oidc                       = true
+  # use_oidc                       = true
 }
 
 data "azurerm_client_config" "current" {
