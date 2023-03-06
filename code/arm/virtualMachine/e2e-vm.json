@@ -23,6 +23,14 @@
                 "description": "description"
             }
         },
+        "adminPassword": {
+            "type": "securestring",
+            "defaultValue": "",
+            "minLength": 12,
+            "metadata": {
+                "description": "Password for the Virtual Machine."
+            }
+        },
         "_artifactsLocation": {
             "type": "string",
             "defaultValue": "https://raw.githubusercontent.com/uday31in/compliant-workload/main/",
@@ -174,7 +182,7 @@
             "properties": {
                 "mode": "incremental",
                 "templateLink": {
-                    "uri": "[uri(parameters('_artifactsLocation'), concat('storage/compliant-storage.json', parameters('_artifactsLocationSasToken')))]",
+                    "uri": "[uri(parameters('_artifactsLocation'), concat('virtualMachine/compliant-vm.json', parameters('_artifactsLocationSasToken')))]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
@@ -187,17 +195,11 @@
                     "_artifactsLocationSasToken": {
                         "value": "[parameters('_artifactsLocationSasToken')]"
                     },
-                    "userAssignedIdentityName": {
-                        "value":"[reference(variables('name-compliant-userAssignedIdentity-deployment')).outputs.userAssignedIdentityName.value]"
-                    },
-                    "userAssignedIdentityResourceGroup": {
-                        "value":"[reference(variables('name-compliant-userAssignedIdentity-deployment')).outputs.userAssignedIdentityResourceGroup.value.id]"
-                    },
                     "subnetId": {
                         "value":"[reference(variables('name-compliant-vnet-deployment')).outputs.subnetId.value]"
                     },
-                    "keyName": {
-                        "value":"[reference(variables('name-compliant-keyVault-deployment')).outputs.cmkName.value]"
+                    "keyVaultId": {
+                        "value":"[reference(variables('name-compliant-keyVault-deployment')).outputs.keyVaultId.value]"
                     },
                     "keyVaultUri": {
                         "value":"[reference(variables('name-compliant-keyVault-deployment')).outputs.keyVault.value.vaultUri]"

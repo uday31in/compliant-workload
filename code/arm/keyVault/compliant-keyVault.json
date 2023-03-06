@@ -216,6 +216,10 @@
         "keyVault": {
             "type": "object",
             "value": "[reference( variables('name-compliant-keyvault-id'))]"
+        },
+        "keyVaultId": {
+            "type": "string",
+            "value": "[variables('name-compliant-keyvault-id')]"
         }
     },
     "functions": []
