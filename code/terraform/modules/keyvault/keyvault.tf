@@ -22,6 +22,15 @@ resource "azurerm_key_vault" "key_vault" {
   tenant_id                     = data.azurerm_client_config.current.tenant_id
 }
 
+resource "azurerm_key_vault_key" "key_vault_key" {
+  name         = "cmk"
+  key_vault_id = azurerm_key_vault.example.id
+
+  key_type = "RSA"
+  key_size = 2048
+  key_opts = ["decrypt", "encrypt", "sign", "unwrapKey", "verify", "wrapKey"]
+}
+
 resource "azurerm_private_endpoint" "key_vault_private_endpoint" {
   name                = "${azurerm_key_vault.key_vault.name}-pe"
   location            = var.location
