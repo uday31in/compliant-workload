@@ -11,10 +11,10 @@ resource "azurerm_cognitive_account" "cognitive_service" {
   }
 
   custom_subdomain_name = var.cognitive_service_name
-  customer_managed_key {
-    identity_client_id = data.azurerm_user_assigned_identity.user_assigned_identity.client_id
-    key_vault_key_id   = var.cmk_key_id
-  }
+  # customer_managed_key {  # Request first via https://forms.office.com/Pages/ResponsePage.aspx?id=v4j5cvGGr0GRqy180BHbR3k4-f_9d9xPhWkgOUub9YhUNDZJUERRVVVDME4xNDVNRjEwMTNZV1dHSS4u
+  #   identity_client_id = data.azurerm_user_assigned_identity.user_assigned_identity.client_id
+  #   key_vault_key_id   = var.cmk_key_id
+  # }
   dynamic_throttling_enabled = true
   fqdns                      = []
   kind                       = var.cognitive_service_kind
@@ -39,7 +39,7 @@ resource "azurerm_private_endpoint" "cognitive_service_private_endpoint" {
     name                           = "${azurerm_cognitive_account.cognitive_service.name}-pe"
     is_manual_connection           = false
     private_connection_resource_id = azurerm_cognitive_account.cognitive_service.id
-    subresource_names              = ["vault"]
+    subresource_names              = ["account"]
   }
   subnet_id = var.subnet_id
   dynamic "private_dns_zone_group" {
