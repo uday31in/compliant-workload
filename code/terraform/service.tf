@@ -1,13 +1,11 @@
 module "network" {
   source = "./modules/network"
 
-  location                    = var.location
-  tags                        = var.tags
-  network_security_group_name = "${local.prefix}-nsg001"
-  resource_group_name         = azurerm_resource_group.network_rg.name
-  route_table_name            = "${local.prefix}-rt001"
-  virtual_network_name        = "${local.prefix}-vnet001"
-  # ddos_protection_plan_id     = var.ddos_protection_plan_id
+  location       = var.location
+  tags           = var.tags
+  vnet_id        = var.vnet_id
+  nsg_id         = var.nsg_id
+  route_table_id = var.route_table_id
 }
 
 module "key_vault" {

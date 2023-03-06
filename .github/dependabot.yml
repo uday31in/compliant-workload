@@ -13,9 +13,31 @@ updates:
       - "github-actions"
       - "dependencies"
 
-  # Maintain dependencies for Data Management Zone
+  # Maintain dependencies for Terraform main
   - package-ecosystem: "terraform"
     directory: "/code/terraform"
+    schedule:
+      interval: "weekly"
+      day: "sunday"
+      time: "10:00"
+    labels:
+      - "terraform"
+      - "dependencies"
+
+  # Maintain dependencies for Terraform Key Vault module
+  - package-ecosystem: "terraform"
+    directory: "/code/terraform/modules/keyvault"
+    schedule:
+      interval: "weekly"
+      day: "sunday"
+      time: "10:00"
+    labels:
+      - "terraform"
+      - "dependencies"
+
+  # Maintain dependencies for Terraform Network module
+  - package-ecosystem: "terraform"
+    directory: "/code/terraform/modules/network"
     schedule:
       interval: "weekly"
       day: "sunday"
