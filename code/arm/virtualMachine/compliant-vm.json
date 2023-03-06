@@ -29,30 +29,9 @@
                 "description": "description"
             }
         },
-        "userAssignedIdentityName": {
-            "type": "string",
-            "defaultValue": "compliant-storage-userAssignedIdentity",
-            "metadata": {
-                "description": "description"
-            }
-        },
-        "userAssignedIdentityResourceGroup": {
-            "type": "string",
-            "defaultValue": "/subscriptions/22a8d224-e190-45c0-a936-f915ee2d8b16/resourceGroups/compliant-storage-resourcegroup",
-            "metadata": {
-                "description": "description"
-            }
-        },
         "subnetId": {
             "type": "string",
             "defaultValue": "/subscriptions/0095be37-07e5-48e7-b252-462ae52fefba/resourceGroups/uday-dns-resourcegroup/providers/Microsoft.Network/virtualNetworks/uday-dns-vnet/subnets/uday-dns-vnet-subnet",
-            "metadata": {
-                "description": "description"
-            }
-        },
-        "keyName": {
-            "type": "string",
-            "defaultValue": "cmk-key",
             "metadata": {
                 "description": "description"
             }
@@ -80,7 +59,7 @@
         },
         "adminPassword": {
             "type": "securestring",
-            "defaultValue": "Pa$$word123456789",
+            "defaultValue": "",
             "minLength": 12,
             "metadata": {
                 "description": "Password for the Virtual Machine."
