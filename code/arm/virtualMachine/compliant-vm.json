@@ -17,7 +17,7 @@
         },
         "prefix": {
             "type": "string",
-            "defaultValue": "cs1",
+            "defaultValue": "CVM02",
             "metadata": {
                 "description": "description"
             }
@@ -31,21 +31,21 @@
         },
         "subnetId": {
             "type": "string",
-            "defaultValue": "/subscriptions/0095be37-07e5-48e7-b252-462ae52fefba/resourceGroups/uday-dns-resourcegroup/providers/Microsoft.Network/virtualNetworks/uday-dns-vnet/subnets/uday-dns-vnet-subnet",
+            "defaultValue": "/subscriptions/22a8d224-e190-45c0-a936-f915ee2d8b16/resourceGroups/CVM01-resourcegroup/providers/Microsoft.Network/virtualNetworks/CVM01-vnet/subnets/CVM01-vnet-subnet",
             "metadata": {
                 "description": "description"
             }
         },
         "keyVaultId": {
             "type": "string",
-            "defaultValue": "/subscriptions/0095be37-07e5-48e7-b252-462ae52fefba/resourceGroups/uday-dns-resourcegroup/providers/Microsoft.KeyVault/vaults/uday-dns-kv",
+            "defaultValue": "/subscriptions/22a8d224-e190-45c0-a936-f915ee2d8b16/resourceGroups/CVM01-resourcegroup/providers/Microsoft.KeyVault/vaults/CVM01-kv",
             "metadata": {
                 "description": "description"
             }
         },
         "keyVaultUri": {
             "type": "string",
-            "defaultValue": "https://uday-dns-kv.vault.azure.net/keys/cmk-key/92442fdf59c442d8bff8ecad7fca29bf",
+            "defaultValue": "https://cvm01-kv.vault.azure.net/keys/cmk-key/f4a902723692413582f496ac04d0e10d",
             "metadata": {
                 "description": "description"
             }
@@ -59,7 +59,7 @@
         },
         "adminPassword": {
             "type": "securestring",
-            "defaultValue": "",
+            "defaultValue": "Pa$$w0rd123456789",
             "minLength": 12,
             "metadata": {
                 "description": "Password for the Virtual Machine."
@@ -97,6 +97,18 @@
                 "description": "The Windows version for the VM. This will pick a fully patched image of this given Windows version."
             }
         },
+        "diskSku": {
+            "type": "string",
+            "defaultValue": "StandardSSD_LRS",
+            "allowedValues": [
+                "Standard_LRS",
+                "StandardSSD_LRS",
+                "Premium_LRS"
+            ],
+            "metadata": {
+                "description": "SKU of the attached data disk (Standard HDD, Standard SSD or Premium SSD)"
+            }
+        },
         "vmSize": {
             "type": "string",
             "defaultValue": "Standard_D2s_v5",
@@ -119,6 +131,7 @@
     "variables": {
         "name-compliant-vm": "[concat(parameters('prefix'),'-vm')]",
         "name-compliant-vm-nic": "[concat(variables('name-compliant-vm'),'-nic')]",
+        "name-compliant-vm-disk": "[concat(variables('name-compliant-vm'),'-disk')]",
         "name-compliant-vm-diskEncryptionSets": "[concat(variables('name-compliant-vm'),'-diskEncryptionSets')]",
         "securityProfileJson": {
             "uefiSettings": {
@@ -168,6 +181,33 @@
             }
         },
         {
+            "type": "Microsoft.Compute/disks",
+            "apiVersion": "2019-07-01",
+            "name": "[variables('name-compliant-vm-disk')]",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[variables('name-compliant-vm-diskEncryptionSets')]"
+            ],
+            "properties": {
+                "diskSizeGB": 128,
+                "networkAccessPolicy" : "DenyAll",
+                "publicNetworkAccess" : "Disabled",
+                "creationData": {
+                    "createOption": "FromImage",
+                    "imageReference": {
+                        "id": "[resourceId('Microsoft.Compute/diskEncryptionSets', variables('name-compliant-vm-diskEncryptionSets'))]"
+                    }
+                },
+                "encryption": {
+                    "type": "EncryptionAtRestWithCustomerKey",
+                    "diskEncryptionSetId": "[parameters('diskEncryptionSetId')]"
+                }
+            },
+            "sku": {
+                "name": "[parameters('diskSku')]"
+            }
+        },
+        {
             "type": "Microsoft.Authorization/roleAssignments",
             "apiVersion": "2022-04-01",
             "name": "[guid(deployment().name)]",
@@ -187,6 +227,7 @@
             "dependsOn": [
                 "[resourceId('Microsoft.Network/networkInterfaces', variables('name-compliant-vm-nic'))]",
                 "[variables('name-compliant-vm-diskEncryptionSets')]",
+                "[variables('name-compliant-vm-disk')]",
                 "[guid(deployment().name)]"
             ],
             "properties": {
@@ -212,7 +253,7 @@
                     "osDisk": {
                         "createOption": "FromImage",
                         "managedDisk": {
-                            "storageAccountType": "StandardSSD_LRS",
+                            "id": "[resourceId('Microsoft.Compute/disks/', variables('vVmDataDiskName'))]",
                             "diskEncryptionSet": {
                                 "id": "[resourceId('Microsoft.Compute/diskEncryptionSets', variables('name-compliant-vm-diskEncryptionSets'))]"
                             }
