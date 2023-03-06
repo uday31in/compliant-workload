@@ -17,35 +17,35 @@
         },
         "prefix": {
             "type": "string",
-            "defaultValue": "CVM02",
+            "defaultValue": "CVM03-vm",
             "metadata": {
                 "description": "description"
             }
         },
         "location": {
             "type": "string",
-            "defaultValue": "westeurope",
+            "defaultValue": "eastus",
             "metadata": {
                 "description": "description"
             }
         },
         "subnetId": {
             "type": "string",
-            "defaultValue": "/subscriptions/22a8d224-e190-45c0-a936-f915ee2d8b16/resourceGroups/CVM01-resourcegroup/providers/Microsoft.Network/virtualNetworks/CVM01-vnet/subnets/CVM01-vnet-subnet",
+            "defaultValue": "/subscriptions/22a8d224-e190-45c0-a936-f915ee2d8b16/resourceGroups/CVM03-resourcegroup/providers/Microsoft.Network/virtualNetworks/CVM03-vnet/subnets/CVM03-vnet-subnet",
             "metadata": {
                 "description": "description"
             }
         },
         "keyVaultId": {
             "type": "string",
-            "defaultValue": "/subscriptions/22a8d224-e190-45c0-a936-f915ee2d8b16/resourceGroups/CVM01-resourcegroup/providers/Microsoft.KeyVault/vaults/CVM01-kv",
+            "defaultValue": "/subscriptions/22a8d224-e190-45c0-a936-f915ee2d8b16/resourceGroups/CVM03-resourcegroup/providers/Microsoft.KeyVault/vaults/CVM03-kv",
             "metadata": {
                 "description": "description"
             }
         },
         "keyVaultUri": {
             "type": "string",
-            "defaultValue": "https://cvm01-kv.vault.azure.net/keys/cmk-key/f4a902723692413582f496ac04d0e10d",
+            "defaultValue": "https://cvm03-kv.vault.azure.net/keys/cmk-key/79d06127e74b47a3b17219802d2faece",
             "metadata": {
                 "description": "description"
             }
@@ -59,7 +59,7 @@
         },
         "adminPassword": {
             "type": "securestring",
-            "defaultValue": "Pa$$w0rd123456789",
+            "defaultValue": "",
             "minLength": 12,
             "metadata": {
                 "description": "Password for the Virtual Machine."
@@ -132,7 +132,8 @@
         "name-compliant-vm": "[concat(parameters('prefix'),'-vm')]",
         "name-compliant-vm-nic": "[concat(variables('name-compliant-vm'),'-nic')]",
         "name-compliant-vm-disk": "[concat(variables('name-compliant-vm'),'-disk')]",
-        "name-compliant-vm-diskEncryptionSets": "[concat(variables('name-compliant-vm'),'-diskEncryptionSets')]",
+        "name-compliant-vm-diskEncryptionSet": "[concat(variables('name-compliant-vm'),'-diskEncryptionSet')]",
+        "name-compliant-vm-diskEncryptionSet-id": "[resourceId('Microsoft.Compute/diskEncryptionSets', variables('name-compliant-vm-diskEncryptionSet'))]",
         "securityProfileJson": {
             "uefiSettings": {
                 "secureBootEnabled": true,
@@ -165,7 +166,7 @@
         {
             "type": "Microsoft.Compute/diskEncryptionSets",
             "apiVersion": "2022-07-02",
-            "name": "[variables('name-compliant-vm-diskEncryptionSets')]",
+            "name": "[variables('name-compliant-vm-diskEncryptionSet')]",
             "location": "[parameters('location')]",
             "identity": {
                 "type": "SystemAssigned"
@@ -186,7 +187,7 @@
             "name": "[variables('name-compliant-vm-disk')]",
             "location": "[parameters('location')]",
             "dependsOn": [
-                "[variables('name-compliant-vm-diskEncryptionSets')]"
+                "[variables('name-compliant-vm-diskEncryptionSet')]"
             ],
             "properties": {
                 "diskSizeGB": 128,
@@ -195,12 +196,12 @@
                 "creationData": {
                     "createOption": "FromImage",
                     "imageReference": {
-                        "id": "[resourceId('Microsoft.Compute/diskEncryptionSets', variables('name-compliant-vm-diskEncryptionSets'))]"
+                        "id": "[resourceId('Microsoft.Compute/diskEncryptionSets', variables('name-compliant-vm-diskEncryptionSet'))]"
                     }
                 },
                 "encryption": {
                     "type": "EncryptionAtRestWithCustomerKey",
-                    "diskEncryptionSetId": "[parameters('diskEncryptionSetId')]"
+                    "diskEncryptionSetId": "[variables('name-compliant-vm-diskEncryptionSet-id')]"
                 }
             },
             "sku": {
@@ -212,11 +213,13 @@
             "apiVersion": "2022-04-01",
             "name": "[guid(deployment().name)]",
             "dependsOn": [
-                "[variables('name-compliant-vm-diskEncryptionSets')]"
+                "[variables('name-compliant-vm-diskEncryptionSet')]"
             ],
             "properties": {
                 "roleDefinitionId": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', 'e147488a-f6f5-4113-8e2d-b22465e65bf6')]",
-                "principalId": "[reference(concat('Microsoft.Compute/diskEncryptionSets/', variables('name-compliant-vm-diskEncryptionSets')), '2019-11-01', 'Full').identity.principalId]"
+                "principalId": "[reference(concat('Microsoft.Compute/diskEncryptionSets/', variables('name-compliant-vm-diskEncryptionSets')), '2019-11-01', 'Full').identity.principalId]",
+                "principalType" : "ServicePrincipal"
+
             }
         },
         {
@@ -226,7 +229,7 @@
             "location": "[parameters('location')]",
             "dependsOn": [
                 "[resourceId('Microsoft.Network/networkInterfaces', variables('name-compliant-vm-nic'))]",
-                "[variables('name-compliant-vm-diskEncryptionSets')]",
+                "[variables('name-compliant-vm-diskEncryptionSet')]",
                 "[variables('name-compliant-vm-disk')]",
                 "[guid(deployment().name)]"
             ],
@@ -255,7 +258,7 @@
                         "managedDisk": {
                             "id": "[resourceId('Microsoft.Compute/disks/', variables('vVmDataDiskName'))]",
                             "diskEncryptionSet": {
-                                "id": "[resourceId('Microsoft.Compute/diskEncryptionSets', variables('name-compliant-vm-diskEncryptionSets'))]"
+                                "id": "[variables('name-compliant-vm-diskEncryptionSet-id')]"
                             }
                         }
                     }

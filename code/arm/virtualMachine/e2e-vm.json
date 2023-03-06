@@ -4,14 +4,14 @@
     "parameters": {
         "prefix": {
             "type": "string",
-            "defaultValue": "CVM02",
+            "defaultValue": "CVM03",
             "metadata": {
                 "description": "description"
             }
         },
-        "location":{
+        "location": {
             "type": "string",
-            "defaultValue": "westeurope",
+            "defaultValue": "eastus",
             "metadata": {
                 "description": "description"
             }
@@ -55,19 +55,14 @@
     "variables": {
         "name-compliant-resourcegroup": "[concat(parameters('prefix'),'-resourcegroup')]",
         "name-compliant-resourcegroup-deployment": "[concat(variables('name-compliant-resourcegroup'),'-deployment')]",
-
         "name-compliant-vnet": "[concat(parameters('prefix'),'-vnet')]",
         "name-compliant-vnet-deployment": "[concat(variables('name-compliant-vnet'),'-deployment')]",
-
         "name-compliant-userAssignedIdentity": "[concat(parameters('prefix'),'-userAssignedIdentity')]",
         "name-compliant-userAssignedIdentity-deployment": "[concat(variables('name-compliant-userAssignedIdentity'),'-deployment')]",
-
         "name-compliant-KeyVault": "[concat(parameters('prefix'),'-kv')]",
         "name-compliant-KeyVault-deployment": "[concat(variables('name-compliant-KeyVault'),'-deployment')]",
-
         "name-compliant-storage": "[ replace(concat(parameters('prefix'),'-storage'),'-','')]",
         "name-compliant-storage-deployment": "[concat(concat(parameters('prefix'),'-storage'),'-deployment')]",
-
         "name-compliant-vm": "[ concat(parameters('prefix'),'-vm')]",
         "name-compliant-vm-deployment": "[concat(variables('name-compliant-vm'),'-deployment')]"
     },
@@ -113,7 +108,10 @@
                 },
                 "parameters": {
                     "prefix": {
-                        "value":"[variables('name-compliant-vnet')]"
+                        "value": "[variables('name-compliant-vnet')]"
+                    },
+                    "location":{
+                        "value": "[parameters('location')]"
                     },
                     "_artifactsLocation": {
                         "value": "[parameters('_artifactsLocation')]"
@@ -140,7 +138,10 @@
                 },
                 "parameters": {
                     "prefix": {
-                        "value":"[variables('name-compliant-userAssignedIdentity')]"
+                        "value": "[variables('name-compliant-userAssignedIdentity')]"
+                    },
+                    "location":{
+                        "value": "[parameters('location')]"
                     },
                     "_artifactsLocation": {
                         "value": "[parameters('_artifactsLocation')]"
@@ -164,13 +165,16 @@
                 },
                 "parameters": {
                     "prefix": {
-                        "value":"[variables('name-compliant-KeyVault')]"
+                        "value": "[variables('name-compliant-KeyVault')]"
+                    },
+                    "location":{
+                        "value": "[parameters('location')]"
                     },
                     "userAssignedIdentity": {
-                        "value":"[reference(variables('name-compliant-userAssignedIdentity-deployment')).outputs.userAssignedIdentity.value]"
+                        "value": "[reference(variables('name-compliant-userAssignedIdentity-deployment')).outputs.userAssignedIdentity.value]"
                     },
                     "subnetId": {
-                        "value":"[reference(variables('name-compliant-vnet-deployment')).outputs.subnetId.value]"
+                        "value": "[reference(variables('name-compliant-vnet-deployment')).outputs.subnetId.value]"
                     },
                     "_artifactsLocation": {
                         "value": "[parameters('_artifactsLocation')]"
@@ -194,7 +198,10 @@
                 },
                 "parameters": {
                     "prefix": {
-                        "value":"[variables('name-compliant-vm')]"
+                        "value": "[variables('name-compliant-vm')]"
+                    },
+                    "location":{
+                        "value": "[parameters('location')]"
                     },
                     "_artifactsLocation": {
                         "value": "[parameters('_artifactsLocation')]"
@@ -209,19 +216,18 @@
                         "value": "[parameters('adminPassword')]"
                     },
                     "subnetId": {
-                        "value":"[reference(variables('name-compliant-vnet-deployment')).outputs.subnetId.value]"
+                        "value": "[reference(variables('name-compliant-vnet-deployment')).outputs.subnetId.value]"
                     },
                     "keyVaultId": {
-                        "value":"[reference(variables('name-compliant-keyVault-deployment')).outputs.keyVaultId.value]"
+                        "value": "[reference(variables('name-compliant-keyVault-deployment')).outputs.keyVaultId.value]"
                     },
                     "keyVaultUri": {
-                        "value":"[reference(variables('name-compliant-keyVault-deployment')).outputs.cmk.value.keyUriWithVersion]"
+                        "value": "[reference(variables('name-compliant-keyVault-deployment')).outputs.cmk.value.keyUriWithVersion]"
                     }
                 }
             }
         }
     ],
-    "outputs": {
-    },
+    "outputs": {},
     "functions": []
 }
