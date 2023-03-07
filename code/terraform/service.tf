@@ -17,16 +17,33 @@ module "user_assigned_identity" {
   user_assigned_identity_name = "${local.prefix}-uai001"
 }
 
-# module "key_vault" {
-#   source = "./modules/keyvault"
+module "key_vault" {
+  source = "./modules/keyvault"
 
-#   location                      = var.location
-#   tags                          = var.tags
-#   resource_group_name           = azurerm_resource_group.services_rg.name
-#   key_vault_name                = "${local.prefix}-vault001"
-#   subnet_id                     = module.network.subnet_private_endpoints_id
-#   private_dns_zone_id_key_vault = var.private_dns_zone_id_key_vault
-# }
+  location                      = var.location
+  tags                          = var.tags
+  resource_group_name           = azurerm_resource_group.services_rg.name
+  key_vault_name                = "${local.prefix}-vault001"
+  subnet_id                     = module.network.subnet_private_endpoints_id
+  private_dns_zone_id_key_vault = var.private_dns_zone_id_key_vault
+}
+
+module "bastion" {
+  source = "./modules/bastion"
+
+  location            = var.location
+  tags                = var.tags
+  resource_group_name = azurerm_resource_group.bastion_rg.name
+  admin_password      = var.admin_password
+  admin_username      = var.admin_username
+  bastion_name        = "${local.prefix}-bas001"
+  vm_name             = "${local.prefix}-vm001"
+  subnet_bastion_id   = module.network.subnet_bastion_id
+  subnet_compute_id   = module.network.subnet_compute_id
+  cmk_uai_id          = module.user_assigned_identity.user_assigned_identity_id
+  cmk_key_vault_id    = var.cmk_key_vault_id
+  cmk_key_name        = var.cmk_key_name
+}
 
 module "cognitive_service" {
   source = "./modules/cognitiveservices"

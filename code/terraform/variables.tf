@@ -61,13 +61,24 @@ variable "route_table_id" {
   }
 }
 
-variable "private_dns_zone_id_cognitive_service" {
-  description = "Specifies the resource ID of the private DNS zone for the Cognitive Service."
+variable "admin_password" {
+  description = "Specifies the admin password of the virtual machine."
   type        = string
+  sensitive   = true
+  validation {
+    condition     = length(var.admin_password) >= 2
+    error_message = "Please specify a valid password."
+  }
+}
+
+variable "admin_username" {
+  description = "Specifies the admin username of the virtual machine."
+  type        = string
+  default     = "VmMainUser"
   sensitive   = false
   validation {
-    condition     = var.private_dns_zone_id_cognitive_service == "" || (length(split("/", var.private_dns_zone_id_cognitive_service)) == 9 && (endswith(var.private_dns_zone_id_cognitive_service, "privatelink.cognitiveservices.azure.com") || endswith(var.private_dns_zone_id_cognitive_service, "privatelink.openai.azure.com")))
-    error_message = "Please specify a valid resource ID for the private DNS Zone."
+    condition     = length(var.admin_username) >= 2
+    error_message = "Please specify a valid password."
   }
 }
 
@@ -88,6 +99,16 @@ variable "cmk_key_name" {
   validation {
     condition     = length(var.cmk_key_name) >= 2
     error_message = "Please specify a valid resource ID."
+  }
+}
+
+variable "private_dns_zone_id_cognitive_service" {
+  description = "Specifies the resource ID of the private DNS zone for the Cognitive Service."
+  type        = string
+  sensitive   = false
+  validation {
+    condition     = var.private_dns_zone_id_cognitive_service == "" || (length(split("/", var.private_dns_zone_id_cognitive_service)) == 9 && (endswith(var.private_dns_zone_id_cognitive_service, "privatelink.cognitiveservices.azure.com") || endswith(var.private_dns_zone_id_cognitive_service, "privatelink.openai.azure.com")))
+    error_message = "Please specify a valid resource ID for the private DNS Zone."
   }
 }
 

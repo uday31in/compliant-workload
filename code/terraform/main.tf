@@ -58,8 +58,8 @@ provider "azapi" {
 data "azurerm_client_config" "current" {
 }
 
-resource "azurerm_resource_group" "network_rg" {
-  name     = "${local.prefix}-network-rg"
+resource "azurerm_resource_group" "bastion_rg" {
+  name     = "${local.prefix}-bastion-rg"
   location = var.location
   tags     = var.tags
 }

@@ -40,6 +40,16 @@ variable "subnet_id" {
   }
 }
 
+variable "cmk_uai_id" {
+  description = "Specifies the resource ID of the user assigned identity used for customer managed keys."
+  type        = string
+  sensitive   = false
+  validation {
+    condition     = length(split("/", var.cmk_uai_id)) == 9
+    error_message = "Please specify a valid resource ID."
+  }
+}
+
 variable "private_dns_zone_id_key_vault" {
   description = "Specifies the resource ID of the private DNS zone for Azure Key Vault."
   type        = string
