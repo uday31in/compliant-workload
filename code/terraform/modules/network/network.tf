@@ -1,162 +1,162 @@
 resource "azurerm_network_security_group" "network_security_group_bastion" {
-  name = "${data.azurerm_network_security_group.network_security_group.name}-bastion"
+  name                = "${data.azurerm_network_security_group.network_security_group.name}-bastion"
   location            = var.location
   resource_group_name = data.azurerm_virtual_network.virtual_network.resource_group_name
-  tags = var.tags
+  tags                = var.tags
 
   security_rule = [
     {
-      access = "Allow"
-      description = "Required for HTTPS inbound communication of connecting user."
-      destination_address_prefix = "*"
-      destination_address_prefixes = []
+      access                                     = "Allow"
+      description                                = "Required for HTTPS inbound communication of connecting user."
+      destination_address_prefix                 = "*"
+      destination_address_prefixes               = []
       destination_application_security_group_ids = []
-      destination_port_range = "443"
-      destination_port_ranges = []
-      direction = "Inbound"
-      name = "AllowHttpsInbound"
-      priority = 120
-      protocol = "Tcp"
-      source_address_prefix = "Internet"
-      source_address_prefixes = []
-      source_application_security_group_ids = []
-      source_port_range = "*"
-      source_port_ranges = []
+      destination_port_range                     = "443"
+      destination_port_ranges                    = []
+      direction                                  = "Inbound"
+      name                                       = "AllowHttpsInbound"
+      priority                                   = 120
+      protocol                                   = "Tcp"
+      source_address_prefix                      = "Internet"
+      source_address_prefixes                    = []
+      source_application_security_group_ids      = []
+      source_port_range                          = "*"
+      source_port_ranges                         = []
     },
     {
-      access = "Allow"
-      description = "Required for the control plane, that is, Gateway Manager to be able to talk to Azure Bastion."
-      destination_address_prefix = "*"
-      destination_address_prefixes = []
+      access                                     = "Allow"
+      description                                = "Required for the control plane, that is, Gateway Manager to be able to talk to Azure Bastion."
+      destination_address_prefix                 = "*"
+      destination_address_prefixes               = []
       destination_application_security_group_ids = []
-      destination_port_range = "443"
-      destination_port_ranges = []
-      direction = "Inbound"
-      name = "AllowGatewayManagerInbound"
-      priority = 130
-      protocol = "Tcp"
-      source_address_prefix = "GatewayManager"
-      source_address_prefixes = []
-      source_application_security_group_ids = []
-      source_port_range = "*"
-      source_port_ranges = []
+      destination_port_range                     = "443"
+      destination_port_ranges                    = []
+      direction                                  = "Inbound"
+      name                                       = "AllowGatewayManagerInbound"
+      priority                                   = 130
+      protocol                                   = "Tcp"
+      source_address_prefix                      = "GatewayManager"
+      source_address_prefixes                    = []
+      source_application_security_group_ids      = []
+      source_port_range                          = "*"
+      source_port_ranges                         = []
     },
     {
-      access = "Allow"
-      description = "Required for the control plane, that is, Gateway Manager to be able to talk to Azure Bastion."
-      destination_address_prefix = "*"
-      destination_address_prefixes = []
+      access                                     = "Allow"
+      description                                = "Required for the control plane, that is, Gateway Manager to be able to talk to Azure Bastion."
+      destination_address_prefix                 = "*"
+      destination_address_prefixes               = []
       destination_application_security_group_ids = []
-      destination_port_range = "443"
-      destination_port_ranges = []
-      direction = "Inbound"
-      name = "AllowAzureLoadBalancerInbound"
-      priority = 140
-      protocol = "Tcp"
-      source_address_prefix = "AzureLoadBalancer"
-      source_address_prefixes = []
-      source_application_security_group_ids = []
-      source_port_range = "*"
-      source_port_ranges = []
+      destination_port_range                     = "443"
+      destination_port_ranges                    = []
+      direction                                  = "Inbound"
+      name                                       = "AllowAzureLoadBalancerInbound"
+      priority                                   = 140
+      protocol                                   = "Tcp"
+      source_address_prefix                      = "AzureLoadBalancer"
+      source_address_prefixes                    = []
+      source_application_security_group_ids      = []
+      source_port_range                          = "*"
+      source_port_ranges                         = []
     },
     {
-      access = "Allow"
-      description = "Required for data plane communication between the underlying components of Azure Bastion."
-      destination_address_prefix = "VirtualNetwork"
-      destination_address_prefixes = []
+      access                                     = "Allow"
+      description                                = "Required for data plane communication between the underlying components of Azure Bastion."
+      destination_address_prefix                 = "VirtualNetwork"
+      destination_address_prefixes               = []
       destination_application_security_group_ids = []
-      destination_port_range = ""
+      destination_port_range                     = ""
       destination_port_ranges = [
         "5701",
         "8080"
       ]
-      direction = "Inbound"
-      name = "AllowBastionCommunicationInbound"
-      priority = 150
-      protocol = "*"
-      source_address_prefix = "VirtualNetwork"
-      source_address_prefixes = []
+      direction                             = "Inbound"
+      name                                  = "AllowBastionCommunicationInbound"
+      priority                              = 150
+      protocol                              = "*"
+      source_address_prefix                 = "VirtualNetwork"
+      source_address_prefixes               = []
       source_application_security_group_ids = []
-      source_port_range = "*"
-      source_port_ranges = []
+      source_port_range                     = "*"
+      source_port_ranges                    = []
     },
     {
-      access = "Allow"
-      description = "Required for SSH and RDP outbound connectivity."
-      destination_address_prefix = "VirtualNetwork"
-      destination_address_prefixes = []
+      access                                     = "Allow"
+      description                                = "Required for SSH and RDP outbound connectivity."
+      destination_address_prefix                 = "VirtualNetwork"
+      destination_address_prefixes               = []
       destination_application_security_group_ids = []
-      destination_port_range = ""
+      destination_port_range                     = ""
       destination_port_ranges = [
         "22",
         "3389"
       ]
-      direction = "Outbound"
-      name = "AllowSshRdpOutbound"
-      priority = 100
-      protocol = "*"
-      source_address_prefix = "*"
-      source_address_prefixes = []
+      direction                             = "Outbound"
+      name                                  = "AllowSshRdpOutbound"
+      priority                              = 100
+      protocol                              = "*"
+      source_address_prefix                 = "*"
+      source_address_prefixes               = []
       source_application_security_group_ids = []
-      source_port_range = "*"
-      source_port_ranges = []
+      source_port_range                     = "*"
+      source_port_ranges                    = []
     },
     {
-      access = "Allow"
-      description = "Required for Azure Cloud outbound connectivity (Logs and Metrics)."
-      destination_address_prefix = "AzureCloud"
-      destination_address_prefixes = []
+      access                                     = "Allow"
+      description                                = "Required for Azure Cloud outbound connectivity (Logs and Metrics)."
+      destination_address_prefix                 = "AzureCloud"
+      destination_address_prefixes               = []
       destination_application_security_group_ids = []
-      destination_port_range = "443"
-      destination_port_ranges = []
-      direction = "Outbound"
-      name = "AllowAzureCloudOutbound"
-      priority = 110
-      protocol = "Tcp"
-      source_address_prefix = "*"
-      source_address_prefixes = []
-      source_application_security_group_ids = []
-      source_port_range = "*"
-      source_port_ranges = []
+      destination_port_range                     = "443"
+      destination_port_ranges                    = []
+      direction                                  = "Outbound"
+      name                                       = "AllowAzureCloudOutbound"
+      priority                                   = 110
+      protocol                                   = "Tcp"
+      source_address_prefix                      = "*"
+      source_address_prefixes                    = []
+      source_application_security_group_ids      = []
+      source_port_range                          = "*"
+      source_port_ranges                         = []
     },
     {
-      access = "Allow"
-      description = "Required for data plane communication between the underlying components of Azure Bastion."
-      destination_address_prefix = "VirtualNetwork"
-      destination_address_prefixes = []
+      access                                     = "Allow"
+      description                                = "Required for data plane communication between the underlying components of Azure Bastion."
+      destination_address_prefix                 = "VirtualNetwork"
+      destination_address_prefixes               = []
       destination_application_security_group_ids = []
-      destination_port_range = ""
+      destination_port_range                     = ""
       destination_port_ranges = [
         "5701",
         "8080"
       ]
-      direction = "Outbound"
-      name = "AllowBastionCommunicationOutbound"
-      priority = 120
-      protocol = "*"
-      source_address_prefix = "VirtualNetwork"
-      source_address_prefixes = []
+      direction                             = "Outbound"
+      name                                  = "AllowBastionCommunicationOutbound"
+      priority                              = 120
+      protocol                              = "*"
+      source_address_prefix                 = "VirtualNetwork"
+      source_address_prefixes               = []
       source_application_security_group_ids = []
-      source_port_range = "*"
-      source_port_ranges = []
+      source_port_range                     = "*"
+      source_port_ranges                    = []
     },
     {
-      access = "Allow"
-      description = "Required for session and certificate validation."
-      destination_address_prefix = "Internet"
-      destination_address_prefixes = []
+      access                                     = "Allow"
+      description                                = "Required for session and certificate validation."
+      destination_address_prefix                 = "Internet"
+      destination_address_prefixes               = []
       destination_application_security_group_ids = []
-      destination_port_range = "80"
-      destination_port_ranges = []
-      direction = "Outbound"
-      name = "AllowGetSessionInformationOutbound"
-      priority = 130
-      protocol = "*"
-      source_address_prefix = "*"
-      source_address_prefixes = []
-      source_application_security_group_ids = []
-      source_port_range = "*"
-      source_port_ranges = []
+      destination_port_range                     = "80"
+      destination_port_ranges                    = []
+      direction                                  = "Outbound"
+      name                                       = "AllowGetSessionInformationOutbound"
+      priority                                   = 130
+      protocol                                   = "*"
+      source_address_prefix                      = "*"
+      source_address_prefixes                    = []
+      source_application_security_group_ids      = []
+      source_port_range                          = "*"
+      source_port_ranges                         = []
     }
   ]
 }
@@ -222,9 +222,6 @@ resource "azapi_resource" "subnet_bastion" {
       }
       privateEndpointNetworkPolicies    = "Enabled"
       privateLinkServiceNetworkPolicies = "Enabled"
-      # routeTable = {
-      #   id = data.azurerm_route_table.route_table.id
-      # }
       serviceEndpointPolicies = []
       serviceEndpoints        = []
     }

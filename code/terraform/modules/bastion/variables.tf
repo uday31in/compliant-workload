@@ -20,42 +20,63 @@ variable "resource_group_name" {
   }
 }
 
-variable "cognitive_service_name" {
-  description = "Specifies the name of the cognitive service."
+variable "bastion_name" {
+  description = "Specifies the name of the bastion service."
   type        = string
   sensitive   = false
   validation {
-    condition     = length(var.cognitive_service_name) >= 2
+    condition     = length(var.bastion_name) >= 2
     error_message = "Please specify a valid name."
   }
 }
 
-variable "cognitive_service_kind" {
-  description = "Specifies the kind of the cognitive service."
+variable "vm_name" {
+  description = "Specifies the name of the virtual machine."
   type        = string
   sensitive   = false
   validation {
-    condition     = contains(["AnomalyDetector", "ComputerVision", "CognitiveServices", "ContentModerator", "CustomVision.Training", "CustomVision.Prediction", "Face", "FormRecognizer", "ImmersiveReader", "LUIS", "Personalizer", "SpeechServices", "TextAnalytics", "TextTranslation", "OpenAI"], var.cognitive_service_kind)
-    error_message = "Please specify a valid kind."
+    condition     = length(var.vm_name) >= 2
+    error_message = "Please specify a valid name."
   }
 }
 
-variable "cognitive_service_sku" {
-  description = "Specifies the name of the cognitive service."
+variable "admin_password" {
+  description = "Specifies the admin password of the virtual machine."
   type        = string
-  sensitive   = false
+  sensitive   = true
   validation {
-    condition     = length(var.cognitive_service_sku) >= 1
-    error_message = "Please specify a valid sku name."
+    condition     = length(var.admin_password) >= 2
+    error_message = "Please specify a valid password."
   }
 }
 
-variable "subnet_id" {
-  description = "Specifies the resource ID of the subnet used for the deployment."
+variable "admin_username" {
+  description = "Specifies the admin username of the virtual machine."
+  type        = string
+  default     = "VmMainUser"
+  sensitive   = false
+  validation {
+    condition     = length(var.admin_username) >= 2
+    error_message = "Please specify a valid password."
+  }
+}
+
+variable "subnet_bastion_id" {
+  description = "Specifies the resource ID of the subnet used for the bastion host."
   type        = string
   sensitive   = false
   validation {
-    condition     = length(split("/", var.subnet_id)) == 11
+    condition     = length(split("/", var.subnet_bastion_id)) == 11
+    error_message = "Please specify a valid resource ID."
+  }
+}
+
+variable "subnet_compute_id" {
+  description = "Specifies the resource ID of the subnet used for the compute."
+  type        = string
+  sensitive   = false
+  validation {
+    condition     = length(split("/", var.subnet_compute_id)) == 11
     error_message = "Please specify a valid resource ID."
   }
 }
@@ -87,15 +108,5 @@ variable "cmk_key_name" {
   validation {
     condition     = length(var.cmk_key_name) >= 2
     error_message = "Please specify a valid resource ID."
-  }
-}
-
-variable "private_dns_zone_id_cognitive_service" {
-  description = "Specifies the resource ID of the private DNS zone for the Cognitive Service."
-  type        = string
-  sensitive   = false
-  validation {
-    condition     = var.private_dns_zone_id_cognitive_service == "" || (length(split("/", var.private_dns_zone_id_cognitive_service)) == 9 && (endswith(var.private_dns_zone_id_cognitive_service, "privatelink.cognitiveservices.azure.com") || endswith(var.private_dns_zone_id_cognitive_service, "privatelink.openai.azure.com")))
-    error_message = "Please specify a valid resource ID for the private DNS Zone."
   }
 }
