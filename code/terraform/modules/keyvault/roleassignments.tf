@@ -1,5 +1,11 @@
-resource "azurerm_role_assignment" "example-disk" {
-  scope                = var.cmk_key_vault_id
+resource "azurerm_role_assignment" "role_assignment_key_vault_uai" {
+  scope                = azurerm_key_vault.key_vault.id
   role_definition_name = "Key Vault Crypto Service Encryption User"
-  principal_id         = azurerm_disk_encryption_set.disk_encryption_set.identity.0.principal_id
+  principal_id         = data.azurerm_user_assigned_identity.user_assigned_identity.principal_id
+}
+
+resource "azurerm_role_assignment" "role_assignment_key_vault_current" {
+  scope                = azurerm_key_vault.key_vault.id
+  role_definition_name = "Key Vault Crypto Officer"
+  principal_id         = data.azurerm_client_config.current.object_id
 }

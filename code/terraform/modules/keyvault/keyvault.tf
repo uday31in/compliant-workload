@@ -10,12 +10,12 @@ resource "azurerm_key_vault" "key_vault" {
   enabled_for_disk_encryption     = false
   enabled_for_template_deployment = false
   network_acls {
-    bypass                     = "None"
+    bypass                     = "AzureServices"
     default_action             = "Deny"
     ip_rules                   = []
     virtual_network_subnet_ids = []
   }
-  public_network_access_enabled = false
+  public_network_access_enabled = true
   purge_protection_enabled      = true
   sku_name                      = "standard"
   soft_delete_retention_days    = 7
@@ -24,11 +24,15 @@ resource "azurerm_key_vault" "key_vault" {
 
 resource "azurerm_key_vault_key" "key_vault_key" {
   name         = "cmk"
-  key_vault_id = azurerm_key_vault.example.id
+  key_vault_id = azurerm_key_vault.key_vault.id
 
   key_type = "RSA"
   key_size = 2048
   key_opts = ["decrypt", "encrypt", "sign", "unwrapKey", "verify", "wrapKey"]
+
+  depends_on = [
+    azurerm_role_assignment.role_assignment_key_vault_current
+  ]
 }
 
 resource "azurerm_private_endpoint" "key_vault_private_endpoint" {
