@@ -24,8 +24,9 @@ module "key_vault" {
   tags                          = var.tags
   resource_group_name           = azurerm_resource_group.services_rg.name
   key_vault_name                = "${local.prefix}-vault001"
+  cmk_uai_id                    = module.user_assigned_identity.user_assigned_identity_id
   subnet_id                     = module.network.subnet_private_endpoints_id
-  private_dns_zone_id_key_vault = var.private_dns_zone_id_key_vault
+  private_dns_zone_id_key_vault = module.network.private_dns_zone_key_vault_id
 }
 
 module "bastion" {
@@ -41,8 +42,8 @@ module "bastion" {
   subnet_bastion_id   = module.network.subnet_bastion_id
   subnet_compute_id   = module.network.subnet_compute_id
   cmk_uai_id          = module.user_assigned_identity.user_assigned_identity_id
-  cmk_key_vault_id    = var.cmk_key_vault_id
-  cmk_key_name        = var.cmk_key_name
+  cmk_key_vault_id    = module.key_vault.key_vault_id
+  cmk_key_name        = module.key_vault.key_vault_cmk_name
 }
 
 module "cognitive_service" {
@@ -56,9 +57,9 @@ module "cognitive_service" {
   cognitive_service_sku                 = "S0"
   subnet_id                             = module.network.subnet_private_endpoints_id
   cmk_uai_id                            = module.user_assigned_identity.user_assigned_identity_id
-  cmk_key_vault_id                      = var.cmk_key_vault_id
-  cmk_key_name                          = var.cmk_key_name
-  private_dns_zone_id_cognitive_service = var.private_dns_zone_id_cognitive_service
+  cmk_key_vault_id                      = module.key_vault.key_vault_id
+  cmk_key_name                          = module.key_vault.key_vault_cmk_name
+  private_dns_zone_id_cognitive_service = module.network.private_dns_zone_cognitive_service_id
 }
 
 module "storage" {
@@ -71,7 +72,7 @@ module "storage" {
   storage_container_names  = ["data"]
   subnet_id                = module.network.subnet_private_endpoints_id
   cmk_uai_id               = module.user_assigned_identity.user_assigned_identity_id
-  cmk_key_vault_id         = var.cmk_key_vault_id
-  cmk_key_name             = var.cmk_key_name
-  private_dns_zone_id_blob = var.private_dns_zone_id_blob
+  cmk_key_vault_id         = module.key_vault.key_vault_id
+  cmk_key_name             = module.key_vault.key_vault_cmk_name
+  private_dns_zone_id_blob = module.network.private_dns_zone_blob_id
 }
