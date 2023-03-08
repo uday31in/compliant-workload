@@ -24,8 +24,8 @@
             }
         },
         "failureThreshold": {
-            "type": "int",
-            "defaultValue": 1,
+            "type": "string",
+            "defaultValue": "0.1",
             "metadata": {
                 "description": "The remediation failure threshold settings"
             }
@@ -84,7 +84,7 @@
         "policyDefinitionReferenceId": "[managementGroupResourceId('Microsoft.Authorization/policyDefinitions', parameters('policyDefinitionReferenceName'))]",
         "name-compliant-remediation-properties": {
             "failureThreshold": {
-                "percentage": "[parameters('failureThreshold')]"
+                "percentage": "[float(parameters('failureThreshold'))]"
             },
             "filters": {
                 "locations": "[parameters('filterlocations')]"
