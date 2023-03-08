@@ -6,21 +6,21 @@
             "type": "string",
             "defaultValue": "remediation",
             "metadata": {
-                "description": "description"
+                "description": "deployment prefix"
             }
         },
         "location": {
             "type": "string",
             "defaultValue": "eastus",
             "metadata": {
-                "description": "description"
+                "description": "deployment location"
             }
         },
         "scope": {
             "type": "string",
-            "defaultValue": "22a8d224-e190-45c0-a936-f915ee2d8b16",
+            "defaultValue": "acea",
             "metadata": {
-                "description": "acea"
+                "description": "scope at remediation will be applied."
             }
         },
         "failureThreshold": {
