@@ -97,9 +97,20 @@
                 "description": "The Windows version for the VM. This will pick a fully patched image of this given Windows version."
             }
         },
+        "osType": {
+            "type": "string",
+            "defaultValue": "Windows",
+            "allowedValues": [
+                "Windows",
+                "Linux"
+            ],
+            "metadata": {
+                "description": "The operating system type of the platform image."
+            }
+        },
         "diskSku": {
             "type": "string",
-            "defaultValue": "StandardSSD_LRS",
+            "defaultValue": "Premium_LRS",
             "allowedValues": [
                 "Standard_LRS",
                 "StandardSSD_LRS",
@@ -129,11 +140,15 @@
         }
     },
     "variables": {
-        "name-compliant-vm": "[concat(parameters('prefix'),'-vm')]",
+        "name-compliant-vm": "[concat(parameters('prefix'),'')]",
         "name-compliant-vm-nic": "[concat(variables('name-compliant-vm'),'-nic')]",
         "name-compliant-vm-disk": "[concat(variables('name-compliant-vm'),'-disk')]",
+        "name-compliant-vm-disk-id": "[resourceId('Microsoft.Compute/disks', variables('name-compliant-vm-disk'))]",
         "name-compliant-vm-diskEncryptionSet": "[concat(variables('name-compliant-vm'),'-diskEncryptionSet')]",
         "name-compliant-vm-diskEncryptionSet-id": "[resourceId('Microsoft.Compute/diskEncryptionSets', variables('name-compliant-vm-diskEncryptionSet'))]",
+        "imagePublisher": "[if(equals(parameters('osType'), 'Windows'), 'MicrosoftWindowsServer', 'OpenLogic')]",
+        "imageOffer": "[if(equals(parameters('osType'), 'Windows'), 'WindowsServer', 'CentOS')]",
+        "imageSku": "[if(equals(parameters('osType'), 'Windows'), '2019-Datacenter', '7.5')]",
         "securityProfileJson": {
             "uefiSettings": {
                 "secureBootEnabled": true,
@@ -144,63 +159,77 @@
         }
     },
     "resources": [
-        {
-            "type": "Microsoft.Network/networkInterfaces",
-            "apiVersion": "2022-05-01",
-            "name": "[variables('name-compliant-vm-nic')]",
-            "location": "[parameters('location')]",
-            "properties": {
-                "ipConfigurations": [
-                    {
-                        "name": "ipconfig",
-                        "properties": {
-                            "privateIPAllocationMethod": "Dynamic",
-                            "subnet": {
-                                "id": "[parameters('subnetId')]"
-                            }
-                        }
-                    }
-                ]
-            }
-        },
-        {
-            "type": "Microsoft.Compute/diskEncryptionSets",
-            "apiVersion": "2022-07-02",
-            "name": "[variables('name-compliant-vm-diskEncryptionSet')]",
-            "location": "[parameters('location')]",
-            "identity": {
-                "type": "SystemAssigned"
-            },
-            "properties": {
-                "activeKey": {
-                    "keyUrl": "[parameters('keyVaultUri')]",
-                    "sourceVault": {
-                        "id": "[parameters('keyVaultId')]"
-                    }
-                },
-                "encryptionType": "EncryptionAtRestWithPlatformAndCustomerKeys"
-            }
-        },
+        // {
+        //     "type": "Microsoft.Network/networkInterfaces",
+        //     "apiVersion": "2022-05-01",
+        //     "name": "[variables('name-compliant-vm-nic')]",
+        //     "location": "[parameters('location')]",
+        //     "properties": {
+        //         "ipConfigurations": [
+        //             {
+        //                 "name": "ipconfig",
+        //                 "properties": {
+        //                     "privateIPAllocationMethod": "Dynamic",
+        //                     "subnet": {
+        //                         "id": "[parameters('subnetId')]"
+        //                     }
+        //                 }
+        //             }
+        //         ]
+        //     }
+        // },
+        // {
+        //     "type": "Microsoft.Compute/diskEncryptionSets",
+        //     "apiVersion": "2022-07-02",
+        //     "name": "[variables('name-compliant-vm-diskEncryptionSet')]",
+        //     "location": "[parameters('location')]",
+        //     "identity": {
+        //         "type": "SystemAssigned"
+        //     },
+        //     "properties": {
+        //         "activeKey": {
+        //             "keyUrl": "[parameters('keyVaultUri')]",
+        //             "sourceVault": {
+        //                 "id": "[parameters('keyVaultId')]"
+        //             }
+        //         },
+        //         "encryptionType": "EncryptionAtRestWithPlatformAndCustomerKeys"
+        //     }
+        // },
+        // {
+        //     "type": "Microsoft.Authorization/roleAssignments",
+        //     "apiVersion": "2022-04-01",
+        //     "name": "[guid(deployment().name)]",
+        //     "dependsOn": [
+        //         "[variables('name-compliant-vm-diskEncryptionSet')]"
+        //     ],
+        //     "properties": {
+        //         "roleDefinitionId": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', 'e147488a-f6f5-4113-8e2d-b22465e65bf6')]",
+        //         "principalId": "[reference(concat('Microsoft.Compute/diskEncryptionSets/', variables('name-compliant-vm-diskEncryptionSet')), '2019-11-01', 'Full').identity.principalId]",
+        //         "principalType": "ServicePrincipal"
+        //     }
+        // },
         {
             "type": "Microsoft.Compute/disks",
-            "apiVersion": "2019-07-01",
+            "apiVersion": "2022-07-02",
             "name": "[variables('name-compliant-vm-disk')]",
             "location": "[parameters('location')]",
             "dependsOn": [
-                "[variables('name-compliant-vm-diskEncryptionSet')]"
+                // "[variables('name-compliant-vm-diskEncryptionSet')]",
+                // "[guid(deployment().name)]"
             ],
             "properties": {
                 "diskSizeGB": 128,
-                "networkAccessPolicy" : "DenyAll",
-                "publicNetworkAccess" : "Disabled",
+                "networkAccessPolicy": "DenyAll",
+                "publicNetworkAccess": "Disabled",
                 "creationData": {
                     "createOption": "FromImage",
-                    "imageReference": {
-                        "id": "[resourceId('Microsoft.Compute/diskEncryptionSets', variables('name-compliant-vm-diskEncryptionSet'))]"
+                    "galleryImageReference": {
+                        "sharedGalleryImageId":  "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Compute/images/', variables('imagePublisher'), '.', variables('imageOffer'), '.', variables('imageSku'), '-latest')]",
                     }
                 },
                 "encryption": {
-                    "type": "EncryptionAtRestWithCustomerKey",
+                    "type": "EncryptionAtRestWithPlatformAndCustomerKeys",
                     "diskEncryptionSetId": "[variables('name-compliant-vm-diskEncryptionSet-id')]"
                 }
             },
@@ -208,71 +237,59 @@
                 "name": "[parameters('diskSku')]"
             }
         },
-        {
-            "type": "Microsoft.Authorization/roleAssignments",
-            "apiVersion": "2022-04-01",
-            "name": "[guid(deployment().name)]",
-            "dependsOn": [
-                "[variables('name-compliant-vm-diskEncryptionSet')]"
-            ],
-            "properties": {
-                "roleDefinitionId": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', 'e147488a-f6f5-4113-8e2d-b22465e65bf6')]",
-                "principalId": "[reference(concat('Microsoft.Compute/diskEncryptionSets/', variables('name-compliant-vm-diskEncryptionSets')), '2019-11-01', 'Full').identity.principalId]",
-                "principalType" : "ServicePrincipal"
-
-            }
-        },
-        {
-            "type": "Microsoft.Compute/virtualMachines",
-            "apiVersion": "2022-11-01",
-            "name": "[variables('name-compliant-vm')]",
-            "location": "[parameters('location')]",
-            "dependsOn": [
-                "[resourceId('Microsoft.Network/networkInterfaces', variables('name-compliant-vm-nic'))]",
-                "[variables('name-compliant-vm-diskEncryptionSet')]",
-                "[variables('name-compliant-vm-disk')]",
-                "[guid(deployment().name)]"
-            ],
-            "properties": {
-                "hardwareProfile": {
-                    "vmSize": "[parameters('vmSize')]"
-                },
-                "osProfile": {
-                    "computerName": "[variables('name-compliant-vm')]",
-                    "adminUsername": "[parameters('adminUsername')]",
-                    "adminPassword": "[parameters('adminPassword')]",
-                    "windowsConfiguration": {
-                        "enableAutomaticUpdates": false,
-                        "provisionVmAgent": true
-                    }
-                },
-                "storageProfile": {
-                    "imageReference": {
-                        "publisher": "MicrosoftWindowsServer",
-                        "offer": "WindowsServer",
-                        "sku": "[parameters('OSVersion')]",
-                        "version": "latest"
-                    },
-                    "osDisk": {
-                        "createOption": "FromImage",
-                        "managedDisk": {
-                            "id": "[resourceId('Microsoft.Compute/disks/', variables('vVmDataDiskName'))]",
-                            "diskEncryptionSet": {
-                                "id": "[variables('name-compliant-vm-diskEncryptionSet-id')]"
-                            }
-                        }
-                    }
-                },
-                "networkProfile": {
-                    "networkInterfaces": [
-                        {
-                            "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('name-compliant-vm-nic'))]"
-                        }
-                    ]
-                },
-                "securityProfile": "[if(equals(parameters('securityType'), 'TrustedLaunch'), variables('securityProfileJson'), json('null'))]"
-            }
-        }
+        // {
+        //     "type": "Microsoft.Compute/virtualMachines",
+        //     "apiVersion": "2022-03-01",
+        //     "name": "[variables('name-compliant-vm')]",
+        //     "location": "[parameters('location')]",
+        //     "dependsOn": [
+        //         "[resourceId('Microsoft.Network/networkInterfaces', variables('name-compliant-vm-nic'))]",
+        //         "[variables('name-compliant-vm-diskEncryptionSet')]",
+        //         "[variables('name-compliant-vm-disk')]",
+        //         "[guid(deployment().name)]"
+        //     ],
+        //     "properties": {
+        //         "hardwareProfile": {
+        //             "vmSize": "[parameters('vmSize')]"
+        //         },
+        //         "osProfile": {
+        //             "computerName": "[variables('name-compliant-vm')]",
+        //             "adminUsername": "[parameters('adminUsername')]",
+        //             "adminPassword": "[parameters('adminPassword')]",
+        //             "windowsConfiguration": {
+        //                 "enableAutomaticUpdates": false,
+        //                 "provisionVmAgent": true
+        //             }
+        //         },
+        //         "storageProfile": {
+        //             "osDisk": {
+        //                 "createOption": "Attach",
+        //                 "managedDisk": {
+        //                     "storageAccountType": "[parameters('diskSku')]",
+        //                     "id": "[variables('name-compliant-vm-disk-id')]",
+        //                     "diskEncryptionSet": {
+        //                         "id": "[variables('name-compliant-vm-diskEncryptionSet-id')]"
+        //                     }
+        //                 },
+        //                 "osType":"Windows"
+        //             },
+        //             "imageReference": {
+        //                 "publisher": "MicrosoftWindowsServer",
+        //                 "offer": "WindowsServer",
+        //                 "sku": "[parameters('OSVersion')]",
+        //                 "version": "latest"
+        //             }
+        //         },
+        //         "networkProfile": {
+        //             "networkInterfaces": [
+        //                 {
+        //                     "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('name-compliant-vm-nic'))]"
+        //                 }
+        //             ]
+        //         },
+        //         "securityProfile": "[if(equals(parameters('securityType'), 'TrustedLaunch'), variables('securityProfileJson'), json('null'))]"
+        //     }
+        // }
     ],
     "outputs": {},
     "functions": []
