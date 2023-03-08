@@ -17,7 +17,7 @@ resource "azurerm_storage_account" "storage" {
   allow_nested_items_to_be_public = false
   allowed_copy_scope              = "AAD"
   blob_properties {
-    change_feed_enabled           = false
+    change_feed_enabled = false
     container_delete_retention_policy {
       days = 7
     }
