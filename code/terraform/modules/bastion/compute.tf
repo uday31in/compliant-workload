@@ -71,4 +71,8 @@ resource "azurerm_windows_virtual_machine" "vm" {
   size         = "Standard_D2s_v5"
   timezone     = "UTC"
   vtpm_enabled = true
+
+  depends_on = [
+    azurerm_role_assignment.role_assignment_key_vault
+  ]
 }

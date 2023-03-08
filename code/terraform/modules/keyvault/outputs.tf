@@ -5,5 +5,13 @@ output "key_vault_id" {
 }
 
 output "key_vault_cmk_id" {
-  value = azurerm_key_vault_key.key_vault_key.id
+  value       = azurerm_key_vault_key.key_vault_key.id
+  description = "Specifies the resource ID of the Key Vault key used for cmk."
+  sensitive   = false
+}
+
+output "key_vault_cmk_name" {
+  value       = azurerm_key_vault_key.key_vault_key.name
+  description = "Specifies the name of the Key Vault key used for cmk."
+  sensitive   = false
 }
