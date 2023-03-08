@@ -20,14 +20,24 @@ variable "resource_group_name" {
   }
 }
 
-variable "key_vault_name" {
-  description = "Specifies the name of the key vault."
+variable "storage_name" {
+  description = "Specifies the name of the storage accounts."
   type        = string
   sensitive   = false
   validation {
-    condition     = length(var.key_vault_name) >= 2
+    condition     = length(var.storage_name) >= 2
     error_message = "Please specify a valid name."
   }
+}
+
+variable "storage_container_names" {
+  description = "Specifies the list of names for storage account containers."
+  type        = set(string)
+  sensitive   = false
+  # validation {
+  #   condition     = true
+  #   error_message = "Please specify a valid name."
+  # }
 }
 
 variable "subnet_id" {
@@ -50,12 +60,32 @@ variable "cmk_uai_id" {
   }
 }
 
-variable "private_dns_zone_id_key_vault" {
-  description = "Specifies the resource ID of the private DNS zone for Azure Key Vault."
+variable "cmk_key_vault_id" {
+  description = "Specifies the resource ID of the key vault."
   type        = string
   sensitive   = false
   validation {
-    condition     = var.private_dns_zone_id_key_vault == "" || (length(split("/", var.private_dns_zone_id_key_vault)) == 9 && endswith(var.private_dns_zone_id_key_vault, "privatelink.vaultcore.azure.net"))
+    condition     = length(split("/", var.cmk_key_vault_id)) == 9
+    error_message = "Please specify a valid resource ID."
+  }
+}
+
+variable "cmk_key_name" {
+  description = "Specifies the resource ID of the key vault."
+  type        = string
+  sensitive   = false
+  validation {
+    condition     = length(var.cmk_key_name) >= 2
+    error_message = "Please specify a valid resource ID."
+  }
+}
+
+variable "private_dns_zone_id_blob" {
+  description = "Specifies the resource ID of the private DNS zone for Azure Storage blob endpoints."
+  type        = string
+  sensitive   = false
+  validation {
+    condition     = var.private_dns_zone_id_blob == "" || (length(split("/", var.private_dns_zone_id_blob)) == 9 && endswith(var.private_dns_zone_id_blob, "privatelink.blob.core.windows.net"))
     error_message = "Please specify a valid resource ID for the private DNS Zone."
   }
 }

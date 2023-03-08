@@ -61,42 +61,23 @@ variable "route_table_id" {
   }
 }
 
-variable "private_dns_zone_id_blob" {
-  description = "Specifies the resource ID of the private DNS zone for Azure Storage blob endpoints."
+variable "admin_password" {
+  description = "Specifies the admin password of the virtual machine."
   type        = string
-  sensitive   = false
+  sensitive   = true
   validation {
-    condition     = var.private_dns_zone_id_blob == "" || (length(split("/", var.private_dns_zone_id_blob)) == 9 && endswith(var.private_dns_zone_id_blob, "privatelink.blob.core.windows.net"))
-    error_message = "Please specify a valid resource ID for the private DNS Zone."
+    condition     = length(var.admin_password) >= 2
+    error_message = "Please specify a valid password."
   }
 }
 
-variable "private_dns_zone_id_dfs" {
-  description = "Specifies the resource ID of the private DNS zone for Azure Storage dfs endpoints."
+variable "admin_username" {
+  description = "Specifies the admin username of the virtual machine."
   type        = string
+  default     = "VmMainUser"
   sensitive   = false
   validation {
-    condition     = var.private_dns_zone_id_dfs == "" || (length(split("/", var.private_dns_zone_id_dfs)) == 9 && endswith(var.private_dns_zone_id_dfs, "privatelink.dfs.core.windows.net"))
-    error_message = "Please specify a valid resource ID for the private DNS Zone."
-  }
-}
-
-variable "private_dns_zone_id_queue" {
-  description = "Specifies the resource ID of the private DNS zone for Azure Storage queue endpoints."
-  type        = string
-  sensitive   = false
-  validation {
-    condition     = var.private_dns_zone_id_queue == "" || (length(split("/", var.private_dns_zone_id_queue)) == 9 && endswith(var.private_dns_zone_id_queue, "privatelink.queue.core.windows.net"))
-    error_message = "Please specify a valid resource ID for the private DNS Zone."
-  }
-}
-
-variable "private_dns_zone_id_key_vault" {
-  description = "Specifies the resource ID of the private DNS zone for Azure Key Vault."
-  type        = string
-  sensitive   = false
-  validation {
-    condition     = var.private_dns_zone_id_key_vault == "" || (length(split("/", var.private_dns_zone_id_key_vault)) == 9 && endswith(var.private_dns_zone_id_key_vault, "privatelink.vaultcore.azure.net"))
-    error_message = "Please specify a valid resource ID for the private DNS Zone."
+    condition     = length(var.admin_username) >= 2
+    error_message = "Please specify a valid password."
   }
 }
