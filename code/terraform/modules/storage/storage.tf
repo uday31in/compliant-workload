@@ -18,7 +18,6 @@ resource "azurerm_storage_account" "storage" {
   allowed_copy_scope              = "AAD"
   blob_properties {
     change_feed_enabled           = false
-    change_feed_retention_in_days = 7
     container_delete_retention_policy {
       days = 7
     }
@@ -36,11 +35,11 @@ resource "azurerm_storage_account" "storage" {
   cross_tenant_replication_enabled = false
   default_to_oauth_authentication  = true
   enable_https_traffic_only        = true
-  immutability_policy {
-    state                         = "Disabled"
-    allow_protected_append_writes = true
-    period_since_creation_in_days = 7
-  }
+  # immutability_policy {
+  #   state                         = "Disabled"
+  #   allow_protected_append_writes = true
+  #   period_since_creation_in_days = 7
+  # }
   infrastructure_encryption_enabled = true
   is_hns_enabled                    = false
   large_file_share_enabled          = false
@@ -130,7 +129,7 @@ resource "azurerm_private_endpoint" "storage_private_endpoint_blob" {
   dynamic "private_dns_zone_group" {
     for_each = var.private_dns_zone_id_blob == "" ? [] : [1]
     content {
-      name = "${azurerm_cognitive_account.cognitive_service.name}-arecord"
+      name = "${azurerm_storage_account.storage.name}-arecord"
       private_dns_zone_ids = [
         var.private_dns_zone_id_blob
       ]
