@@ -222,8 +222,8 @@ resource "azapi_resource" "subnet_bastion" {
       }
       privateEndpointNetworkPolicies    = "Enabled"
       privateLinkServiceNetworkPolicies = "Enabled"
-      serviceEndpointPolicies = []
-      serviceEndpoints        = []
+      serviceEndpointPolicies           = []
+      serviceEndpoints                  = []
     }
   })
 }
