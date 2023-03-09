@@ -32,7 +32,9 @@
         },
         "filterlocations": {
             "type": "array",
-            "defaultValue": ["eastus"],
+            "defaultValue": [
+                "eastus"
+            ],
             "metadata": {
                 "description": "The resource locations that will be remediated."
             }
@@ -46,14 +48,14 @@
         },
         "policyAssignmentName": {
             "type": "string",
-            "defaultValue": "Deploy Microsoft Defender for Cloud configuration",
+            "defaultValue": "deploy-ascdf-config",
             "metadata": {
                 "description": "The policy Assignment Name that should be remediated"
             }
         },
-        "policyDefinitionReferenceName": {
+        "policyDefinitionReferenceId": {
             "type": "string",
-            "defaultValue": "defenderForStorageAccounts",
+            "defaultValue": "defenderForCosmosDb",
             "metadata": {
                 "description": "The policy definition reference ID of the individual definition that should be remediated. Required when the policy assignment being remediated assigns a policy set definition."
             }
@@ -81,17 +83,13 @@
         "name-compliant-remediation": "[concat(parameters('prefix'),'-remediation')]",
         "name-compliant-remediation-deployment": "[concat(variables('name-compliant-remediation'),'-deployment')]",
         "policyAssignmentId": "[managementGroupResourceId('Microsoft.Authorization/policyAssignments', parameters('policyAssignmentName'))]",
-        "policyDefinitionReferenceId": "[managementGroupResourceId('Microsoft.Authorization/policyDefinitions', parameters('policyDefinitionReferenceName'))]",
-        "name-compliant-remediation-properties": {
+        "compliant-remediation-properties": {
             "failureThreshold": {
                 "percentage": "[float(parameters('failureThreshold'))]"
             },
-            "filters": {
-                "locations": "[parameters('filterlocations')]"
-            },
             "parallelDeployments": "[parameters('parallelDeployments')]",
             "policyAssignmentId": "[variables('policyAssignmentId')]",
-            "policyDefinitionReferenceId": "[variables('policyDefinitionReferenceId')]",
+            "policyDefinitionReferenceId": "[parameters('policyDefinitionReferenceId')]",
             "resourceCount": "[parameters('resourceCount')]",
             "resourceDiscoveryMode": "[parameters('resourceDiscoveryMode')]"
         }
@@ -101,25 +99,13 @@
             "type": "Microsoft.PolicyInsights/remediations",
             "name": "[variables('name-compliant-remediation-deployment')]",
             "apiVersion": "2021-10-01",
-            "Properties": {
-                "failureThreshold": {
-                    "percentage": "[parameters('failureThreshold')]"
-                },
-                "filters": {
-                    "locations": "[parameters('filterlocations')]"
-                },
-                "parallelDeployments": "[parameters('parallelDeployments')]",
-                "policyAssignmentId": "[variables('policyAssignmentId')]",
-                "policyDefinitionReferenceId": "[variables('policyDefinitionReferenceId')]",
-                "resourceCount": "[parameters('resourceCount')]",
-                "resourceDiscoveryMode": "[parameters('resourceDiscoveryMode')]"
-            }
+            "Properties": "[variables('compliant-remediation-properties')]"
         }
     ],
     "outputs": {
         "remediation-property": {
             "type": "object",
-            "value": "[variables('name-compliant-remediation-properties')]"
+            "value": "[variables('compliant-remediation-properties')]"
         }
     },
     "functions": []
