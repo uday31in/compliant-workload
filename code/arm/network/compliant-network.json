@@ -28,6 +28,13 @@
             "metadata": {
                 "description": "description"
             }
+        },
+        "ddosProtectionPlan": {
+            "type": "string",
+            "defaultValue": "/subscriptions/539e250b-b64b-4aec-aace-271141f578e5/resourceGroups/solar-ddos/providers/Microsoft.Network/ddosProtectionPlans/solar-ddos-eastus",
+            "metadata": {
+                "description": "description"
+            }
         }
     },
     "variables": {
@@ -270,7 +277,7 @@
                 "virtualNetworkPeerings": [],
                 "enableDdosProtection": true,
                 "ddosProtectionPlan": {
-                    "id": "/subscriptions/c62c2473-9d97-4014-a42c-dd41f1b3c5e7/resourceGroups/chase-ddos/providers/Microsoft.Network/ddosProtectionPlans/chase-ddos-westeurope"
+                    "id": "[parameters('ddosProtectionPlan')]"
                 }
             }
         }

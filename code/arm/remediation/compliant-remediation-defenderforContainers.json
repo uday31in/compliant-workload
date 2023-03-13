@@ -1,0 +1,112 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "prefix": {
+            "type": "string",
+            "defaultValue": "remediation",
+            "metadata": {
+                "description": "deployment prefix"
+            }
+        },
+        "location": {
+            "type": "string",
+            "defaultValue": "eastus",
+            "metadata": {
+                "description": "deployment location"
+            }
+        },
+        "scope": {
+            "type": "string",
+            "defaultValue": "acea",
+            "metadata": {
+                "description": "scope at remediation will be applied."
+            }
+        },
+        "failureThreshold": {
+            "type": "string",
+            "defaultValue": "0.1",
+            "metadata": {
+                "description": "The remediation failure threshold settings"
+            }
+        },
+        "filterlocations": {
+            "type": "array",
+            "defaultValue": [
+                "eastus"
+            ],
+            "metadata": {
+                "description": "The resource locations that will be remediated."
+            }
+        },
+        "parallelDeployments": {
+            "type": "int",
+            "defaultValue": 2,
+            "metadata": {
+                "description": "Determines how many resources to remediate at any given time. Can be used to increase or reduce the pace of the remediation. If not provided, the default parallel deployments value is used."
+            }
+        },
+        "policyAssignmentName": {
+            "type": "string",
+            "defaultValue": "deploy-ascdf-config",
+            "metadata": {
+                "description": "The policy Assignment Name that should be remediated"
+            }
+        },
+        "policyDefinitionReferenceId": {
+            "type": "string",
+            "defaultValue": "defenderforContainers",
+            "metadata": {
+                "description": "The policy definition reference ID of the individual definition that should be remediated. Required when the policy assignment being remediated assigns a policy set definition."
+            }
+        },
+        "resourceCount": {
+            "type": "int",
+            "defaultValue": 2,
+            "metadata": {
+                "description": "Determines the max number of resources that can be remediated by the remediation job. If not provided, the default resource count is used."
+            }
+        },
+        "resourceDiscoveryMode": {
+            "type": "string",
+            "defaultValue": "ExistingNonCompliant",
+            "allowedValues": [
+                "ExistingNonCompliant",
+                "ReEvaluateCompliance"
+            ],
+            "metadata": {
+                "description": "The way resources to remediate are discovered. Defaults to ExistingNonCompliant if not specified"
+            }
+        }
+    },
+    "variables": {
+        "name-compliant-remediation": "[concat(parameters('prefix'),'-remediation')]",
+        "name-compliant-remediation-deployment": "[concat(variables('name-compliant-remediation'),'-deployment')]",
+        "policyAssignmentId": "[managementGroupResourceId('Microsoft.Authorization/policyAssignments', parameters('policyAssignmentName'))]",
+        "compliant-remediation-properties": {
+            "failureThreshold": {
+                "percentage": "[float(parameters('failureThreshold'))]"
+            },
+            "parallelDeployments": "[parameters('parallelDeployments')]",
+            "policyAssignmentId": "[variables('policyAssignmentId')]",
+            "policyDefinitionReferenceId": "[parameters('policyDefinitionReferenceId')]",
+            "resourceCount": "[parameters('resourceCount')]",
+            "resourceDiscoveryMode": "[parameters('resourceDiscoveryMode')]"
+        }
+    },
+    "resources": [
+        {
+            "type": "Microsoft.PolicyInsights/remediations",
+            "name": "[variables('name-compliant-remediation-deployment')]",
+            "apiVersion": "2021-10-01",
+            "Properties": "[variables('compliant-remediation-properties')]"
+        }
+    ],
+    "outputs": {
+        "remediation-property": {
+            "type": "object",
+            "value": "[variables('compliant-remediation-properties')]"
+        }
+    },
+    "functions": []
+}

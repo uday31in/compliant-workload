@@ -178,7 +178,8 @@
             "apiVersion": "2021-10-01",
             "name": "[variables('name-compliant-keyvault-cmk-name')]",
             "dependsOn": [
-                "[variables('name-compliant-keyvault-id')]"
+                "[variables('name-compliant-keyvault-id')]",
+                "[variables('name-compliant-keyvault-pe')]"
             ],
             "properties": {
                 "kty": "RSA",
@@ -216,6 +217,10 @@
         "keyVault": {
             "type": "object",
             "value": "[reference( variables('name-compliant-keyvault-id'))]"
+        },
+        "keyVaultId": {
+            "type": "string",
+            "value": "[variables('name-compliant-keyvault-id')]"
         }
     },
     "functions": []

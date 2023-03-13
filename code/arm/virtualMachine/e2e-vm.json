@@ -4,14 +4,14 @@
     "parameters": {
         "prefix": {
             "type": "string",
-            "defaultValue": "uday-vm",
+            "defaultValue": "CVM03",
             "metadata": {
                 "description": "description"
             }
         },
-        "location":{
+        "location": {
             "type": "string",
-            "defaultValue": "westeurope",
+            "defaultValue": "eastus",
             "metadata": {
                 "description": "description"
             }
@@ -23,9 +23,24 @@
                 "description": "description"
             }
         },
+        "adminUsername": {
+            "type": "string",
+            "defaultValue": "saturn",
+            "metadata": {
+                "description": "Password for the Virtual Machine."
+            }
+        },
+        "adminPassword": {
+            "type": "securestring",
+            "defaultValue": "Pa$$w0rd123456789",
+            "minLength": 12,
+            "metadata": {
+                "description": "Password for the Virtual Machine."
+            }
+        },
         "_artifactsLocation": {
             "type": "string",
-            "defaultValue": "https://raw.githubusercontent.com/uday31in/compliant-workload/main/",
+            "defaultValue": "https://raw.githubusercontent.com/uday31in/compliant-workload/main/code/arm/",
             "metadata": {
                 "description": "This is the link to the nested template that must to be accessible to ARM to be able to use as a part of nested deployment.
                                 Please feel free to use template hosted here or override with choice of your location.
@@ -40,19 +55,14 @@
     "variables": {
         "name-compliant-resourcegroup": "[concat(parameters('prefix'),'-resourcegroup')]",
         "name-compliant-resourcegroup-deployment": "[concat(variables('name-compliant-resourcegroup'),'-deployment')]",
-
         "name-compliant-vnet": "[concat(parameters('prefix'),'-vnet')]",
         "name-compliant-vnet-deployment": "[concat(variables('name-compliant-vnet'),'-deployment')]",
-
         "name-compliant-userAssignedIdentity": "[concat(parameters('prefix'),'-userAssignedIdentity')]",
         "name-compliant-userAssignedIdentity-deployment": "[concat(variables('name-compliant-userAssignedIdentity'),'-deployment')]",
-
         "name-compliant-KeyVault": "[concat(parameters('prefix'),'-kv')]",
         "name-compliant-KeyVault-deployment": "[concat(variables('name-compliant-KeyVault'),'-deployment')]",
-
         "name-compliant-storage": "[ replace(concat(parameters('prefix'),'-storage'),'-','')]",
         "name-compliant-storage-deployment": "[concat(concat(parameters('prefix'),'-storage'),'-deployment')]",
-
         "name-compliant-vm": "[ concat(parameters('prefix'),'-vm')]",
         "name-compliant-vm-deployment": "[concat(variables('name-compliant-vm'),'-deployment')]"
     },
@@ -98,7 +108,10 @@
                 },
                 "parameters": {
                     "prefix": {
-                        "value":"[variables('name-compliant-vnet')]"
+                        "value": "[variables('name-compliant-vnet')]"
+                    },
+                    "location":{
+                        "value": "[parameters('location')]"
                     },
                     "_artifactsLocation": {
                         "value": "[parameters('_artifactsLocation')]"
@@ -125,7 +138,10 @@
                 },
                 "parameters": {
                     "prefix": {
-                        "value":"[variables('name-compliant-userAssignedIdentity')]"
+                        "value": "[variables('name-compliant-userAssignedIdentity')]"
+                    },
+                    "location":{
+                        "value": "[parameters('location')]"
                     },
                     "_artifactsLocation": {
                         "value": "[parameters('_artifactsLocation')]"
@@ -144,18 +160,21 @@
             "properties": {
                 "mode": "incremental",
                 "templateLink": {
-                    "uri": "[uri(parameters('_artifactsLocation'), concat('KeyVault/compliant-KeyVault.json', parameters('_artifactsLocationSasToken')))]",
+                    "uri": "[uri(parameters('_artifactsLocation'), concat('keyVault/compliant-keyVault.json', parameters('_artifactsLocationSasToken')))]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
                     "prefix": {
-                        "value":"[variables('name-compliant-KeyVault')]"
+                        "value": "[variables('name-compliant-KeyVault')]"
+                    },
+                    "location":{
+                        "value": "[parameters('location')]"
                     },
                     "userAssignedIdentity": {
-                        "value":"[reference(variables('name-compliant-userAssignedIdentity-deployment')).outputs.userAssignedIdentity.value]"
+                        "value": "[reference(variables('name-compliant-userAssignedIdentity-deployment')).outputs.userAssignedIdentity.value]"
                     },
                     "subnetId": {
-                        "value":"[reference(variables('name-compliant-vnet-deployment')).outputs.subnetId.value]"
+                        "value": "[reference(variables('name-compliant-vnet-deployment')).outputs.subnetId.value]"
                     },
                     "_artifactsLocation": {
                         "value": "[parameters('_artifactsLocation')]"
@@ -174,12 +193,15 @@
             "properties": {
                 "mode": "incremental",
                 "templateLink": {
-                    "uri": "[uri(parameters('_artifactsLocation'), concat('storage/compliant-storage.json', parameters('_artifactsLocationSasToken')))]",
+                    "uri": "[uri(parameters('_artifactsLocation'), concat('virtualMachine/compliant-vm.json', parameters('_artifactsLocationSasToken')))]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
                     "prefix": {
-                        "value":"[variables('name-compliant-storage')]"
+                        "value": "[variables('name-compliant-vm')]"
+                    },
+                    "location":{
+                        "value": "[parameters('location')]"
                     },
                     "_artifactsLocation": {
                         "value": "[parameters('_artifactsLocation')]"
@@ -187,26 +209,25 @@
                     "_artifactsLocationSasToken": {
                         "value": "[parameters('_artifactsLocationSasToken')]"
                     },
-                    "userAssignedIdentityName": {
-                        "value":"[reference(variables('name-compliant-userAssignedIdentity-deployment')).outputs.userAssignedIdentityName.value]"
+                    "adminUsername": {
+                        "value": "[parameters('adminUsername')]"
                     },
-                    "userAssignedIdentityResourceGroup": {
-                        "value":"[reference(variables('name-compliant-userAssignedIdentity-deployment')).outputs.userAssignedIdentityResourceGroup.value.id]"
+                    "adminPassword": {
+                        "value": "[parameters('adminPassword')]"
                     },
                     "subnetId": {
-                        "value":"[reference(variables('name-compliant-vnet-deployment')).outputs.subnetId.value]"
+                        "value": "[reference(variables('name-compliant-vnet-deployment')).outputs.subnetId.value]"
                     },
-                    "keyName": {
-                        "value":"[reference(variables('name-compliant-keyVault-deployment')).outputs.cmkName.value]"
+                    "keyVaultId": {
+                        "value": "[reference(variables('name-compliant-keyVault-deployment')).outputs.keyVaultId.value]"
                     },
                     "keyVaultUri": {
-                        "value":"[reference(variables('name-compliant-keyVault-deployment')).outputs.keyVault.value.vaultUri]"
+                        "value": "[reference(variables('name-compliant-keyVault-deployment')).outputs.cmk.value.keyUriWithVersion]"
                     }
                 }
             }
         }
     ],
-    "outputs": {
-    },
+    "outputs": {},
     "functions": []
 }
