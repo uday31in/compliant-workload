@@ -11,7 +11,7 @@ output "key_vault_cmk_id" {
 }
 
 output "key_vault_cmk_name" {
-  value       = azurerm_key_vault_key.key_vault_key.name
+  value       = azapi_resource.key_vault_key.id // azurerm_key_vault_key.key_vault_key.name
   description = "Specifies the name of the Key Vault key used for cmk."
   sensitive   = false
 }
