@@ -16,6 +16,12 @@ output "subnet_compute_id" {
   sensitive   = false
 }
 
+output "subnet_apim_id" {
+  value       = azapi_resource.subnet_apim.id
+  description = "Specifies the resource ID of the API Management subnet."
+  sensitive   = false
+}
+
 output "private_dns_zone_blob_id" {
   value       = azurerm_private_dns_zone.private_dns_zone_blob.id
   description = "Specifies the resource ID of the Private DNS Zone."
