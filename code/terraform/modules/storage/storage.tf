@@ -30,7 +30,7 @@ resource "azurerm_storage_account" "storage" {
   }
   customer_managed_key {
     user_assigned_identity_id = data.azurerm_user_assigned_identity.user_assigned_identity.id
-    key_vault_key_id          = data.azurerm_key_vault_key.key_vault_key.id
+    key_vault_key_id          = jsondecode(data.azapi_resource.key_vault_key.output).properties.keyUriWithVersion # data.azurerm_key_vault_key.key_vault_key.id
   }
   cross_tenant_replication_enabled = false
   default_to_oauth_authentication  = true
@@ -52,8 +52,8 @@ resource "azurerm_storage_account" "storage" {
   }
   nfsv3_enabled                 = false
   public_network_access_enabled = false
-  queue_encryption_key_type     = "Service"
-  table_encryption_key_type     = "Service"
+  queue_encryption_key_type     = "Account"
+  table_encryption_key_type     = "Account"
   routing {
     choice                      = "MicrosoftRouting"
     publish_internet_endpoints  = false

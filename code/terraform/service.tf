@@ -76,3 +76,13 @@ module "storage" {
   cmk_key_name             = module.key_vault.key_vault_cmk_name
   private_dns_zone_id_blob = module.network.private_dns_zone_blob_id
 }
+
+module "logging" {
+  source = "./modules/logging"
+
+  location                     = var.location
+  tags                         = var.tags
+  resource_group_name          = azurerm_resource_group.logging_rg.name
+  application_insights_name    = "${local.prefix}-appi001"
+  log_analytics_workspace_name = "${local.prefix}-log001"
+}

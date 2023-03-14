@@ -26,8 +26,8 @@ resource "azurerm_disk_encryption_set" "disk_encryption_set" {
   }
 
   auto_key_rotation_enabled = false
-  encryption_type           = "EncryptionAtRestWithCustomerKey"
-  key_vault_key_id          = data.azurerm_key_vault_key.key_vault_key.id
+  encryption_type           = "EncryptionAtRestWithPlatformAndCustomerKeys"
+  key_vault_key_id          = jsondecode(data.azapi_resource.key_vault_key.output).properties.keyUriWithVersion # data.azurerm_key_vault_key.key_vault_key.id
 }
 
 resource "azurerm_windows_virtual_machine" "vm" {
