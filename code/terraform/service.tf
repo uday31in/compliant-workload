@@ -93,7 +93,7 @@ module "apimanagement" {
   location                = var.location
   tags                    = var.tags
   resource_group_name     = azurerm_resource_group.services_rg.name
-  api_management_name     = "${local.prefix}-apim001"
+  api_management_name     = "${local.prefix}-apim002"
   api_management_sku      = "Developer"
   api_management_capacity = 1
   subnet_id               = module.network.subnet_apim_id
