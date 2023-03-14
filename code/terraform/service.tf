@@ -86,3 +86,18 @@ module "logging" {
   application_insights_name    = "${local.prefix}-appi001"
   log_analytics_workspace_name = "${local.prefix}-log001"
 }
+
+module "apimanagement" {
+  source = "./modules/apimanagement"
+
+  location                = var.location
+  tags                    = var.tags
+  resource_group_name     = azurerm_resource_group.services_rg.name
+  api_management_name     = "${local.prefix}-apim002"
+  api_management_sku      = "Developer"
+  api_management_capacity = 1
+  subnet_id               = module.network.subnet_apim_id
+  api_management_email    = var.api_management_email
+  publisher_name          = var.publisher_name
+  encoded_certificate     = ""
+}

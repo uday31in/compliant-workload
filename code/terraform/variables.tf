@@ -81,3 +81,23 @@ variable "admin_username" {
     error_message = "Please specify a valid password."
   }
 }
+
+variable "api_management_email" {
+  description = "Specifies the email for API Management."
+  type        = string
+  sensitive   = false
+  validation {
+    condition     = length(var.api_management_email) >= 2
+    error_message = "Please specify a valid email."
+  }
+}
+
+variable "publisher_name" {
+  description = "Specifies the publisher for API Management."
+  type        = string
+  sensitive   = false
+  validation {
+    condition     = length(var.publisher_name) >= 2
+    error_message = "Please specify a valid publisher."
+  }
+}
