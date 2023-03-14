@@ -36,7 +36,7 @@ resource "azurerm_key_vault" "key_vault" {
 # }
 
 resource "azapi_resource" "key_vault_key" {
-  type      = "Microsoft.KeyVault/vaults/keys@2021-10-01"
+  type      = "Microsoft.KeyVault/vaults/keys@2022-11-01"
   name      = "cmk"
   parent_id = azurerm_key_vault.key_vault.id
 
