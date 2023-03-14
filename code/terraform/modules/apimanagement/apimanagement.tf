@@ -16,7 +16,7 @@ resource "azurerm_api_management" "api_management" {
   }
   client_certificate_enabled = false
   gateway_disabled           = false
-  min_api_version            = "2022-08-01"
+  min_api_version            = "2021-08-01"
   notification_sender_email  = var.api_management_email
   protocols {
     enable_http2 = true

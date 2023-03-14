@@ -7,5 +7,5 @@ nsg_id               = "/subscriptions/6a439cba-0e4d-46ca-9eda-e3b7a8f60a49/reso
 route_table_id       = "/subscriptions/6a439cba-0e4d-46ca-9eda-e3b7a8f60a49/resourceGroups/vnet-eastus/providers/Microsoft.Network/routeTables/udr-eastus"
 admin_password       = ""
 admin_username       = "VmMainUser"
-api_management_email = "mabuss@microsoft.com"
+api_management_email = ""
 publisher_name       = "Contoso"
