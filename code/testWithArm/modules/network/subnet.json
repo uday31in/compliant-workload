@@ -1,0 +1,69 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "subnetName": {
+            "type": "string",
+            "metadata": {
+                "description": "Specifies the name of the subnet."
+            }
+        },
+        "subnetAddressPrefix": {
+            "type": "string",
+            "metadata": {
+                "description": "Specifies the subnet address prefix."
+            }
+        },
+        "virtualNetworkId": {
+            "type": "string",
+            "metadata": {
+                "description": "Specifies the ID of the virtual network."
+            }
+        },
+        "networkSecurityGroupId": {
+            "type": "string",
+            "metadata": {
+                "description": "Specifies the ID of the network security group."
+            }
+        },
+        "routeTableId": {
+            "type": "string",
+            "metadata": {
+                "description": "Specifies the ID of the route table."
+            }
+        }
+    },
+    "functions": [],
+    "variables": {
+        "virtualNetworkName": "[last(split(parameters('virtualNetworkId'), '/'))]"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Network/virtualnetworks/subnets",
+            "apiVersion": "2022-09-01",
+            "name": "[concat(variables('virtualNetworkName'), '/', parameters('subnetName'))]",
+            "properties": {
+                "addressPrefix": "[parameters('subnetAddressPrefix')]",
+                "addressPrefixes": [],
+                "applicationGatewayIpConfigurations": [],
+                "delegations": [],
+                "networkSecurityGroup": {
+                    "id": "[parameters('networkSecurityGroupId')]"
+                },
+                "privateEndpointNetworkPolicies": "Enabled",
+                "privateLinkServiceNetworkPolicies": "Enabled",
+                "routeTable": {
+                    "id": "[parameters('routeTableId')]"
+                },
+                "serviceEndpointPolicies": [],
+                "serviceEndpoints": []
+            }
+        }
+    ],
+    "outputs": {
+        "subnetId": {
+            "type": "string",
+            "value": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), parameters('subnetName'))]"
+        }
+    }
+}

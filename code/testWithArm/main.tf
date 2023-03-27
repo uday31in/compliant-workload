@@ -18,7 +18,7 @@ terraform {
     resource_group_name  = "workload000-cicd"
     storage_account_name = "workload000stg001"
     container_name       = "terraform"
-    key                  = "terraform-mabuss-test.tfstate"
+    key                  = "terraform-mabuss002-test.tfstate"
     use_oidc             = true
   }
 }
@@ -58,11 +58,11 @@ provider "azapi" {
 data "azurerm_client_config" "current" {
 }
 
-resource "azurerm_resource_group" "bastion_rg" {
-  name     = "${local.prefix}-bastion-rg"
-  location = var.location
-  tags     = var.tags
-}
+# resource "azurerm_resource_group" "bastion_rg" {
+#   name     = "${local.prefix}-bastion-rg"
+#   location = var.location
+#   tags     = var.tags
+# }
 
 resource "azurerm_resource_group" "services_rg" {
   name     = "${local.prefix}-services-rg"
@@ -70,8 +70,8 @@ resource "azurerm_resource_group" "services_rg" {
   tags     = var.tags
 }
 
-resource "azurerm_resource_group" "logging_rg" {
-  name     = "${local.prefix}-logging-rg"
-  location = var.location
-  tags     = var.tags
-}
+# resource "azurerm_resource_group" "logging_rg" {
+#   name     = "${local.prefix}-logging-rg"
+#   location = var.location
+#   tags     = var.tags
+# }
