@@ -45,9 +45,17 @@
         }
     ],
     "outputs": {
-        "keyVaultKeyId": {
+        "keyVaultKeyName": {
+            "type": "string",
+            "value": "[parameters('keyVaultKeyName')]"
+        },
+        "keyVaultKeyResourceId": {
             "type": "string",
             "value": "[resourceId('Microsoft.KeyVault/vaults/keys', variables('keyVaultName'), parameters('keyVaultKeyName'))]"
+        },
+        "keyVaultKeyUri": {
+            "type": "string",
+            "value": "[reference(resourceId('Microsoft.KeyVault/vaults/keys', variables('keyVaultName'), parameters('keyVaultKeyName')), '2021-10-01', 'Full').properties.keyUriWithVersion]"
         }
     }
 }

@@ -1,4 +1,4 @@
-# resource "azapi_resource" "subnet_private_endpoints" {
+# resource "azapi_resource" "subnet_private_endpoints" {  # We can switch back to azapi once it is allow-listed
 #   type      = "Microsoft.Network/virtualNetworks/subnets@2022-07-01"
 #   name      = "PrivateEndpointSubnet"
 #   parent_id = data.azurerm_virtual_network.virtual_network.id

@@ -58,20 +58,14 @@ provider "azapi" {
 data "azurerm_client_config" "current" {
 }
 
-# resource "azurerm_resource_group" "bastion_rg" {
-#   name     = "${local.prefix}-bastion-rg"
-#   location = var.location
-#   tags     = var.tags
-# }
-
 resource "azurerm_resource_group" "services_rg" {
   name     = "${local.prefix}-services-rg"
   location = var.location
   tags     = var.tags
 }
 
-# resource "azurerm_resource_group" "logging_rg" {
-#   name     = "${local.prefix}-logging-rg"
-#   location = var.location
-#   tags     = var.tags
-# }
+resource "azurerm_resource_group" "logging_rg" {
+  name     = "${local.prefix}-logging-rg"
+  location = var.location
+  tags     = var.tags
+}
