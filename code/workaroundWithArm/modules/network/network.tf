@@ -23,7 +23,7 @@
 # }
 
 resource "azurerm_resource_group_template_deployment" "subnet_private_endpoints" {
-  name = "PrivateEndpointSubnet-${formatdate("YYYY-MM-DD'T'hh-mm-ssZ", timestamp())}"
+  name = "PrivateEndpointSubnet"
   resource_group_name = data.azurerm_virtual_network.virtual_network.resource_group_name
   deployment_mode = "Incremental"
 
