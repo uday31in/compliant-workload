@@ -12,10 +12,10 @@ resource "azurerm_key_vault" "key_vault" {
   network_acls {
     bypass                     = "AzureServices"
     default_action             = "Deny"
-    ip_rules                   = []
+    ip_rules                   = var.ip_rules_key_vault
     virtual_network_subnet_ids = []
   }
-  public_network_access_enabled = false
+  public_network_access_enabled = true
   purge_protection_enabled      = true
   sku_name                      = "standard"
   soft_delete_retention_days    = 7

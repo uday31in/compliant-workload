@@ -11,8 +11,9 @@ module "stamps" {
   storage_container_names = [
     "data"
   ]
-  ip_rules_cognitive_service    = []
-  ip_rules_storage              = []
+  ip_rules_cognitive_service    = setunion(local.proxy_ips, local.open_ai_ips_eastus)
+  ip_rules_storage              = setunion(local.proxy_ips, local.open_ai_ips_eastus)
+  ip_rules_key_vault            = []
   private_dns_zone_id_key_vault = azurerm_private_dns_zone.private_dns_zone_key_vault.id
   private_dns_zone_id_open_ai   = azurerm_private_dns_zone.private_dns_zone_open_ai.id
   private_dns_zone_id_blob      = azurerm_private_dns_zone.private_dns_zone_blob.id

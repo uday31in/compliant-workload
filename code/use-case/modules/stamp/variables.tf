@@ -70,6 +70,16 @@ variable "ip_rules_cognitive_service" {
   # }
 }
 
+variable "ip_rules_key_vault" {
+  description = "Specifies the list of IP rules for cognitive services."
+  type        = set(string)
+  sensitive   = false
+  # validation {
+  #   condition     = true
+  #   error_message = "Please specify a valid name."
+  # }
+}
+
 variable "ip_rules_storage" {
   description = "Specifies the list of IP rules for storage."
   type        = set(string)
