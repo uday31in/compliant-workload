@@ -15,7 +15,7 @@ resource "azurerm_key_vault" "key_vault" {
     ip_rules                   = var.ip_rules_key_vault
     virtual_network_subnet_ids = []
   }
-  public_network_access_enabled = true
+  public_network_access_enabled = true  # TODO: Update when ExpressRoute is available
   purge_protection_enabled      = true
   sku_name                      = "standard"
   soft_delete_retention_days    = 7

@@ -51,7 +51,7 @@ resource "azurerm_storage_account" "storage" {
     virtual_network_subnet_ids = []
   }
   nfsv3_enabled                 = false
-  public_network_access_enabled = true # TODO: Update when ExpressRoute is available
+  public_network_access_enabled = true  # TODO: Update when ExpressRoute is available
   queue_encryption_key_type     = "Account"
   table_encryption_key_type     = "Account"
   routing {
