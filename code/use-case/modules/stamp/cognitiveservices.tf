@@ -15,7 +15,7 @@ resource "azurerm_cognitive_account" "cognitive_service" {
   #   identity_client_id = azurerm_user_assigned_identity.user_assigned_identity.client_id
   #   key_vault_key_id   = jsondecode(azapi_resource.key_vault_key_cognitive_services.output).properties.keyUriWithVersion
   # }
-  dynamic_throttling_enabled = true
+  dynamic_throttling_enabled = false
   fqdns                      = []
   kind                       = "OpenAI"
   local_auth_enabled         = false

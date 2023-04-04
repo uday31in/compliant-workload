@@ -15,7 +15,7 @@ resource "azurerm_cognitive_account" "cognitive_service" {
   #   identity_client_id = data.azurerm_user_assigned_identity.user_assigned_identity.client_id
   #   key_vault_key_id   = jsondecode(data.azapi_resource.key_vault_key.output).properties.keyUriWithVersion  # data.azurerm_key_vault_key.key_vault_key.id
   # }
-  dynamic_throttling_enabled = true
+  dynamic_throttling_enabled = false
   fqdns                      = []
   kind                       = var.cognitive_service_kind
   local_auth_enabled         = false
