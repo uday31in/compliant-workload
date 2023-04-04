@@ -24,7 +24,7 @@ resource "azurerm_key_vault" "key_vault" {
 
 resource "azapi_resource" "key_vault_key_storage" {
   type      = "Microsoft.KeyVault/vaults/keys@2022-11-01"
-  name      = "cmk"
+  name      = "cmkStorage"
   parent_id = azurerm_key_vault.key_vault.id
 
   body = jsonencode({
@@ -52,7 +52,7 @@ resource "azapi_resource" "key_vault_key_storage" {
 
 resource "azapi_resource" "key_vault_key_cognitive_services" {
   type      = "Microsoft.KeyVault/vaults/keys@2022-11-01"
-  name      = "cmk"
+  name      = "cmkCognitiveService"
   parent_id = azurerm_key_vault.key_vault.id
 
   body = jsonencode({
