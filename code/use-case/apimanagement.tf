@@ -112,7 +112,7 @@ resource "azurerm_api_management_api" "api_open_ai_authoring" {
   protocols             = ["https"]
   revision              = "1"
   revision_description  = "This is the initial revision."
-  service_url           = module.stamps["stp01"].open_ai_endpoint
+  service_url           = "${module.stamps["stp01"].open_ai_endpoint}openai/"
   subscription_required = false
   version               = "v1"
   version_description   = "Version v1 of the Open AI API."
