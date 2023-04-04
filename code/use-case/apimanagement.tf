@@ -58,17 +58,17 @@ resource "azurerm_api_management" "api_management" {
   zones                = var.api_management_sku == "Premium" ? ["1", "2", "3"] : null
 }
 
-resource "azurerm_api_management_certificate" "api_management_certificate" {
-  name                = "ApimCertificate"
-  api_management_name = azurerm_api_management.api_management.name
-  resource_group_name = azurerm_api_management.api_management.resource_group_name
+# resource "azurerm_api_management_certificate" "api_management_certificate" {
+#   name                = "ApimCertificate"
+#   api_management_name = azurerm_api_management.api_management.name
+#   resource_group_name = azurerm_api_management.api_management.resource_group_name
 
-  key_vault_secret_id = azurerm_key_vault_certificate.key_vault_certificate.secret_id
+#   key_vault_secret_id = azurerm_key_vault_certificate.key_vault_certificate.secret_id
 
-  depends_on = [
-    azurerm_role_assignment.role_assignment_key_vault_apim
-  ]
-}
+#   depends_on = [
+#     azurerm_role_assignment.role_assignment_key_vault_apim
+#   ]
+# }
 
 resource "azurerm_api_management_logger" "api_management_logger" {
   name                = "log-analytics"
@@ -79,6 +79,44 @@ resource "azurerm_api_management_logger" "api_management_logger" {
   application_insights {
     instrumentation_key = azurerm_application_insights.application_insights.instrumentation_key
   }
+}
+
+resource "azurerm_api_management_api_version_set" "api_management_api_version_set" {
+  name                = "ApiVersionSet"
+  api_management_name = azurerm_api_management.api_management.name
+  resource_group_name = azurerm_api_management.api_management.resource_group_name
+
+  display_name      = "DefaultApiVersionSet"
+  description       = "Default API Version Set using the Path."
+  versioning_scheme = "Segment"
+}
+
+resource "azurerm_api_management_api" "api_open_ai_authoring" {
+  name                = "example-api"
+  api_management_name = azurerm_api_management.api_management.name
+  resource_group_name = azurerm_api_management.api_management.resource_group_name
+
+  api_type = "http"
+  # contact {
+  #   email = ""
+  #   name  = ""
+  #   url   = ""
+  # }
+  display_name = "Example API"
+  description  = "This is the Authoring API for the Open AI service."
+  import {
+    content_format = "openapi+json-link"
+    content_value  = local.swagger_open_ai_authoring
+  }
+  path                  = "example"
+  protocols             = ["https"]
+  revision              = "1"
+  revision_description  = "This is the initial revision."
+  service_url           = module.stamps["stp01"].open_ai_endpoint
+  subscription_required = false
+  version               = "v1"
+  version_description   = "Version v1 of the Open AI API."
+  version_set_id        = azurerm_api_management_api_version_set.api_management_api_version_set.id
 }
 
 # resource "azurerm_api_management_policy" "api_management_policy_openai" {

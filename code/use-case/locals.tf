@@ -26,7 +26,9 @@ locals {
     "89.247.164.246",
     "89.247.164.247",
     "89.247.164.248",
-    "89.247.164.249"
+    "89.247.164.249",
+    "167.220.197.8",
+    "167.220.197.136"
   ]
   apim_ips = azurerm_api_management.api_management.public_ip_addresses
   open_ai_ips_eastus = [
@@ -76,4 +78,8 @@ locals {
     "20.236.145.0/25",
     "13.73.242.128/26"
   ]
+
+  swagger_open_ai_inference = "https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/cognitiveservices/data-plane/AzureOpenAI/inference/stable/2022-12-01/inference.json"
+  swagger_open_ai_authoring = "https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/cognitiveservices/data-plane/AzureOpenAI/authoring/stable/2022-12-01/azureopenai.json"
+  # "https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/cognitiveservices/data-plane/Language/stable/2022-05-01/analyzetext.json"
 }

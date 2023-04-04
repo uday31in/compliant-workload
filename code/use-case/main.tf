@@ -14,11 +14,11 @@ terraform {
 
   backend "azurerm" {
     environment          = "public"
-    subscription_id      = "176a0de9-d99e-4faa-90cc-89780e1186fe"
-    resource_group_name  = "workload000-cicd"
-    storage_account_name = "workload000stg001"
+    subscription_id      = "558bd446-4212-46a2-908c-9ab0a628705e"
+    resource_group_name  = "usecase-network-rg"
+    storage_account_name = "usecasestg001"
     container_name       = "terraform"
-    key                  = "terraform-e2e.tfstate"
+    key                  = "terraform.tfstate"
     use_oidc             = true
   }
 }

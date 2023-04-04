@@ -51,7 +51,7 @@ resource "azurerm_storage_account" "storage" {
     virtual_network_subnet_ids = []
   }
   nfsv3_enabled                 = false
-  public_network_access_enabled = true  # TODO: Update when ExpressRoute is available
+  public_network_access_enabled = true # TODO: Update when ExpressRoute is available
   queue_encryption_key_type     = "Account"
   table_encryption_key_type     = "Account"
   routing {
@@ -108,27 +108,52 @@ resource "azapi_resource" "storage_containers" {
   })
 }
 
-resource "azurerm_private_endpoint" "storage_private_endpoint_blob" {
-  name                = "${azurerm_storage_account.storage.name}-blob-pe"
-  location            = var.location
-  resource_group_name = azurerm_storage_account.storage.resource_group_name
-  tags                = var.tags
+# resource "azurerm_private_endpoint" "storage_private_endpoint_blob" {
+#   name                = "${azurerm_storage_account.storage.name}-blob-pe"
+#   location            = var.location
+#   resource_group_name = azurerm_storage_account.storage.resource_group_name
+#   tags                = var.tags
 
-  custom_network_interface_name = "${azurerm_storage_account.storage.name}-blob-nic"
-  private_service_connection {
-    name                           = "${azurerm_storage_account.storage.name}-blob-pe"
-    is_manual_connection           = false
-    private_connection_resource_id = azurerm_storage_account.storage.id
-    subresource_names              = ["blob"]
-  }
-  subnet_id = var.subnet_id
-  dynamic "private_dns_zone_group" {
-    for_each = var.private_dns_zone_id_blob == "" ? [] : [1]
-    content {
-      name = "${azurerm_storage_account.storage.name}-arecord"
-      private_dns_zone_ids = [
-        var.private_dns_zone_id_blob
-      ]
-    }
-  }
-}
+#   custom_network_interface_name = "${azurerm_storage_account.storage.name}-blob-nic"
+#   private_service_connection {
+#     name                           = "${azurerm_storage_account.storage.name}-blob-pe"
+#     is_manual_connection           = false
+#     private_connection_resource_id = azurerm_storage_account.storage.id
+#     subresource_names              = ["blob"]
+#   }
+#   subnet_id = var.subnet_id
+#   dynamic "private_dns_zone_group" {
+#     for_each = var.private_dns_zone_id_blob == "" ? [] : [1]
+#     content {
+#       name = "${azurerm_storage_account.storage.name}-arecord"
+#       private_dns_zone_ids = [
+#         var.private_dns_zone_id_blob
+#       ]
+#     }
+#   }
+# }
+
+# resource "azurerm_private_endpoint" "storage_private_endpoint_dfs" {
+#   name                = "${azurerm_storage_account.storage.name}-dfs-pe"
+#   location            = var.location
+#   resource_group_name = azurerm_storage_account.storage.resource_group_name
+#   tags                = var.tags
+
+#   custom_network_interface_name = "${azurerm_storage_account.storage.name}-dfs-nic"
+#   private_service_connection {
+#     name                           = "${azurerm_storage_account.storage.name}-dfs-pe"
+#     is_manual_connection           = false
+#     private_connection_resource_id = azurerm_storage_account.storage.id
+#     subresource_names              = ["dfs"]
+#   }
+#   subnet_id = var.subnet_id
+#   dynamic "private_dns_zone_group" {
+#     for_each = var.private_dns_zone_id_dfs == "" ? [] : [1]
+#     content {
+#       name = "${azurerm_storage_account.storage.name}-arecord"
+#       private_dns_zone_ids = [
+#         var.private_dns_zone_id_dfs
+#       ]
+#     }
+#   }
+# }

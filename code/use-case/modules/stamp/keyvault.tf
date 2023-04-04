@@ -15,7 +15,7 @@ resource "azurerm_key_vault" "key_vault" {
     ip_rules                   = var.ip_rules_key_vault
     virtual_network_subnet_ids = []
   }
-  public_network_access_enabled = true  # TODO: Update when ExpressRoute is available
+  public_network_access_enabled = true # TODO: Update when ExpressRoute is available
   purge_protection_enabled      = true
   sku_name                      = "standard"
   soft_delete_retention_days    = 7
@@ -78,27 +78,27 @@ resource "azapi_resource" "key_vault_key_cognitive_services" {
   response_export_values = ["properties.keyUriWithVersion"]
 }
 
-resource "azurerm_private_endpoint" "key_vault_private_endpoint" {
-  name                = "${azurerm_key_vault.key_vault.name}-pe"
-  location            = var.location
-  resource_group_name = azurerm_key_vault.key_vault.resource_group_name
-  tags                = var.tags
+# resource "azurerm_private_endpoint" "key_vault_private_endpoint" {
+#   name                = "${azurerm_key_vault.key_vault.name}-pe"
+#   location            = var.location
+#   resource_group_name = azurerm_key_vault.key_vault.resource_group_name
+#   tags                = var.tags
 
-  custom_network_interface_name = "${azurerm_key_vault.key_vault.name}-nic"
-  private_service_connection {
-    name                           = "${azurerm_key_vault.key_vault.name}-pe"
-    is_manual_connection           = false
-    private_connection_resource_id = azurerm_key_vault.key_vault.id
-    subresource_names              = ["vault"]
-  }
-  subnet_id = var.subnet_id
-  dynamic "private_dns_zone_group" {
-    for_each = var.private_dns_zone_id_key_vault == "" ? [] : [1]
-    content {
-      name = "${azurerm_key_vault.key_vault.name}-arecord"
-      private_dns_zone_ids = [
-        var.private_dns_zone_id_key_vault
-      ]
-    }
-  }
-}
+#   custom_network_interface_name = "${azurerm_key_vault.key_vault.name}-nic"
+#   private_service_connection {
+#     name                           = "${azurerm_key_vault.key_vault.name}-pe"
+#     is_manual_connection           = false
+#     private_connection_resource_id = azurerm_key_vault.key_vault.id
+#     subresource_names              = ["vault"]
+#   }
+#   subnet_id = var.subnet_id
+#   dynamic "private_dns_zone_group" {
+#     for_each = var.private_dns_zone_id_key_vault == "" ? [] : [1]
+#     content {
+#       name = "${azurerm_key_vault.key_vault.name}-arecord"
+#       private_dns_zone_ids = [
+#         var.private_dns_zone_id_key_vault
+#       ]
+#     }
+#   }
+# }
