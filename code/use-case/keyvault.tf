@@ -22,7 +22,7 @@ resource "azurerm_key_vault" "key_vault" {
   tenant_id                     = data.azurerm_client_config.current.tenant_id
 }
 
-# resource "azurerm_key_vault_certificate" "key_vault_certificate" {
+# resource "azurerm_key_vault_certificate" "key_vault_certificate" {  # Uncomment to deploy certificate to key vault
 #   name                = "ApimCertificate"
 #   key_vault_id = azurerm_key_vault.key_vault.id
 

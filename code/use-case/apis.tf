@@ -15,7 +15,7 @@ resource "azurerm_api_management_api" "api_open_ai_inference" {
   resource_group_name = azurerm_api_management.api_management.resource_group_name
 
   api_type = "http"
-  # contact {
+  # contact {  # Uncomment to specify contact details for API
   #   email = ""
   #   name  = ""
   #   url   = ""

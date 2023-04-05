@@ -58,7 +58,7 @@ resource "azurerm_api_management" "api_management" {
   zones                = var.api_management_sku == "Premium" ? ["1", "2", "3"] : null
 }
 
-# resource "azurerm_api_management_certificate" "api_management_certificate" {
+# resource "azurerm_api_management_certificate" "api_management_certificate" {  # Uncomment to deploy certificates to APIM
 #   name                = "ApimCertificate"
 #   api_management_name = azurerm_api_management.api_management.name
 #   resource_group_name = azurerm_api_management.api_management.resource_group_name
@@ -70,7 +70,7 @@ resource "azurerm_api_management" "api_management" {
 #   ]
 # }
 
-# resource "azurerm_api_management_policy" "api_management_policy_openai" {
+# resource "azurerm_api_management_policy" "api_management_policy_openai" {  # Uncomment to deploy policies to APIM 
 #   api_management_id = azurerm_api_management.example.id
 #   xml_content       = file("${path.module}/apim_policy/openai_policy.xml")
 # }

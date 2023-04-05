@@ -32,14 +32,9 @@ resource "azurerm_storage_account" "storage" {
     user_assigned_identity_id = azurerm_user_assigned_identity.user_assigned_identity.id
     key_vault_key_id          = jsondecode(azapi_resource.key_vault_key_storage.output).properties.keyUriWithVersion
   }
-  cross_tenant_replication_enabled = false
-  default_to_oauth_authentication  = true
-  enable_https_traffic_only        = true
-  # immutability_policy {
-  #   state                         = "Disabled"
-  #   allow_protected_append_writes = true
-  #   period_since_creation_in_days = 7
-  # }
+  cross_tenant_replication_enabled  = false
+  default_to_oauth_authentication   = true
+  enable_https_traffic_only         = true
   infrastructure_encryption_enabled = true
   is_hns_enabled                    = true
   large_file_share_enabled          = false
@@ -108,7 +103,7 @@ resource "azapi_resource" "storage_containers" {
   })
 }
 
-# resource "azurerm_private_endpoint" "storage_private_endpoint_blob" {
+# resource "azurerm_private_endpoint" "storage_private_endpoint_blob" {  # Uncomment to deploy the private endpoint
 #   name                = "${azurerm_storage_account.storage.name}-blob-pe"
 #   location            = var.location
 #   resource_group_name = azurerm_storage_account.storage.resource_group_name
@@ -133,7 +128,7 @@ resource "azapi_resource" "storage_containers" {
 #   }
 # }
 
-# resource "azurerm_private_endpoint" "storage_private_endpoint_dfs" {
+# resource "azurerm_private_endpoint" "storage_private_endpoint_dfs" {  # Uncomment to deploy the private endpoint
 #   name                = "${azurerm_storage_account.storage.name}-dfs-pe"
 #   location            = var.location
 #   resource_group_name = azurerm_storage_account.storage.resource_group_name

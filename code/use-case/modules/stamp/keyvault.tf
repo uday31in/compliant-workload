@@ -78,7 +78,7 @@ resource "azapi_resource" "key_vault_key_cognitive_services" {
   response_export_values = ["properties.keyUriWithVersion"]
 }
 
-# resource "azurerm_private_endpoint" "key_vault_private_endpoint" {
+# resource "azurerm_private_endpoint" "key_vault_private_endpoint" {  # Uncomment to deploy the private endpoint
 #   name                = "${azurerm_key_vault.key_vault.name}-pe"
 #   location            = var.location
 #   resource_group_name = azurerm_key_vault.key_vault.resource_group_name
