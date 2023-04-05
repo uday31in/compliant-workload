@@ -70,8 +70,13 @@ resource "azurerm_api_management" "api_management" {
 #   ]
 # }
 
+# resource "azurerm_api_management_policy" "api_management_policy_openai" {
+#   api_management_id = azurerm_api_management.example.id
+#   xml_content       = file("${path.module}/apim_policy/openai_policy.xml")
+# }
+
 resource "azurerm_api_management_logger" "api_management_logger" {
-  name                = "log-analytics"
+  name                = "application-insights"
   api_management_name = azurerm_api_management.api_management.name
   resource_group_name = azurerm_api_management.api_management.resource_group_name
   resource_id         = azurerm_application_insights.application_insights.id
@@ -80,46 +85,3 @@ resource "azurerm_api_management_logger" "api_management_logger" {
     instrumentation_key = azurerm_application_insights.application_insights.instrumentation_key
   }
 }
-
-resource "azurerm_api_management_api_version_set" "api_management_api_version_set" {
-  name                = "ApiVersionSet"
-  api_management_name = azurerm_api_management.api_management.name
-  resource_group_name = azurerm_api_management.api_management.resource_group_name
-
-  display_name      = "DefaultApiVersionSet"
-  description       = "Default API Version Set using the Path."
-  versioning_scheme = "Segment"
-}
-
-resource "azurerm_api_management_api" "api_open_ai_authoring" {
-  name                = "example-api"
-  api_management_name = azurerm_api_management.api_management.name
-  resource_group_name = azurerm_api_management.api_management.resource_group_name
-
-  api_type = "http"
-  # contact {
-  #   email = ""
-  #   name  = ""
-  #   url   = ""
-  # }
-  display_name = "Example API"
-  description  = "This is the Authoring API for the Open AI service."
-  import {
-    content_format = "openapi+json-link"
-    content_value  = local.swagger_open_ai_authoring
-  }
-  path                  = "example"
-  protocols             = ["https"]
-  revision              = "1"
-  revision_description  = "This is the initial revision."
-  service_url           = "${module.stamps["stp01"].open_ai_endpoint}openai/"
-  subscription_required = false
-  version               = "v1"
-  version_description   = "Version v1 of the Open AI API."
-  version_set_id        = azurerm_api_management_api_version_set.api_management_api_version_set.id
-}
-
-# resource "azurerm_api_management_policy" "api_management_policy_openai" {
-#   api_management_id = azurerm_api_management.example.id
-#   xml_content       = file("${path.module}/apim_policy/openai_policy.xml")
-# }

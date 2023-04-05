@@ -53,7 +53,23 @@ variable "subnet_id" {
 variable "storage_container_names" {
   description = "Specifies the list of names for storage account containers."
   type        = set(string)
+  default     = []
   sensitive   = false
+  # validation {
+  #   condition     = true
+  #   error_message = "Please specify a valid name."
+  # }
+}
+
+variable "cognitive_service_openai_models" {
+  description = "Specifies the list of names for storage account containers."
+  type = set(object({
+    format  = string
+    name    = string
+    version = string
+  }))
+  default   = []
+  sensitive = false
   # validation {
   #   condition     = true
   #   error_message = "Please specify a valid name."
@@ -63,6 +79,7 @@ variable "storage_container_names" {
 variable "ip_rules_cognitive_service" {
   description = "Specifies the list of IP rules for cognitive services."
   type        = set(string)
+  default     = []
   sensitive   = false
   # validation {
   #   condition     = true
@@ -73,6 +90,7 @@ variable "ip_rules_cognitive_service" {
 variable "ip_rules_key_vault" {
   description = "Specifies the list of IP rules for cognitive services."
   type        = set(string)
+  default     = []
   sensitive   = false
   # validation {
   #   condition     = true
@@ -83,6 +101,7 @@ variable "ip_rules_key_vault" {
 variable "ip_rules_storage" {
   description = "Specifies the list of IP rules for storage."
   type        = set(string)
+  default     = []
   sensitive   = false
   # validation {
   #   condition     = true
@@ -93,6 +112,7 @@ variable "ip_rules_storage" {
 variable "private_dns_zone_id_key_vault" {
   description = "Specifies the resource ID of the private DNS zone for Azure Key Vault."
   type        = string
+  default     = ""
   sensitive   = false
   validation {
     condition     = var.private_dns_zone_id_key_vault == "" || (length(split("/", var.private_dns_zone_id_key_vault)) == 9 && endswith(var.private_dns_zone_id_key_vault, "privatelink.vaultcore.azure.net"))
@@ -103,6 +123,7 @@ variable "private_dns_zone_id_key_vault" {
 variable "private_dns_zone_id_open_ai" {
   description = "Specifies the resource ID of the private DNS zone for the Cognitive Service."
   type        = string
+  default     = ""
   sensitive   = false
   validation {
     condition     = var.private_dns_zone_id_open_ai == "" || (length(split("/", var.private_dns_zone_id_open_ai)) == 9 && endswith(var.private_dns_zone_id_open_ai, "privatelink.openai.azure.com"))
@@ -113,6 +134,7 @@ variable "private_dns_zone_id_open_ai" {
 variable "private_dns_zone_id_blob" {
   description = "Specifies the resource ID of the private DNS zone for Azure Storage blob endpoints."
   type        = string
+  default     = ""
   sensitive   = false
   validation {
     condition     = var.private_dns_zone_id_blob == "" || (length(split("/", var.private_dns_zone_id_blob)) == 9 && endswith(var.private_dns_zone_id_blob, "privatelink.blob.core.windows.net"))
@@ -123,6 +145,7 @@ variable "private_dns_zone_id_blob" {
 variable "private_dns_zone_id_dfs" {
   description = "Specifies the resource ID of the private DNS zone for Azure Storage dfs endpoints."
   type        = string
+  default     = ""
   sensitive   = false
   validation {
     condition     = var.private_dns_zone_id_dfs == "" || (length(split("/", var.private_dns_zone_id_dfs)) == 9 && endswith(var.private_dns_zone_id_dfs, "privatelink.dfs.core.windows.net"))

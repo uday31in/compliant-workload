@@ -32,6 +32,26 @@ resource "azurerm_cognitive_account" "cognitive_service" {
   ]
 }
 
+resource "azapi_resource" "cognitive_service_open_ai_models" {
+  for_each  = { for each in var.cognitive_service_openai_models : "${each.name}-${each.version}" => each }
+  type      = "Microsoft.CognitiveServices/accounts/deployments@2022-12-01"
+  name      = each.key
+  parent_id = azurerm_cognitive_account.cognitive_service.id
+
+  body = jsonencode({
+    properties = {
+      model = {
+        format  = each.value.format
+        name    = each.value.name
+        version = each.value.version
+      }
+      scaleSettings = {
+        scaleType = "Standard"
+      }
+    }
+  })
+}
+
 resource "azurerm_private_endpoint" "cognitive_service_private_endpoint" {
   name                = "${azurerm_cognitive_account.cognitive_service.name}-pe"
   location            = var.location
