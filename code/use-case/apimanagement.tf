@@ -76,7 +76,7 @@ resource "azurerm_api_management" "api_management" {
 # }
 
 resource "azurerm_api_management_logger" "api_management_logger" {
-  name                = "log-analytics"
+  name                = "application-insights"
   api_management_name = azurerm_api_management.api_management.name
   resource_group_name = azurerm_api_management.api_management.resource_group_name
   resource_id         = azurerm_application_insights.application_insights.id
