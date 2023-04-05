@@ -44,12 +44,12 @@ resource "azurerm_api_management_api" "api_open_ai_inference" {
   version_set_id        = azurerm_api_management_api_version_set.api_management_api_version_set.id
 }
 
-resource "azurerm_api_management_api_diagnostic" "example" {
+resource "azurerm_api_management_api_diagnostic" "api_open_ai_inference_diagnostic" {
   for_each                 = azurerm_api_management_api.api_open_ai_inference
   identifier               = "applicationinsights"
   resource_group_name      = azurerm_api_management.api_management.resource_group_name
   api_management_name      = azurerm_api_management.api_management.name
-  api_name                 = azurerm_api_management_api.api_open_ai_inference[each.key].id
+  api_name                 = azurerm_api_management_api.api_open_ai_inference[each.key].name
   api_management_logger_id = azurerm_api_management_logger.api_management_logger.id
 
   sampling_percentage       = 5.0
@@ -57,7 +57,7 @@ resource "azurerm_api_management_api_diagnostic" "example" {
   log_client_ip             = true
   verbosity                 = "information"
   http_correlation_protocol = "W3C"
-  operation_name_format = "Name"
+  operation_name_format     = "Name"
 
   frontend_request {
     body_bytes = 32
