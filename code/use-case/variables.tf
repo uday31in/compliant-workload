@@ -85,10 +85,6 @@ variable "stamps" {
   description = "Specifies the list of stamp names."
   type        = list(string)
   sensitive   = false
-  # validation {
-  #   condition     = true
-  #   error_message = "Please specify a valid name."
-  # }
 }
 
 variable "api_management_email" {

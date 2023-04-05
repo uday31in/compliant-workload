@@ -79,9 +79,6 @@ locals {
     "13.73.242.128/26"
   ]
 
-  swagger_open_ai_inference = "https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/cognitiveservices/data-plane/AzureOpenAI/inference/stable/2022-12-01/inference.json"
-  swagger_open_ai_authoring = "https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/cognitiveservices/data-plane/AzureOpenAI/authoring/stable/2022-12-01/azureopenai.json"
-
   stamp_open_ai_model_names = flatten([
     for stamp_key, stamp_value in module.stamps : [
       for model_name in stamp_value.open_ai_model_names : {

@@ -98,35 +98,14 @@ resource "azurerm_network_security_group" "network_security_group_apim" {
   ]
 }
 
-# resource "azapi_resource" "subnet_appgw" {
-#   type      = "Microsoft.Network/virtualNetworks/subnets@2022-07-01"
-#   name      = "AppGatewaySubnet"
-#   parent_id = data.azurerm_virtual_network.virtual_network.id
-
-#   body = jsonencode({
-#     properties = {
-#       addressPrefix = tostring(cidrsubnet(data.azurerm_virtual_network.virtual_network.address_space[0], 27 - tonumber(reverse(split("/", data.azurerm_virtual_network.virtual_network.address_space[0]))[0]), 0))
-#       delegations   = []
-#       ipAllocations = []
-#       networkSecurityGroup = {
-#         id = data.azurerm_network_security_group.network_security_group.id
-#       }
-#       privateEndpointNetworkPolicies    = "Enabled"
-#       privateLinkServiceNetworkPolicies = "Enabled"
-#       serviceEndpointPolicies           = []
-#       serviceEndpoints                  = []
-#     }
-#   })
-# }
-
-# resource "azapi_resource" "subnet_apim" {
+# resource "azapi_resource" "subnet_apim" {  # Uncomment to deploy subnet for APIM
 #   type      = "Microsoft.Network/virtualNetworks/subnets@2022-07-01"
 #   name      = "ApimSubnet"
 #   parent_id = data.azurerm_virtual_network.virtual_network.id
 
 #   body = jsonencode({
 #     properties = {
-#       addressPrefix = tostring(cidrsubnet(data.azurerm_virtual_network.virtual_network.address_space[0], 27 - tonumber(reverse(split("/", data.azurerm_virtual_network.virtual_network.address_space[0]))[0]), 1))
+#       addressPrefix = tostring(cidrsubnet(data.azurerm_virtual_network.virtual_network.address_space[0], 27 - tonumber(reverse(split("/", data.azurerm_virtual_network.virtual_network.address_space[0]))[0]), 0))
 #       delegations   = []
 #       ipAllocations = []
 #       networkSecurityGroup = {
@@ -151,7 +130,7 @@ resource "azapi_resource" "subnet_stamps" {
 
   body = jsonencode({
     properties = {
-      addressPrefix = tostring(cidrsubnet(data.azurerm_virtual_network.virtual_network.address_space[0], 29 - tonumber(reverse(split("/", data.azurerm_virtual_network.virtual_network.address_space[0]))[0]), 8 + index(var.stamps, each.key)))
+      addressPrefix = tostring(cidrsubnet(data.azurerm_virtual_network.virtual_network.address_space[0], 29 - tonumber(reverse(split("/", data.azurerm_virtual_network.virtual_network.address_space[0]))[0]), 4 + index(var.stamps, each.key)))
       delegations   = []
       ipAllocations = []
       networkSecurityGroup = {

@@ -55,10 +55,6 @@ variable "storage_container_names" {
   type        = set(string)
   default     = []
   sensitive   = false
-  # validation {
-  #   condition     = true
-  #   error_message = "Please specify a valid name."
-  # }
 }
 
 variable "cognitive_service_openai_models" {
@@ -70,10 +66,6 @@ variable "cognitive_service_openai_models" {
   }))
   default   = []
   sensitive = false
-  # validation {
-  #   condition     = true
-  #   error_message = "Please specify a valid name."
-  # }
 }
 
 variable "ip_rules_cognitive_service" {
@@ -81,10 +73,6 @@ variable "ip_rules_cognitive_service" {
   type        = set(string)
   default     = []
   sensitive   = false
-  # validation {
-  #   condition     = true
-  #   error_message = "Please specify a valid name."
-  # }
 }
 
 variable "ip_rules_key_vault" {
@@ -92,10 +80,6 @@ variable "ip_rules_key_vault" {
   type        = set(string)
   default     = []
   sensitive   = false
-  # validation {
-  #   condition     = true
-  #   error_message = "Please specify a valid name."
-  # }
 }
 
 variable "ip_rules_storage" {
@@ -103,10 +87,6 @@ variable "ip_rules_storage" {
   type        = set(string)
   default     = []
   sensitive   = false
-  # validation {
-  #   condition     = true
-  #   error_message = "Please specify a valid name."
-  # }
 }
 
 variable "private_dns_zone_id_key_vault" {

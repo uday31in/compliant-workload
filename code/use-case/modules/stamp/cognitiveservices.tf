@@ -52,27 +52,27 @@ resource "azapi_resource" "cognitive_service_open_ai_models" {
   })
 }
 
-resource "azurerm_private_endpoint" "cognitive_service_private_endpoint" {
-  name                = "${azurerm_cognitive_account.cognitive_service.name}-pe"
-  location            = var.location
-  resource_group_name = azurerm_cognitive_account.cognitive_service.resource_group_name
-  tags                = var.tags
+# resource "azurerm_private_endpoint" "cognitive_service_private_endpoint" {  # Uncomment to deploy the private endpoint
+#   name                = "${azurerm_cognitive_account.cognitive_service.name}-pe"
+#   location            = var.location
+#   resource_group_name = azurerm_cognitive_account.cognitive_service.resource_group_name
+#   tags                = var.tags
 
-  custom_network_interface_name = "${azurerm_cognitive_account.cognitive_service.name}-nic"
-  private_service_connection {
-    name                           = "${azurerm_cognitive_account.cognitive_service.name}-pe"
-    is_manual_connection           = false
-    private_connection_resource_id = azurerm_cognitive_account.cognitive_service.id
-    subresource_names              = ["account"]
-  }
-  subnet_id = var.subnet_id
-  dynamic "private_dns_zone_group" {
-    for_each = var.private_dns_zone_id_open_ai == "" ? [] : [1]
-    content {
-      name = "${azurerm_cognitive_account.cognitive_service.name}-arecord"
-      private_dns_zone_ids = [
-        var.private_dns_zone_id_open_ai
-      ]
-    }
-  }
-}
+#   custom_network_interface_name = "${azurerm_cognitive_account.cognitive_service.name}-nic"
+#   private_service_connection {
+#     name                           = "${azurerm_cognitive_account.cognitive_service.name}-pe"
+#     is_manual_connection           = false
+#     private_connection_resource_id = azurerm_cognitive_account.cognitive_service.id
+#     subresource_names              = ["account"]
+#   }
+#   subnet_id = var.subnet_id
+#   dynamic "private_dns_zone_group" {
+#     for_each = var.private_dns_zone_id_open_ai == "" ? [] : [1]
+#     content {
+#       name = "${azurerm_cognitive_account.cognitive_service.name}-arecord"
+#       private_dns_zone_ids = [
+#         var.private_dns_zone_id_open_ai
+#       ]
+#     }
+#   }
+# }
