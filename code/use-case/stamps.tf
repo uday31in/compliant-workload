@@ -11,6 +11,13 @@ module "stamps" {
   storage_container_names = [
     "data"
   ]
+  cognitive_service_openai_models = [
+    {
+      format  = "OpenAI"
+      name    = "gpt-35-turbo"
+      version = "0301"
+    }
+  ]
   ip_rules_cognitive_service    = setunion(local.proxy_ips, local.apim_ips)
   ip_rules_storage              = setunion(local.proxy_ips, local.open_ai_ips_eastus)
   ip_rules_key_vault            = local.proxy_ips
