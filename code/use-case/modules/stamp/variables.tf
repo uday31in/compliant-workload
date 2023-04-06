@@ -50,6 +50,16 @@ variable "subnet_id" {
   }
 }
 
+variable "log_analytics_workspace_id" {
+  description = "Specifies the resource ID of the log analytics workspace used for the stamp"
+  type        = string
+  sensitive   = false
+  validation {
+    condition     = length(split("/", var.log_analytics_workspace_id)) == 9
+    error_message = "Please specify a valid resource ID."
+  }
+}
+
 variable "storage_container_names" {
   description = "Specifies the list of names for storage account containers."
   type        = set(string)
