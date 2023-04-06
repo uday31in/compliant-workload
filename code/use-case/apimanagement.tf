@@ -85,3 +85,38 @@ resource "azurerm_api_management_logger" "api_management_logger" {
     instrumentation_key = azurerm_application_insights.application_insights.instrumentation_key
   }
 }
+
+data "azurerm_monitor_diagnostic_categories" "diagnostic_categories_api_management" {
+  resource_id = azurerm_api_management.api_management.id
+}
+
+resource "azurerm_monitor_diagnostic_setting" "diagnostic_setting_api_management" {
+  name                           = "logAnalytics"
+  target_resource_id             = azurerm_api_management.api_management.id
+  log_analytics_workspace_id     = azurerm_log_analytics_workspace.log_analytics_workspace.id
+
+  dynamic "enabled_log" {
+    iterator = entry
+    for_each = data.azurerm_monitor_diagnostic_categories.diagnostic_categories_api_management.log_category_groups
+    content {
+      category_group = entry.value
+      retention_policy {
+        enabled = true
+        days    = 30
+      }
+    }
+  }
+
+  dynamic "metric" {
+    iterator = entry
+    for_each = data.azurerm_monitor_diagnostic_categories.diagnostic_categories_api_management.metrics
+    content {
+      category = entry.value
+      enabled  = true
+      retention_policy {
+        enabled = true
+        days    = 30
+      }
+    }
+  }
+}

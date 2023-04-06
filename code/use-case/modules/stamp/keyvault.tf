@@ -78,6 +78,41 @@ resource "azapi_resource" "key_vault_key_cognitive_services" {
   response_export_values = ["properties.keyUriWithVersion"]
 }
 
+data "azurerm_monitor_diagnostic_categories" "diagnostic_categories_key_vault" {
+  resource_id = azurerm_key_vault.key_vault.id
+}
+
+resource "azurerm_monitor_diagnostic_setting" "diagnostic_setting_key_vault" {
+  name                           = "logAnalytics"
+  target_resource_id             = azurerm_key_vault.key_vault.id
+  log_analytics_workspace_id     = var.log_analytics_workspace_id
+
+  dynamic "enabled_log" {
+    iterator = entry
+    for_each = data.azurerm_monitor_diagnostic_categories.diagnostic_categories_key_vault.log_category_groups
+    content {
+      category_group = entry.value
+      retention_policy {
+        enabled = true
+        days    = 30
+      }
+    }
+  }
+
+  dynamic "metric" {
+    iterator = entry
+    for_each = data.azurerm_monitor_diagnostic_categories.diagnostic_categories_key_vault.metrics
+    content {
+      category = entry.value
+      enabled  = true
+      retention_policy {
+        enabled = true
+        days    = 30
+      }
+    }
+  }
+}
+
 # resource "azurerm_private_endpoint" "key_vault_private_endpoint" {  # Uncomment to deploy the private endpoint
 #   name                = "${azurerm_key_vault.key_vault.name}-pe"
 #   location            = var.location

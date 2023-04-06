@@ -2,12 +2,13 @@ module "stamps" {
   source   = "./modules/stamp"
   for_each = toset(var.stamps)
 
-  location            = var.location
-  resource_group_name = azurerm_resource_group.stamp_rgs[each.key].name
-  prefix              = local.prefix
-  stamp               = each.key
-  tags                = var.tags
-  subnet_id           = azapi_resource.subnet_stamps[each.key].id
+  location                   = var.location
+  resource_group_name        = azurerm_resource_group.stamp_rgs[each.key].name
+  prefix                     = local.prefix
+  stamp                      = each.key
+  tags                       = var.tags
+  subnet_id                  = azapi_resource.subnet_stamps[each.key].id
+  log_analytics_workspace_id = azurerm_log_analytics_workspace.log_analytics_workspace.id
   storage_container_names = [
     "data"
   ]
