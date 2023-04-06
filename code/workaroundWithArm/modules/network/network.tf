@@ -23,9 +23,9 @@
 # }
 
 resource "azurerm_resource_group_template_deployment" "subnet_private_endpoints" {
-  name = "PrivateEndpointSubnet"
+  name                = "PrivateEndpointSubnet"
   resource_group_name = data.azurerm_virtual_network.virtual_network.resource_group_name
-  deployment_mode = "Incremental"
+  deployment_mode     = "Incremental"
 
   parameters_content = jsonencode({
     subnetName = {

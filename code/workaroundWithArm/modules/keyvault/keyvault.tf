@@ -63,9 +63,9 @@ resource "azurerm_key_vault" "key_vault" {
 # }
 
 resource "azurerm_resource_group_template_deployment" "key_vault_key" {
-  name = "KeyVaultKey"
+  name                = "KeyVaultKey"
   resource_group_name = azurerm_key_vault.key_vault.resource_group_name
-  deployment_mode = "Incremental"
+  deployment_mode     = "Incremental"
 
   parameters_content = jsonencode({
     keyVaultKeyName = {
