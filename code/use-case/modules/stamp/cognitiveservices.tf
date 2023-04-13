@@ -8,13 +8,16 @@ resource "azurerm_cognitive_account" "cognitive_service" {
   }
 
   custom_subdomain_name = "${local.prefix}-cog001"
-  # customer_managed_key {  # Request first via https://forms.office.com/Pages/ResponsePage.aspx?id=v4j5cvGGr0GRqy180BHbR3k4-f_9d9xPhWkgOUub9YhUNDZJUERRVVVDME4xNDVNRjEwMTNZV1dHSS4u
-  #   key_vault_key_id   = jsondecode(azapi_resource.key_vault_key_cognitive_services.output).properties.keyUriWithVersion
-  # }
+  customer_managed_key { # Request first via https://forms.office.com/Pages/ResponsePage.aspx?id=v4j5cvGGr0GRqy180BHbR3k4-f_9d9xPhWkgOUub9YhUNDZJUERRVVVDME4xNDVNRjEwMTNZV1dHSS4u
+    key_vault_key_id = jsondecode(azapi_resource.key_vault_key_cognitive_services.output).properties.keyUriWithVersion
+  }
   dynamic_throttling_enabled = false
-  fqdns                      = []
-  kind                       = "OpenAI"
-  local_auth_enabled         = false
+  fqdns = [
+    trimsuffix(replace(azurerm_storage_account.storage.primary_blob_endpoint, "https://", ""), "/"),
+    trimsuffix(replace(azurerm_key_vault.key_vault.vault_uri, "https://", ""), "/")
+  ]
+  kind               = "OpenAI"
+  local_auth_enabled = false
   network_acls {
     default_action = "Deny"
     ip_rules       = var.ip_rules_cognitive_service
@@ -53,9 +56,9 @@ data "azurerm_monitor_diagnostic_categories" "diagnostic_categories_cognitive_se
 }
 
 resource "azurerm_monitor_diagnostic_setting" "diagnostic_setting_cognitive_service" {
-  name                           = "logAnalytics"
-  target_resource_id             = azurerm_cognitive_account.cognitive_service.id
-  log_analytics_workspace_id     = var.log_analytics_workspace_id
+  name                       = "logAnalytics"
+  target_resource_id         = azurerm_cognitive_account.cognitive_service.id
+  log_analytics_workspace_id = var.log_analytics_workspace_id
 
   dynamic "enabled_log" {
     iterator = entry
