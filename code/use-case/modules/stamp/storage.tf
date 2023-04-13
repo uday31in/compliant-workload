@@ -55,7 +55,7 @@ resource "azurerm_storage_account" "storage" {
     publish_microsoft_endpoints = false
   }
   sftp_enabled              = false
-  shared_access_key_enabled = true
+  shared_access_key_enabled = false
 
   depends_on = [
     azurerm_role_assignment.role_assignment_key_vault_uai
@@ -108,9 +108,9 @@ data "azurerm_monitor_diagnostic_categories" "diagnostic_categories_storage" {
 }
 
 resource "azurerm_monitor_diagnostic_setting" "diagnostic_setting_storage" {
-  name                           = "logAnalytics"
-  target_resource_id             = azurerm_storage_account.storage.id
-  log_analytics_workspace_id     = var.log_analytics_workspace_id
+  name                       = "logAnalytics"
+  target_resource_id         = azurerm_storage_account.storage.id
+  log_analytics_workspace_id = var.log_analytics_workspace_id
 
   dynamic "enabled_log" {
     iterator = entry

@@ -27,7 +27,6 @@
             "properties": {
                 "attributes": {
                     "enabled": true,
-                    "exp": 1709484065,
                     "exportable": false
                 },
                 "curveName": "P-256",

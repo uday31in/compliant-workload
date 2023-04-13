@@ -91,9 +91,9 @@ data "azurerm_monitor_diagnostic_categories" "diagnostic_categories_api_manageme
 }
 
 resource "azurerm_monitor_diagnostic_setting" "diagnostic_setting_api_management" {
-  name                           = "logAnalytics"
-  target_resource_id             = azurerm_api_management.api_management.id
-  log_analytics_workspace_id     = azurerm_log_analytics_workspace.log_analytics_workspace.id
+  name                       = "logAnalytics"
+  target_resource_id         = azurerm_api_management.api_management.id
+  log_analytics_workspace_id = azurerm_log_analytics_workspace.log_analytics_workspace.id
 
   dynamic "enabled_log" {
     iterator = entry

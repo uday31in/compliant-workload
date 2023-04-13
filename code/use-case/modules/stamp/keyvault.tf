@@ -83,9 +83,9 @@ data "azurerm_monitor_diagnostic_categories" "diagnostic_categories_key_vault" {
 }
 
 resource "azurerm_monitor_diagnostic_setting" "diagnostic_setting_key_vault" {
-  name                           = "logAnalytics"
-  target_resource_id             = azurerm_key_vault.key_vault.id
-  log_analytics_workspace_id     = var.log_analytics_workspace_id
+  name                       = "logAnalytics"
+  target_resource_id         = azurerm_key_vault.key_vault.id
+  log_analytics_workspace_id = var.log_analytics_workspace_id
 
   dynamic "enabled_log" {
     iterator = entry
