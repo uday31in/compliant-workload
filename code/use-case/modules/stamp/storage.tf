@@ -55,7 +55,7 @@ resource "azurerm_storage_account" "storage" {
     publish_microsoft_endpoints = false
   }
   sftp_enabled              = false
-  shared_access_key_enabled = false
+  shared_access_key_enabled = true
 
   depends_on = [
     azurerm_role_assignment.role_assignment_key_vault_uai
