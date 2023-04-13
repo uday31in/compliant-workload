@@ -11,5 +11,5 @@ stamps = [
   "stp01",
   "stp02"
 ]
-api_management_email = ""
+api_management_email = "mabuss@microsoft.com"
 publisher_name       = "Contoso"
