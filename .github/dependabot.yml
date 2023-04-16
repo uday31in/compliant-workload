@@ -13,9 +13,31 @@ updates:
       - "github-actions"
       - "dependencies"
 
-  # Maintain dependencies for Terraform main
+  # Maintain dependencies for Terraform
   - package-ecosystem: "terraform"
     directory: "/code/terraform"
+    schedule:
+      interval: "weekly"
+      day: "sunday"
+      time: "10:00"
+    labels:
+      - "terraform"
+      - "dependencies"
+
+  # Maintain dependencies for Terraform with ARM
+  - package-ecosystem: "terraform"
+    directory: "/code/workaroundWithArm"
+    schedule:
+      interval: "weekly"
+      day: "sunday"
+      time: "10:00"
+    labels:
+      - "terraform"
+      - "dependencies"
+
+  # Maintain dependencies for Terraform Use-Case
+  - package-ecosystem: "terraform"
+    directory: "/code/use-case"
     schedule:
       interval: "weekly"
       day: "sunday"
