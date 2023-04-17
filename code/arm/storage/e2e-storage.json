@@ -4,14 +4,21 @@
     "parameters": {
         "prefix": {
             "type": "string",
-            "defaultValue": "uday-dns",
+            "defaultValue": "uday-storage1",
             "metadata": {
                 "description": "description"
             }
         },
         "location":{
             "type": "string",
-            "defaultValue": "westeurope",
+            "defaultValue": "eastus",
+            "metadata": {
+                "description": "description"
+            }
+        },
+        "ddosProtectionPlan": {
+            "type": "string",
+            "defaultValue": "/subscriptions/fc035b2d-9f7c-4c87-b643-f156f14a4c5c/resourceGroups/sparta-1-ddos/providers/Microsoft.Network/ddosProtectionPlans/sparta-1-ddos-eastus",
             "metadata": {
                 "description": "description"
             }
@@ -47,7 +54,7 @@
         "name-compliant-userAssignedIdentity": "[concat(parameters('prefix'),'-userAssignedIdentity')]",
         "name-compliant-userAssignedIdentity-deployment": "[concat(variables('name-compliant-userAssignedIdentity'),'-deployment')]",
 
-        "name-compliant-KeyVault": "[concat(parameters('prefix'),'-kv')]",
+        "name-compliant-KeyVault": "[concat(parameters('prefix'),'-kv1')]",
         "name-compliant-KeyVault-deployment": "[concat(variables('name-compliant-KeyVault'),'-deployment')]",
 
         "name-compliant-storage": "[ replace(concat(parameters('prefix'),'-storage'),'-','')]",
@@ -97,6 +104,12 @@
                     "prefix": {
                         "value":"[variables('name-compliant-vnet')]"
                     },
+                    "location": {
+                        "value":"[parameters('location')]"
+                    },
+                    "ddosProtectionPlan": {
+                        "value":"[parameters('ddosProtectionPlan')]"
+                    },
                     "_artifactsLocation": {
                         "value": "[parameters('_artifactsLocation')]"
                     },
@@ -124,6 +137,9 @@
                     "prefix": {
                         "value":"[variables('name-compliant-userAssignedIdentity')]"
                     },
+                    "location": {
+                        "value":"[parameters('location')]"
+                    },
                     "_artifactsLocation": {
                         "value": "[parameters('_artifactsLocation')]"
                     },
@@ -147,6 +163,9 @@
                 "parameters": {
                     "prefix": {
                         "value":"[variables('name-compliant-KeyVault')]"
+                    },
+                    "location": {
+                        "value":"[parameters('location')]"
                     },
                     "userAssignedIdentity": {
                         "value":"[reference(variables('name-compliant-userAssignedIdentity-deployment')).outputs.userAssignedIdentity.value]"
@@ -177,6 +196,9 @@
                 "parameters": {
                     "prefix": {
                         "value":"[variables('name-compliant-storage')]"
+                    },
+                    "location": {
+                        "value":"[parameters('location')]"
                     },
                     "_artifactsLocation": {
                         "value": "[parameters('_artifactsLocation')]"

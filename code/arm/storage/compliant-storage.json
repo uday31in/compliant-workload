@@ -77,7 +77,7 @@
             "type": "Microsoft.Storage/storageAccounts",
             "apiVersion": "2022-05-01",
             "name": "[variables('name-compliant-strorage')]",
-            "location": "westeurope",
+            "location": "[parameters('location')]",
             "sku": {
                 "name": "Standard_LRS"
             },
@@ -100,7 +100,7 @@
                 "publicNetworkAccess": "Disabled",
                 "isLocalUserEnabled": "false",
                 "networkAcls": {
-                    "bypass": "AzureServices",
+                    "bypass": "None",
                     "defaultAction": "deny",
                     "ipRules": []
                 },
