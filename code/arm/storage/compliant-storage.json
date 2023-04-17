@@ -99,6 +99,7 @@
                 "allowedCopyScope": "AAD",
                 "publicNetworkAccess": "Disabled",
                 "isLocalUserEnabled": "false",
+                "isSftpEnabled": "false",
                 "networkAcls": {
                     "bypass": "None",
                     "defaultAction": "deny",
@@ -137,7 +138,7 @@
             "type": "Microsoft.Network/privateEndpoints",
             "apiVersion": "2020-04-01",
             "name": "[variables('name-compliant-strorage-pe')]",
-            "location": "westeurope",
+            "location": "[parameters('location')]",
             "dependsOn": [
                 "[variables('name-compliant-strorage')]"
             ],

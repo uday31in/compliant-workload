@@ -4,7 +4,7 @@
     "parameters": {
         "prefix": {
             "type": "string",
-            "defaultValue": "uday-storage1",
+            "defaultValue": "uday-storage2",
             "metadata": {
                 "description": "description"
             }
