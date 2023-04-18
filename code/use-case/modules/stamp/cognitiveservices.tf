@@ -12,8 +12,8 @@ resource "azurerm_cognitive_account" "cognitive_service" {
 
   custom_subdomain_name = "${local.prefix}-cog001"
   customer_managed_key { # Request first via https://forms.office.com/Pages/ResponsePage.aspx?id=v4j5cvGGr0GRqy180BHbR3k4-f_9d9xPhWkgOUub9YhUNDZJUERRVVVDME4xNDVNRjEwMTNZV1dHSS4u
-    identity_client_id = azurerm_user_assigned_identity.user_assigned_identity.id
-    key_vault_key_id = jsondecode(azapi_resource.key_vault_key_cognitive_services.output).properties.keyUriWithVersion
+    identity_client_id = azurerm_user_assigned_identity.user_assigned_identity.client_id
+    key_vault_key_id   = jsondecode(azapi_resource.key_vault_key_cognitive_services.output).properties.keyUriWithVersion
   }
   dynamic_throttling_enabled = false
   fqdns = [
