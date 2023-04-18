@@ -44,7 +44,6 @@ resource "azapi_resource" "key_vault_key" {
     properties = {
       attributes = {
         enabled    = true
-        exp        = 1709484065
         exportable = false
       }
       curveName = "P-256"
@@ -58,6 +57,21 @@ resource "azapi_resource" "key_vault_key" {
       ]
       keySize = 2048
       kty     = "RSA"
+      rotationPolicy = {
+        attributes = {
+          expiryTime = "P13M"
+        }
+        lifetimeActions = [
+          {
+            action = {
+              type = "rotate"
+            }
+            trigger = {
+              timeAfterCreate = "P12M"
+            }
+          }
+        ]
+      }
     }
   })
 }

@@ -39,7 +39,22 @@
                     "wrapKey"
                 ],
                 "keySize": 2048,
-                "kty": "RSA"
+                "kty": "RSA",
+                "rotationPolicy": {
+                    "attributes": {
+                        "expiryTime": "P13M"
+                    },
+                    "lifetimeActions": [
+                        {
+                            "action": {
+                                "type": "rotate"
+                            },
+                            "trigger": {
+                                "timeAfterCreate": "P12M"
+                            }
+                        }
+                    ]
+                }
             }
         }
     ],
