@@ -1,0 +1,232 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "_generator": {
+      "name": "bicep",
+      "version": "0.16.2.56959",
+      "templateHash": "13941186112806139508"
+    }
+  },
+  "parameters": {
+    "location": {
+      "type": "string",
+      "defaultValue": "eastus",
+      "metadata": {
+        "description": "Specifies the location for all resources."
+      }
+    },
+    "environment": {
+      "type": "string",
+      "defaultValue": "dev",
+      "metadata": {
+        "description": "Specifies the environment of the deployment."
+      },
+      "allowedValues": [
+        "dev",
+        "tst",
+        "prd"
+      ]
+    },
+    "prefix": {
+      "type": "string",
+      "defaultValue": "mabuss70",
+      "metadata": {
+        "description": "Specifies the prefix for all resources created in this deployment."
+      },
+      "maxLength": 10,
+      "minLength": 2
+    },
+    "tags": {
+      "type": "object",
+      "defaultValue": {},
+      "metadata": {
+        "description": "Specifies the tags that you want to apply to all resources."
+      }
+    }
+  },
+  "variables": {
+    "name": "[toLower(format('{0}-{1}', parameters('prefix'), parameters('environment')))]",
+    "userAssignedIdentityName": "[format('{0}-uai001', variables('name'))]",
+    "keyvaultName": "[format('{0}-vault001', variables('name'))]",
+    "storageNameCleaned": "[replace(format('{0}-stg001', variables('name')), '-', '')]"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.ManagedIdentity/userAssignedIdentities",
+      "apiVersion": "2023-01-31",
+      "name": "[variables('userAssignedIdentityName')]",
+      "location": "[parameters('location')]",
+      "tags": "[parameters('tags')]"
+    },
+    {
+      "type": "Microsoft.KeyVault/vaults",
+      "apiVersion": "2023-02-01",
+      "name": "[variables('keyvaultName')]",
+      "location": "[parameters('location')]",
+      "tags": "[parameters('tags')]",
+      "properties": {
+        "accessPolicies": [],
+        "createMode": "default",
+        "enabledForDeployment": false,
+        "enabledForDiskEncryption": false,
+        "enabledForTemplateDeployment": false,
+        "enablePurgeProtection": true,
+        "enableRbacAuthorization": true,
+        "enableSoftDelete": true,
+        "publicNetworkAccess": "Disabled",
+        "networkAcls": {
+          "bypass": "AzureServices",
+          "defaultAction": "Deny",
+          "ipRules": [],
+          "virtualNetworkRules": []
+        },
+        "sku": {
+          "family": "A",
+          "name": "standard"
+        },
+        "softDeleteRetentionInDays": 7,
+        "tenantId": "[subscription().tenantId]"
+      }
+    },
+    {
+      "type": "Microsoft.KeyVault/vaults/keys",
+      "apiVersion": "2023-02-01",
+      "name": "[format('{0}/{1}', variables('keyvaultName'), 'cmk')]",
+      "properties": {
+        "attributes": {
+          "enabled": true,
+          "exportable": false
+        },
+        "curveName": "P-256",
+        "keyOps": [
+          "decrypt",
+          "encrypt",
+          "sign",
+          "unwrapKey",
+          "verify",
+          "wrapKey"
+        ],
+        "keySize": 2048,
+        "kty": "RSA",
+        "rotationPolicy": {
+          "attributes": {
+            "expiryTime": "P13M"
+          },
+          "lifetimeActions": [
+            {
+              "action": {
+                "type": "rotate"
+              },
+              "trigger": {
+                "timeAfterCreate": "P12M"
+              }
+            }
+          ]
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.KeyVault/vaults', variables('keyvaultName'))]"
+      ]
+    },
+    {
+      "type": "Microsoft.Authorization/roleAssignments",
+      "apiVersion": "2022-04-01",
+      "scope": "[format('Microsoft.KeyVault/vaults/{0}', variables('keyvaultName'))]",
+      "name": "[guid(resourceId('Microsoft.KeyVault/vaults', variables('keyvaultName')), resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('userAssignedIdentityName')))]",
+      "properties": {
+        "description": "User Assigned Identity Role Assignment for CMK",
+        "principalId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('userAssignedIdentityName')), '2023-01-31').principalId]",
+        "roleDefinitionId": "[resourceId('Microsoft.Authorization/roleDefinitions', 'e147488a-f6f5-4113-8e2d-b22465e65bf6')]",
+        "principalType": "ServicePrincipal"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.KeyVault/vaults', variables('keyvaultName'))]",
+        "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('userAssignedIdentityName'))]"
+      ]
+    },
+    {
+      "type": "Microsoft.Storage/storageAccounts",
+      "apiVersion": "2022-09-01",
+      "name": "[variables('storageNameCleaned')]",
+      "location": "[parameters('location')]",
+      "tags": "[parameters('tags')]",
+      "identity": {
+        "type": "UserAssigned",
+        "userAssignedIdentities": {
+          "[format('{0}', resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('userAssignedIdentityName')))]": {}
+        }
+      },
+      "sku": {
+        "name": "Standard_LRS"
+      },
+      "kind": "StorageV2",
+      "properties": {
+        "accessTier": "Hot",
+        "allowBlobPublicAccess": false,
+        "allowedCopyScope": "AAD",
+        "allowCrossTenantReplication": false,
+        "allowSharedKeyAccess": false,
+        "defaultToOAuthAuthentication": true,
+        "dnsEndpointType": "Standard",
+        "encryption": {
+          "keySource": "Microsoft.Keyvault",
+          "identity": {
+            "userAssignedIdentity": "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('userAssignedIdentityName'))]"
+          },
+          "keyvaultproperties": {
+            "keyname": "cmk",
+            "keyvaulturi": "[reference(resourceId('Microsoft.KeyVault/vaults', variables('keyvaultName')), '2023-02-01').vaultUri]"
+          },
+          "requireInfrastructureEncryption": true,
+          "services": {
+            "blob": {
+              "enabled": true,
+              "keyType": "Account"
+            },
+            "file": {
+              "enabled": true,
+              "keyType": "Account"
+            },
+            "queue": {
+              "enabled": true,
+              "keyType": "Account"
+            },
+            "table": {
+              "enabled": true,
+              "keyType": "Account"
+            }
+          }
+        },
+        "isHnsEnabled": false,
+        "isLocalUserEnabled": false,
+        "isNfsV3Enabled": false,
+        "isSftpEnabled": false,
+        "keyPolicy": {
+          "keyExpirationPeriodInDays": 7
+        },
+        "largeFileSharesState": "Disabled",
+        "minimumTlsVersion": "TLS1_2",
+        "networkAcls": {
+          "bypass": "None",
+          "defaultAction": "Deny",
+          "ipRules": [],
+          "virtualNetworkRules": []
+        },
+        "publicNetworkAccess": "Disabled",
+        "routingPreference": {
+          "routingChoice": "MicrosoftRouting",
+          "publishInternetEndpoints": false,
+          "publishMicrosoftEndpoints": false
+        },
+        "supportsHttpsTrafficOnly": true
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.KeyVault/vaults', variables('keyvaultName'))]",
+        "[resourceId('Microsoft.KeyVault/vaults/keys', variables('keyvaultName'), 'cmk')]",
+        "[extensionResourceId(resourceId('Microsoft.KeyVault/vaults', variables('keyvaultName')), 'Microsoft.Authorization/roleAssignments', guid(resourceId('Microsoft.KeyVault/vaults', variables('keyvaultName')), resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('userAssignedIdentityName'))))]",
+        "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('userAssignedIdentityName'))]"
+      ]
+    }
+  ]
+}
