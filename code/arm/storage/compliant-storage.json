@@ -17,35 +17,35 @@
         },
         "prefix": {
             "type": "string",
-            "defaultValue": "compliantstorage",
+            "defaultValue": "udaystorage4storage",
             "metadata": {
                 "description": "description"
             }
         },
         "location": {
             "type": "string",
-            "defaultValue": "westeurope",
+            "defaultValue": "eastus",
             "metadata": {
                 "description": "description"
             }
         },
         "userAssignedIdentityName": {
             "type": "string",
-            "defaultValue": "compliant-storage-userAssignedIdentity",
+            "defaultValue": "uday-storage4-userAssignedIdentity",
             "metadata": {
                 "description": "description"
             }
         },
         "userAssignedIdentityResourceGroup": {
             "type": "string",
-            "defaultValue": "/subscriptions/22a8d224-e190-45c0-a936-f915ee2d8b16/resourceGroups/compliant-storage-resourcegroup",
+            "defaultValue": "/subscriptions/22a8d224-e190-45c0-a936-f915ee2d8b16/resourceGroups/uday-storage4-resourcegroup",
             "metadata": {
                 "description": "description"
             }
         },
         "subnetId": {
             "type": "string",
-            "defaultValue": "/subscriptions/22a8d224-e190-45c0-a936-f915ee2d8b16/resourceGroups/compliant-storage-resourcegroup/providers/Microsoft.Network/virtualNetworks/compliant-storage-virtualNetworks/subnets/compliant-storage-virtualNetworks-subnet",
+            "defaultValue": "/subscriptions/22a8d224-e190-45c0-a936-f915ee2d8b16/resourceGroups/uday-storage4-resourcegroup/providers/Microsoft.Network/virtualNetworks/uday-storage4-vnet/subnets/uday-storage4-vnet-subnet",
             "metadata": {
                 "description": "description"
             }
@@ -59,7 +59,7 @@
         },
         "keyVaultUri": {
             "type": "string",
-            "defaultValue": "https://compliant-storage-kv1.vault.azure.net/",
+            "defaultValue": "https://uday-storage4-kv1.vault.azure.net",
             "metadata": {
                 "description": "description"
             }
@@ -75,7 +75,7 @@
     "resources": [
         {
             "type": "Microsoft.Storage/storageAccounts",
-            "apiVersion": "2022-05-01",
+            "apiVersion": "2022-09-01",
             "name": "[variables('name-compliant-strorage')]",
             "location": "[parameters('location')]",
             "sku": {
