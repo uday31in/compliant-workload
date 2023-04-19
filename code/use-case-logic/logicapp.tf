@@ -58,7 +58,7 @@ resource "azurerm_logic_app_standard" "logic_app_standard" {
     websockets_enabled = false
   }
   storage_account_name = azurerm_storage_account.storage.name
-  storage_account_access_key = ""
+  storage_account_access_key = azurerm_storage_account.storage.primary_access_key
   storage_account_share_name = 
   use_extension_bundle = true
   version = "~3"
