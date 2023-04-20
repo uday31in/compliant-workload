@@ -42,11 +42,11 @@ resource "azurerm_storage_account" "storage" {
   network_rules {
     bypass                     = ["None"]
     default_action             = "Deny"
-    ip_rules                   = var.ip_rules_storage
+    ip_rules                   = []
     virtual_network_subnet_ids = []
   }
   nfsv3_enabled                 = false
-  public_network_access_enabled = true # TODO: Update when ExpressRoute is available
+  public_network_access_enabled = false
   queue_encryption_key_type     = "Account"
   table_encryption_key_type     = "Account"
   routing {
@@ -103,6 +103,21 @@ resource "azurerm_storage_management_policy" "storage_management_policy" {
 #   })
 # }
 
+
+resource "azapi_resource" "storage_file_share" {
+  type      = "Microsoft.Storage/storageAccounts/fileServices/shares@2022-09-01"
+  name      = "logicapp"
+  parent_id = "${azurerm_storage_account.storage.id}/fileServices/default"
+
+  body = jsonencode({
+    properties = {
+      accessTier       = "TransactionOptimized"
+      enabledProtocols = "SMB"
+      shareQuota       = 5120
+    }
+  })
+}
+
 data "azurerm_monitor_diagnostic_categories" "diagnostic_categories_storage" {
   resource_id = azurerm_storage_account.storage.id
 }
@@ -110,7 +125,7 @@ data "azurerm_monitor_diagnostic_categories" "diagnostic_categories_storage" {
 resource "azurerm_monitor_diagnostic_setting" "diagnostic_setting_storage" {
   name                       = "logAnalytics"
   target_resource_id         = azurerm_storage_account.storage.id
-  log_analytics_workspace_id = var.log_analytics_workspace_id
+  log_analytics_workspace_id = azurerm_log_analytics_workspace.log_analytics_workspace.id
 
   dynamic "enabled_log" {
     iterator = entry
@@ -152,13 +167,11 @@ resource "azurerm_private_endpoint" "storage_private_endpoint_blob" {
     subresource_names              = ["blob"]
   }
   subnet_id = azapi_resource.subnet_services.id
-  dynamic "private_dns_zone_group" {
-    content {
-      name = "${azurerm_storage_account.storage.name}-arecord"
-      private_dns_zone_ids = [
-        azurerm_private_dns_zone.private_dns_zone_blob.id
-      ]
-    }
+  private_dns_zone_group {
+    name = "${azurerm_storage_account.storage.name}-arecord"
+    private_dns_zone_ids = [
+      azurerm_private_dns_zone.private_dns_zone_blob.id
+    ]
   }
 }
 
@@ -176,13 +189,11 @@ resource "azurerm_private_endpoint" "storage_private_endpoint_file" {
     subresource_names              = ["file"]
   }
   subnet_id = azapi_resource.subnet_services.id
-  dynamic "private_dns_zone_group" {
-    content {
-      name = "${azurerm_storage_account.storage.name}-arecord"
-      private_dns_zone_ids = [
-        azurerm_private_dns_zone.private_dns_zone_file.id
-      ]
-    }
+  private_dns_zone_group {
+    name = "${azurerm_storage_account.storage.name}-arecord"
+    private_dns_zone_ids = [
+      azurerm_private_dns_zone.private_dns_zone_file.id
+    ]
   }
 }
 
@@ -200,13 +211,11 @@ resource "azurerm_private_endpoint" "storage_private_endpoint_queue" {
     subresource_names              = ["queue"]
   }
   subnet_id = azapi_resource.subnet_services.id
-  dynamic "private_dns_zone_group" {
-    content {
-      name = "${azurerm_storage_account.storage.name}-arecord"
-      private_dns_zone_ids = [
-        azurerm_private_dns_zone.private_dns_zone_queue.id
-      ]
-    }
+  private_dns_zone_group {
+    name = "${azurerm_storage_account.storage.name}-arecord"
+    private_dns_zone_ids = [
+      azurerm_private_dns_zone.private_dns_zone_queue.id
+    ]
   }
 }
 
@@ -224,12 +233,10 @@ resource "azurerm_private_endpoint" "storage_private_endpoint_table" {
     subresource_names              = ["table"]
   }
   subnet_id = azapi_resource.subnet_services.id
-  dynamic "private_dns_zone_group" {
-    content {
-      name = "${azurerm_storage_account.storage.name}-arecord"
-      private_dns_zone_ids = [
-        azurerm_private_dns_zone.private_dns_zone_table.id
-      ]
-    }
+  private_dns_zone_group {
+    name = "${azurerm_storage_account.storage.name}-arecord"
+    private_dns_zone_ids = [
+      azurerm_private_dns_zone.private_dns_zone_table.id
+    ]
   }
 }

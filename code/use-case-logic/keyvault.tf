@@ -12,7 +12,7 @@ resource "azurerm_key_vault" "key_vault" {
   network_acls {
     bypass                     = "AzureServices"
     default_action             = "Deny"
-    ip_rules                   = local.proxy_ips
+    ip_rules                   = []
     virtual_network_subnet_ids = []
   }
   public_network_access_enabled = false
@@ -112,13 +112,11 @@ resource "azurerm_private_endpoint" "key_vault_private_endpoint" {
     private_connection_resource_id = azurerm_key_vault.key_vault.id
     subresource_names              = ["vault"]
   }
-  subnet_id = var.subnet_id
-  dynamic "private_dns_zone_group" {
-    content {
-      name = "${azurerm_key_vault.key_vault.name}-arecord"
-      private_dns_zone_ids = [
-        azurerm_private_dns_zone.private_dns_zone_key_vault.id
-      ]
-    }
+  subnet_id = azapi_resource.subnet_services.id
+  private_dns_zone_group {
+    name = "${azurerm_key_vault.key_vault.name}-arecord"
+    private_dns_zone_ids = [
+      azurerm_private_dns_zone.private_dns_zone_key_vault.id
+    ]
   }
 }
