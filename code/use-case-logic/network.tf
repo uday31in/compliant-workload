@@ -9,7 +9,7 @@ resource "azapi_resource" "subnet_logicapp" {
       delegations   = []
       ipAllocations = []
       networkSecurityGroup = {
-        id = azurerm_network_security_group.network_security_group_apim.id
+        id = data.azurerm_network_security_group.network_security_group.id
       }
       privateEndpointNetworkPolicies    = "Enabled"
       privateLinkServiceNetworkPolicies = "Enabled"
@@ -33,7 +33,7 @@ resource "azapi_resource" "subnet_services" {
       delegations   = []
       ipAllocations = []
       networkSecurityGroup = {
-        id = azurerm_network_security_group.network_security_group_apim.id
+        id = data.azurerm_network_security_group.network_security_group.id
       }
       privateEndpointNetworkPolicies    = "Enabled"
       privateLinkServiceNetworkPolicies = "Enabled"
