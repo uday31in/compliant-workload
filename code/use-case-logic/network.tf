@@ -6,7 +6,7 @@ resource "azapi_resource" "subnet_logicapp" {
   body = jsonencode({
     properties = {
       addressPrefix = tostring(cidrsubnet(data.azurerm_virtual_network.virtual_network.address_space[0], 27 - tonumber(reverse(split("/", data.azurerm_virtual_network.virtual_network.address_space[0]))[0]), 0))
-      delegations   = [
+      delegations = [
         {
           name = "LogicAppDelegation"
           properties = {
