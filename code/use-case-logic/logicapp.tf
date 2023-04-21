@@ -30,8 +30,8 @@ resource "azurerm_logic_app_standard" "logic_app_standard" {
     "APPLICATIONINSIGHTS_CONNECTION_STRING" = azurerm_application_insights.application_insights.connection_string
     "FUNCTIONS_WORKER_RUNTIME"              = "node"
     "WEBSITE_NODE_DEFAULT_VERSION"          = "~18"
-    "WEBSITE_CONTENTOVERVNET" = "1"
-    "WEBSITE_VNET_ROUTE_ALL"  = "1"
+    "WEBSITE_CONTENTOVERVNET"               = "1"
+    "WEBSITE_VNET_ROUTE_ALL"                = "1"
   }
   bundle_version          = "[1.*, 2.0.0)"
   client_affinity_enabled = false
@@ -46,16 +46,16 @@ resource "azurerm_logic_app_standard" "logic_app_standard" {
     http2_enabled            = false
     ip_restriction = [
       {
-        name = "AllowSentinel"
-        action = "Allow"
-        headers = null
-        ip_address = null
-        priority = 100
-        service_tag = "AzureSentinel"
+        name                      = "AllowSentinel"
+        action                    = "Allow"
+        headers                   = null
+        ip_address                = null
+        priority                  = 100
+        service_tag               = "AzureSentinel"
         virtual_network_subnet_id = null
       }
     ]
-    min_tls_version          = "1.2"
+    min_tls_version = "1.2"
     # pre_warmed_instance_count = 0  # Uncomment to configure pre-warmed instance count
     runtime_scale_monitoring_enabled = false
     # scm_ip_restriction = []  # Uncomment to define IP restrictions for SCM endpoint
