@@ -31,6 +31,12 @@ variable "tags" {
   sensitive   = false
 }
 
+variable "timestamp_expiry" {
+  description = "Specifies the initial key vault key expiry."
+  type        = number
+  sensitive   = false
+}
+
 variable "vnet_id" {
   description = "Specifies the resource ID of the Vnet used for the Data Landing Zone"
   type        = string
