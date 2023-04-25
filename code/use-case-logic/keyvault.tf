@@ -31,6 +31,50 @@ resource "azapi_resource" "key_vault_key_storage" {
     properties = {
       attributes = {
         enabled    = true
+        # exp        = var.timestamp_expiry
+        exportable = false
+      }
+      curveName = "P-256"
+      keyOps = [
+        "decrypt",
+        "encrypt",
+        "sign",
+        "unwrapKey",
+        "verify",
+        "wrapKey"
+      ]
+      keySize = 2048
+      kty     = "RSA"
+      rotationPolicy = {
+        attributes = {
+          expiryTime = "P13M"
+        }
+        lifetimeActions = [
+          {
+            action = {
+              type = "rotate"
+            }
+            trigger = {
+              timeAfterCreate = "P12M"
+            }
+          }
+        ]
+      }
+    }
+  })
+  response_export_values = ["properties.keyUri"]
+}
+
+resource "azapi_resource" "key_vault_key_eventhub" {
+  type      = "Microsoft.KeyVault/vaults/keys@2022-11-01"
+  name      = "cmkEventHub"
+  parent_id = azurerm_key_vault.key_vault.id
+
+  body = jsonencode({
+    properties = {
+      attributes = {
+        enabled    = true
+        exp        = var.timestamp_expiry
         exportable = false
       }
       curveName = "P-256"
