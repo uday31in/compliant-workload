@@ -31,7 +31,7 @@ resource "azapi_resource" "key_vault_key_storage" {
     properties = {
       attributes = {
         enabled    = true
-        # exp        = var.timestamp_expiry
+        exp        = var.timestamp_expiry
         exportable = false
       }
       curveName = "P-256"
