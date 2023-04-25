@@ -62,3 +62,16 @@ resource "azurerm_private_dns_zone_virtual_network_link" "private_dns_zone_key_v
   private_dns_zone_name = azurerm_private_dns_zone.private_dns_zone_key_vault.name
   virtual_network_id    = data.azurerm_virtual_network.virtual_network.id
 }
+
+resource "azurerm_private_dns_zone" "private_dns_zone_servicebus" {
+  name                = "privatelink.servicebus.windows.net"
+  resource_group_name = data.azurerm_virtual_network.virtual_network.resource_group_name
+  tags                = var.tags
+}
+
+resource "azurerm_private_dns_zone_virtual_network_link" "private_dns_zone_servicebus" {
+  name                  = data.azurerm_virtual_network.virtual_network.name
+  resource_group_name   = data.azurerm_virtual_network.virtual_network.resource_group_name
+  private_dns_zone_name = azurerm_private_dns_zone.private_dns_zone_servicebus.name
+  virtual_network_id    = data.azurerm_virtual_network.virtual_network.id
+}
