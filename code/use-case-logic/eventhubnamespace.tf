@@ -1,9 +1,9 @@
 resource "azapi_resource" "eventhub_namespace" {
-  type = "Microsoft.EventHub/namespaces@2022-10-01-preview"
-  name = "${local.prefix}-evhns001"
+  type      = "Microsoft.EventHub/namespaces@2022-10-01-preview"
+  name      = "${local.prefix}-evhns001"
   parent_id = azurerm_resource_group.app_rg.id
-  location = var.location
-  tags                = var.tags
+  location  = var.location
+  tags      = var.tags
   identity {
     type = "UserAssigned"
     identity_ids = [
@@ -13,9 +13,9 @@ resource "azapi_resource" "eventhub_namespace" {
 
   body = jsonencode({
     sku = {
-      name = "Premium"
+      name     = "Premium"
       capacity = 1
-      tier = "Premium"
+      tier     = "Premium"
     }
     properties = {
       disableLocalAuth = true
@@ -26,16 +26,16 @@ resource "azapi_resource" "eventhub_namespace" {
             identity = {
               userAssignedIdentity = azurerm_user_assigned_identity.user_assigned_identity.id
             }
-            keyName = azapi_resource.key_vault_key_eventhub.name
+            keyName     = azapi_resource.key_vault_key_eventhub.name
             keyVaultUri = azurerm_key_vault.key_vault.vault_uri
           }
         ]
         requireInfrastructureEncryption = true
       }
-      kafkaEnabled = true
-      minimumTlsVersion = "1.2"
+      kafkaEnabled        = true
+      minimumTlsVersion   = "1.2"
       publicNetworkAccess = "Disabled"
-      zoneRedundant = true
+      zoneRedundant       = true
     }
   })
 }
