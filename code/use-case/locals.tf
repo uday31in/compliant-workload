@@ -26,7 +26,8 @@ locals {
     "89.247.164.226",
     "89.247.164.227",
     "89.247.164.228",
-    "89.247.164.229"
+    "89.247.164.229",
+    "167.220.196.158"
   ]
   apim_ips = azurerm_api_management.api_management.public_ip_addresses
   open_ai_ips_eastus = [

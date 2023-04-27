@@ -29,6 +29,11 @@ resource "azurerm_cognitive_account" "cognitive_service" {
   outbound_network_access_restricted = true
   public_network_access_enabled      = true # TODO: Update when ExpressRoute is available
   sku_name                           = "S0"
+  lifecycle {
+    ignore_changes = [
+      customer_managed_key
+    ]
+  }
 
   depends_on = [
     azurerm_role_assignment.role_assignment_key_vault_uai

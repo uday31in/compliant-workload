@@ -28,10 +28,10 @@ resource "azurerm_storage_account" "storage" {
     last_access_time_enabled = false
     versioning_enabled       = false
   }
-  customer_managed_key {
-    user_assigned_identity_id = azurerm_user_assigned_identity.user_assigned_identity.id
-    key_vault_key_id          = jsondecode(azapi_resource.key_vault_key_storage.output).properties.keyUriWithVersion
-  }
+  # customer_managed_key {
+  #   user_assigned_identity_id = azurerm_user_assigned_identity.user_assigned_identity.id
+  #   key_vault_key_id          = jsondecode(azapi_resource.key_vault_key_storage.output).properties.keyUriWithVersion
+  # }
   cross_tenant_replication_enabled  = false
   default_to_oauth_authentication   = true
   enable_https_traffic_only         = true
@@ -40,7 +40,7 @@ resource "azurerm_storage_account" "storage" {
   large_file_share_enabled          = false
   min_tls_version                   = "TLS1_2"
   network_rules {
-    bypass                     = ["None"]
+    bypass                     = ["AzureServices"]
     default_action             = "Deny"
     ip_rules                   = var.ip_rules_storage
     virtual_network_subnet_ids = []
