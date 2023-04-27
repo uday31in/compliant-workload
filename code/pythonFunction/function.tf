@@ -5,93 +5,93 @@ resource "azurerm_service_plan" "service_plan" {
   tags                = var.tags
 
   # maximum_elastic_worker_count = 20
-  os_type                      = "Linux"
-  per_site_scaling_enabled     = false
-  sku_name                     = "P1v3"
-  worker_count                 = 3
-  zone_balancing_enabled       = true
+  os_type                  = "Linux"
+  per_site_scaling_enabled = false
+  sku_name                 = "P1v3"
+  worker_count             = 3
+  zone_balancing_enabled   = true
 }
 
 resource "azapi_resource" "function" {
-  type = "Microsoft.Web/sites@2022-09-01"
+  type      = "Microsoft.Web/sites@2022-09-01"
   parent_id = azurerm_resource_group.app_rg.id
-  name = "${local.prefix}-fctn002"
-  location            = var.location
-  tags                = var.tags
+  name      = "${local.prefix}-fctn002"
+  location  = var.location
+  tags      = var.tags
   identity {
     type = "SystemAssigned"
   }
-  
+
   body = jsonencode({
     kind = "functionapp,linux"
     properties = {
-      clientAffinityEnabled = false
-      clientCertEnabled = false
-      clientCertMode = "Required"
-      enabled = true
-      hostNamesDisabled = false
-      httpsOnly = true
-      hyperV = false
-      isXenon = false
+      clientAffinityEnabled     = false
+      clientCertEnabled         = false
+      clientCertMode            = "Required"
+      enabled                   = true
+      hostNamesDisabled         = false
+      httpsOnly                 = true
+      hyperV                    = false
+      isXenon                   = false
       keyVaultReferenceIdentity = "SystemAssigned"
-      publicNetworkAccess = "Disabled"
-      redundancyMode = "None"
-      reserved = true
-      scmSiteAlsoStopped = false
-      serverFarmId = azurerm_service_plan.service_plan.id
-      storageAccountRequired = false
-      virtualNetworkSubnetId = azapi_resource.subnet_function.id
+      publicNetworkAccess       = "Disabled"
+      redundancyMode            = "None"
+      reserved                  = true
+      scmSiteAlsoStopped        = false
+      serverFarmId              = azurerm_service_plan.service_plan.id
+      storageAccountRequired    = false
+      virtualNetworkSubnetId    = azapi_resource.subnet_function.id
       siteConfig = {
-        autoHealEnabled = false
+        autoHealEnabled            = false
         acrUseManagedIdentityCreds = false
-        alwaysOn = true
+        alwaysOn                   = true
         appSettings = [
           {
-            name = "APPLICATIONINSIGHTS_CONNECTION_STRING"
+            name  = "APPLICATIONINSIGHTS_CONNECTION_STRING"
             value = azurerm_application_insights.application_insights.connection_string
           },
           {
-            name = "APPINSIGHTS_INSTRUMENTATIONKEY"
+            name  = "APPINSIGHTS_INSTRUMENTATIONKEY"
             value = azurerm_application_insights.application_insights.instrumentation_key
           },
           {
-            name = "FUNCTIONS_EXTENSION_VERSION"
+            name  = "FUNCTIONS_EXTENSION_VERSION"
             value = "~4"
           },
           {
-            name = "FUNCTIONS_WORKER_RUNTIME"
+            name  = "FUNCTIONS_WORKER_RUNTIME"
             value = "python"
           },
           {
-            name = "WEBSITE_CONTENTOVERVNET"
+            name  = "WEBSITE_CONTENTOVERVNET"
             value = "1"
           },
           {
-            name = "AzureWebJobsStorage__accountName"
+            name  = "AzureWebJobsStorage__accountName"
             value = azurerm_storage_account.storage.name
           }
         ]
-        azureStorageAccounts = {}
-        detailedErrorLoggingEnabled = true
-        functionAppScaleLimit = 0
+        azureStorageAccounts                   = {}
+        detailedErrorLoggingEnabled            = true
+        functionAppScaleLimit                  = 0
         functionsRuntimeScaleMonitoringEnabled = false
-        ftpsState = "FtpsOnly"
-        http20Enabled = false
-        ipSecurityRestrictionsDefaultAction = "Deny"
-        linuxFxVersion = "Python|3.10"
-        localMySqlEnabled = false
-        loadBalancing = "LeastRequests"
-        minTlsVersion = "1.2"
-        minimumElasticInstanceCount = 0
-        numberOfWorkers = 1
-        preWarmedInstanceCount = 0
-        scmMinTlsVersion = "1.2"
-        scmIpSecurityRestrictionsUseMain = false
+        ftpsState                              = "FtpsOnly"
+        http20Enabled                          = false
+        ipSecurityRestrictionsDefaultAction    = "Deny"
+        linuxFxVersion                         = "Python|3.10"
+        localMySqlEnabled                      = false
+        loadBalancing                          = "LeastRequests"
+        minTlsVersion                          = "1.2"
+        minimumElasticInstanceCount            = 0
+        numberOfWorkers                        = 1
+        preWarmedInstanceCount                 = 0
+        scmMinTlsVersion                       = "1.2"
+        scmIpSecurityRestrictionsUseMain       = false
         scmIpSecurityRestrictionsDefaultAction = "Deny"
-        use32BitWorkerProcess = true
-        vnetRouteAllEnabled = true
-        vnetPrivatePortsCount = 0
-        webSocketsEnabled = false
+        use32BitWorkerProcess                  = true
+        vnetRouteAllEnabled                    = true
+        vnetPrivatePortsCount                  = 0
+        webSocketsEnabled                      = false
       }
     }
   })
