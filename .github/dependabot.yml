@@ -56,3 +56,14 @@ updates:
     labels:
       - "terraform"
       - "dependencies"
+
+  # Maintain dependencies for Terraform pythonFunction
+  - package-ecosystem: "terraform"
+    directory: "/code/pythonFunction"
+    schedule:
+      interval: "weekly"
+      day: "sunday"
+      time: "10:00"
+    labels:
+      - "terraform"
+      - "dependencies"
