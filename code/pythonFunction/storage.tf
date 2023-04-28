@@ -6,7 +6,8 @@ resource "azurerm_storage_account" "storage" {
   identity {
     type = "UserAssigned"
     identity_ids = [
-      azurerm_user_assigned_identity.user_assigned_identity.id
+      var.user_assigned_identity_id
+      # azurerm_user_assigned_identity.user_assigned_identity.id
     ]
   }
 
@@ -29,8 +30,8 @@ resource "azurerm_storage_account" "storage" {
     versioning_enabled       = false
   }
   customer_managed_key {
-    user_assigned_identity_id = azurerm_user_assigned_identity.user_assigned_identity.id
-    key_vault_key_id          = jsondecode(azapi_resource.key_vault_key_storage.output).properties.keyUri
+    user_assigned_identity_id = var.user_assigned_identity_id  # azurerm_user_assigned_identity.user_assigned_identity.id
+    key_vault_key_id          = jsondecode(azurerm_resource_group_template_deployment.key_vault_key_storage.output_content).keyVaultKeyUri.value  # jsondecode(azapi_resource.key_vault_key_storage.output).properties.keyUri
   }
   cross_tenant_replication_enabled  = false
   default_to_oauth_authentication   = true
@@ -58,7 +59,7 @@ resource "azurerm_storage_account" "storage" {
   shared_access_key_enabled = false
 
   depends_on = [
-    azurerm_role_assignment.role_assignment_key_vault_uai
+    # azurerm_role_assignment.role_assignment_key_vault_uai
   ]
 }
 
@@ -103,19 +104,19 @@ resource "azurerm_storage_management_policy" "storage_management_policy" {
 #   })
 # }
 
-resource "azapi_resource" "storage_file_share" {
-  type      = "Microsoft.Storage/storageAccounts/fileServices/shares@2022-09-01"
-  name      = "logicapp"
-  parent_id = "${azurerm_storage_account.storage.id}/fileServices/default"
+# resource "azapi_resource" "storage_file_share" {
+#   type      = "Microsoft.Storage/storageAccounts/fileServices/shares@2022-09-01"
+#   name      = "logicapp"
+#   parent_id = "${azurerm_storage_account.storage.id}/fileServices/default"
 
-  body = jsonencode({
-    properties = {
-      accessTier       = "TransactionOptimized"
-      enabledProtocols = "SMB"
-      shareQuota       = 5120
-    }
-  })
-}
+#   body = jsonencode({
+#     properties = {
+#       accessTier       = "TransactionOptimized"
+#       enabledProtocols = "SMB"
+#       shareQuota       = 5120
+#     }
+#   })
+# }
 
 data "azurerm_monitor_diagnostic_categories" "diagnostic_categories_storage" {
   resource_id = azurerm_storage_account.storage.id
@@ -165,7 +166,7 @@ resource "azurerm_private_endpoint" "storage_private_endpoint_blob" {
     private_connection_resource_id = azurerm_storage_account.storage.id
     subresource_names              = ["blob"]
   }
-  subnet_id = azapi_resource.subnet_services.id
+  subnet_id = jsondecode(azurerm_resource_group_template_deployment.subnet_services.output_content).subnetId.value
   private_dns_zone_group {
     name = "${azurerm_storage_account.storage.name}-arecord"
     private_dns_zone_ids = [
@@ -187,7 +188,7 @@ resource "azurerm_private_endpoint" "storage_private_endpoint_file" {
     private_connection_resource_id = azurerm_storage_account.storage.id
     subresource_names              = ["file"]
   }
-  subnet_id = azapi_resource.subnet_services.id
+  subnet_id = jsondecode(azurerm_resource_group_template_deployment.subnet_services.output_content).subnetId.value
   private_dns_zone_group {
     name = "${azurerm_storage_account.storage.name}-arecord"
     private_dns_zone_ids = [
@@ -209,7 +210,7 @@ resource "azurerm_private_endpoint" "storage_private_endpoint_queue" {
     private_connection_resource_id = azurerm_storage_account.storage.id
     subresource_names              = ["queue"]
   }
-  subnet_id = azapi_resource.subnet_services.id
+  subnet_id = jsondecode(azurerm_resource_group_template_deployment.subnet_services.output_content).subnetId.value
   private_dns_zone_group {
     name = "${azurerm_storage_account.storage.name}-arecord"
     private_dns_zone_ids = [
@@ -231,7 +232,7 @@ resource "azurerm_private_endpoint" "storage_private_endpoint_table" {
     private_connection_resource_id = azurerm_storage_account.storage.id
     subresource_names              = ["table"]
   }
-  subnet_id = azapi_resource.subnet_services.id
+  subnet_id = jsondecode(azurerm_resource_group_template_deployment.subnet_services.output_content).subnetId.value
   private_dns_zone_group {
     name = "${azurerm_storage_account.storage.name}-arecord"
     private_dns_zone_ids = [

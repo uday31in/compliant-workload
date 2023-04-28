@@ -22,47 +22,63 @@ resource "azurerm_key_vault" "key_vault" {
   tenant_id                     = data.azurerm_client_config.current.tenant_id
 }
 
-resource "azapi_resource" "key_vault_key_storage" {
-  type      = "Microsoft.KeyVault/vaults/keys@2022-11-01"
-  name      = "cmkStorage"
-  parent_id = azurerm_key_vault.key_vault.id
+# resource "azapi_resource" "key_vault_key_storage" {
+#   type      = "Microsoft.KeyVault/vaults/keys@2022-11-01"
+#   name      = "cmkStorage"
+#   parent_id = azurerm_key_vault.key_vault.id
 
-  body = jsonencode({
-    properties = {
-      attributes = {
-        enabled    = true
-        exp        = var.timestamp_expiry
-        exportable = false
-      }
-      curveName = "P-256"
-      keyOps = [
-        "decrypt",
-        "encrypt",
-        "sign",
-        "unwrapKey",
-        "verify",
-        "wrapKey"
-      ]
-      keySize = 2048
-      kty     = "RSA"
-      rotationPolicy = {
-        attributes = {
-          expiryTime = "P13M"
-        }
-        lifetimeActions = [
-          {
-            action = {
-              type = "rotate"
-            }
-            trigger = {
-              timeAfterCreate = "P12M"
-            }
-          }
-        ]
-      }
+#   body = jsonencode({
+#     properties = {
+#       attributes = {
+#         enabled    = true
+#         exp        = var.timestamp_expiry
+#         exportable = false
+#       }
+#       curveName = "P-256"
+#       keyOps = [
+#         "decrypt",
+#         "encrypt",
+#         "sign",
+#         "unwrapKey",
+#         "verify",
+#         "wrapKey"
+#       ]
+#       keySize = 2048
+#       kty     = "RSA"
+#       rotationPolicy = {
+#         attributes = {
+#           expiryTime = "P13M"
+#         }
+#         lifetimeActions = [
+#           {
+#             action = {
+#               type = "rotate"
+#             }
+#             trigger = {
+#               timeAfterCreate = "P12M"
+#             }
+#           }
+#         ]
+#       }
+#     }
+#   })
+#   response_export_values = ["properties.keyUri"]
+# }
+
+resource "azurerm_resource_group_template_deployment" "key_vault_key_storage" {
+  name                = "KeyVaultKeyStorageDeployment"
+  resource_group_name = azurerm_key_vault.key_vault.resource_group_name
+  deployment_mode     = "Incremental"
+
+  parameters_content = jsonencode({
+    keyVaultKeyName = {
+      value = "cmkStorage"
+    },
+    keyVaultId = {
+      value = azurerm_key_vault.key_vault.id
     }
   })
-  response_export_values = ["properties.keyUri"]
+  template_content = file("${path.module}/arm/keyVaultKey.json")
 }
 
 data "azurerm_monitor_diagnostic_categories" "diagnostic_categories_key_vault" {
@@ -113,7 +129,7 @@ resource "azurerm_private_endpoint" "key_vault_private_endpoint" {
     private_connection_resource_id = azurerm_key_vault.key_vault.id
     subresource_names              = ["vault"]
   }
-  subnet_id = azapi_resource.subnet_services.id
+  subnet_id = jsondecode(azurerm_resource_group_template_deployment.subnet_services.output_content).subnetId.value
   private_dns_zone_group {
     name = "${azurerm_key_vault.key_vault.name}-arecord"
     private_dns_zone_ids = [

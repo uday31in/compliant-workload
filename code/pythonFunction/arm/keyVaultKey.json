@@ -1,0 +1,80 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "keyVaultKeyName": {
+            "type": "string",
+            "metadata": {
+                "description": "Specifies the name of the key vault key."
+            }
+        },
+        "keyVaultId": {
+            "type": "string",
+            "metadata": {
+                "description": "Specifies the ID of the key vault."
+            }
+        }
+    },
+    "functions": [],
+    "variables": {
+        "keyVaultName": "[last(split(parameters('keyVaultId'), '/'))]"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.KeyVault/vaults/keys",
+            "apiVersion": "2022-11-01",
+            "name": "[concat(variables('keyVaultName'), '/', parameters('keyVaultKeyName'))]",
+            "properties": {
+                "attributes": {
+                    "enabled": true,
+                    "exportable": false,
+                    "exp": 1716628196
+                },
+                "curveName": "P-256",
+                "keyOps": [
+                    "decrypt",
+                    "encrypt",
+                    "sign",
+                    "unwrapKey",
+                    "verify",
+                    "wrapKey"
+                ],
+                "keySize": 2048,
+                "kty": "RSA",
+                "rotationPolicy": {
+                    "attributes": {
+                        "expiryTime": "P13M"
+                    },
+                    "lifetimeActions": [
+                        {
+                            "action": {
+                                "type": "rotate"
+                            },
+                            "trigger": {
+                                "timeAfterCreate": "P12M"
+                            }
+                        }
+                    ]
+                }
+            }
+        }
+    ],
+    "outputs": {
+        "keyVaultKeyName": {
+            "type": "string",
+            "value": "[parameters('keyVaultKeyName')]"
+        },
+        "keyVaultKeyResourceId": {
+            "type": "string",
+            "value": "[resourceId('Microsoft.KeyVault/vaults/keys', variables('keyVaultName'), parameters('keyVaultKeyName'))]"
+        },
+        "keyVaultKeyUriWithVersion": {
+            "type": "string",
+            "value": "[reference(resourceId('Microsoft.KeyVault/vaults/keys', variables('keyVaultName'), parameters('keyVaultKeyName')), '2021-10-01', 'Full').properties.keyUriWithVersion]"
+        },
+        "keyVaultKeyUri": {
+            "type": "string",
+            "value": "[reference(resourceId('Microsoft.KeyVault/vaults/keys', variables('keyVaultName'), parameters('keyVaultKeyName')), '2021-10-01', 'Full').properties.keyUri]"
+        }
+    }
+}

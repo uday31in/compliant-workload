@@ -66,3 +66,13 @@ variable "route_table_id" {
     error_message = "Please specify a valid resource ID."
   }
 }
+
+variable "user_assigned_identity_id" {
+  description = "Specifies the resource ID of the default route table for the Data Landing Zone"
+  type        = string
+  sensitive   = false
+  validation {
+    condition     = length(split("/", var.user_assigned_identity_id)) == 9
+    error_message = "Please specify a valid resource ID."
+  }
+}

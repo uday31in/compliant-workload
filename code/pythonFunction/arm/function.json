@@ -1,0 +1,145 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "location": {
+            "type": "string",
+            "metadata": {
+                "description": "Specifies the location for all resources."
+            }
+        },
+        "functionName": {
+            "type": "string",
+            "metadata": {
+                "description": "Specifies the name of the function."
+            }
+        },
+        "tags": {
+            "type": "object",
+            "metadata": {
+                "description": "Specifies the tags to be applied to the function."
+            }
+        },
+        "serverFarmId": {
+            "type": "string",
+            "metadata": {
+                "description": "Specifies the resource ID of the app service plan."
+            }
+        },
+        "subnetId": {
+            "type": "string",
+            "metadata": {
+                "description": "Specifies the subnet ID for the function."
+            }
+        },
+        "applicationInsightsConnectionString": {
+            "type": "string",
+            "metadata": {
+                "description": "Specifies the connection string of application insights."
+            }
+        },
+        "applicationInsightsInstrumentationKey": {
+            "type": "string",
+            "metadata": {
+                "description": "Specifies the instrumentation key of application insights."
+            }
+        },
+        "storageAccountName": {
+            "type": "string",
+            "metadata": {
+                "description": "Specifies the storage account name for the function."
+            }
+        }
+    },
+    "functions": [],
+    "variables": {},
+    "resources": [
+        {
+            "type": "Microsoft.Web/sites",
+            "apiVersion": "2022-09-01",
+            "name": "[parameters('functionName')]",
+            "location": "[parameters('location')]",
+            "tags": "[parameters('tags')]",
+            "identity": {
+                "type": "SystemAssigned"
+            },
+            "kind": "functionapp,linux",
+            "properties": {
+                "clientAffinityEnabled": false,
+                "clientCertEnabled": false,
+                "clientCertMode": "Required",
+                "enabled": true,
+                "hostNamesDisabled": false,
+                "httpsOnly": true,
+                "hyperV": false,
+                "isXenon": false,
+                "keyVaultReferenceIdentity": "SystemAssigned",
+                "publicNetworkAccess": "Disabled",
+                "redundancyMode": "None",
+                "reserved": true,
+                "scmSiteAlsoStopped": false,
+                "serverFarmId": "[parameters('serverFarmId')]",
+                "storageAccountRequired": false,
+                "virtualNetworkSubnetId": "[parameters('subnetId')]",
+                "siteConfig": {
+                    "acrUseManagedIdentityCreds": false,
+                    "alwaysOn": true,
+                    "autoHealEnabled": false,
+                    "appSettings": [
+                        {
+                            "name": "APPLICATIONINSIGHTS_CONNECTION_STRING",
+                            "value": "[parameters('applicationInsightsConnectionString')]"
+                        },
+                        {
+                            "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
+                            "value": "[parameters('applicationInsightsInstrumentationKey')]"
+                        },
+                        {
+                            "name": "FUNCTIONS_EXTENSION_VERSION",
+                            "value": "~4"
+                        },
+                        {
+                            "name": "FUNCTIONS_WORKER_RUNTIME",
+                            "value": "python"
+                        },
+                        {
+                            "name": "WEBSITE_CONTENTOVERVNET",
+                            "value": "1"
+                        },
+                        {
+                            "name": "AzureWebJobsStorage__accountName",
+                            "value": "[parameters('storageAccountName')]"
+                        }
+                    ],
+                    "azureStorageAccounts": {},
+                    "detailedErrorLoggingEnabled": true,
+                    "functionAppScaleLimit": 0,
+                    "functionsRuntimeScaleMonitoringEnabled": false,
+                    "ftpsState": "FtpsOnly",
+                    "http20Enabled": false,
+                    "ipSecurityRestrictionsDefaultAction": "Deny",
+                    "linuxFxVersion": "Python|3.10",
+                    "localMySqlEnabled": false,
+                    "loadBalancing": "LeastRequests",
+                    "minTlsVersion": "1.2",
+                    "minimumElasticInstanceCount": 0,
+                    "numberOfWorkers": 1,
+                    "preWarmedInstanceCount": 0,
+                    "scmMinTlsVersion": "1.2",
+                    "scmIpSecurityRestrictionsUseMain": false,
+                    "scmIpSecurityRestrictionsDefaultAction": "Deny",
+                    "use32BitWorkerProcess": true,
+                    "vnetRouteAllEnabled": true,
+                    "vnetPrivatePortsCount": 0,
+                    "webSocketsEnabled": false
+                }
+            }
+        }
+    ],
+    "outputs": {
+        "functionId": {
+            "type": "string",
+            "value": "[resourceId('Microsoft.Web/sites', parameters('functionName'))]"
+        }
+    }
+}
